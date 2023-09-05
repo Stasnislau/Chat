@@ -1,10 +1,10 @@
-
+import HomePage from "./pages/homePage"
 
 function App() {
 
   return (
     <div className="App">
-      Ты глупый или кое-что?
+      <HomePage />
     </div>
   )
 }
