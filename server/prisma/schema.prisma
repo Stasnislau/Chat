@@ -23,6 +23,7 @@ model message {
   userId String
   room   room?   @relation(fields: [roomId], references: [id])
   roomId String? @db.ObjectId
+  dateSent  DateTime @default(now())
 }
 
 model room {
