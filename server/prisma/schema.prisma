@@ -11,17 +11,19 @@ datasource db {
 }
 
 model user {
-  id       String   @id @default(cuid()) @map("_id") @db.ObjectId
-  name     String   @unique
-  nickname String   @unique
-  roomIds  String[] @db.ObjectId
-  rooms    room[]   @relation(fields: [roomIds], references: [id])
+  id       String    @id @default(cuid()) @map("_id") @db.ObjectId
+  name     String    @unique
+  nickname String    @unique
+  roomIds  String[]  @db.ObjectId
+  rooms    room[]    @relation(fields: [roomIds], references: [id])
+  message  message[]
 }
 
 model message {
   id       String   @id @default(cuid()) @map("_id") @db.ObjectId
   text     String
-  userId   String
+  user     user     @relation(fields: [userId], references: [id])
+  userId   String   @db.ObjectId
   room     room?    @relation(fields: [roomId], references: [id])
   roomId   String?  @db.ObjectId
   dateSent DateTime @default(now())
