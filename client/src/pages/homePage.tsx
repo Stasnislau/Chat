@@ -24,34 +24,11 @@ const HomePage = () => {
       socket?.off("message", messageListener);
     };
   }, [socket, messageHistory]);
-  return (
-    <Box>
-      <Typography variant="h1">Welcome to the Chat App</Typography>
-      <Typography variant="h2">Hello {user}</Typography>
-      <Box>
-        <Typography variant="h3">Message History</Typography>
-        {messageHistory.map((message, index) => (
-          <Typography key={index}>{message}</Typography>
-        ))}
-      </Box>
-      <Box>
-        <Typography variant="h3">Send a Message</Typography>
-        <input
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Message"
-        />
-        <Button
-          onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-            e.preventDefault();
-            handleSendMessage(message);
-          }}
-        >
-          Send
-        </Button>
-      </Box>
-    </Box>
-  );
+  const onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    handleSendMessage(message);
+  };
+  return <Box>Hello world</Box>;
 };
 
 export default HomePage;

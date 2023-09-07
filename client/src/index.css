@@ -5,7 +5,8 @@
 
   color-scheme: white;
   color: #000000;
-  background-color: #ffffff;
+  background-image: url("/stars-background.svg");
+  padding: 5vh 2vw 5vh 2vw;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
