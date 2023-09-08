@@ -63,8 +63,10 @@ const MessageComponent = observer(() => {
               width: "100%",
               margin: "auto",
               overflowWrap: "break-word",
+              borderRadius: "1rem",
+              boxShadow: "1px rgba(0,0,0,0.4)",
             }}
-            severity="success"
+            severity={item.type}
             onClose={() => {
               store.removeAlert(item.id);
             }}
@@ -82,7 +84,6 @@ const MessageComponent = observer(() => {
             }
           >
             <Typography
-              variant="body1"
               sx={{
                 display: "inline",
                 marginRight: "auto",

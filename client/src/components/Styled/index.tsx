@@ -7,7 +7,7 @@ export const StyledTextField = styled(TextField)({
   fontFamily: "Roboto",
   marginTop: "1rem",
   backgroundColor: "#f5f5f5",
-  borderRadius: "9",
+  borderRadius: "99999999px",
   color: "white",
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
