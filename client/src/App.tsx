@@ -2,6 +2,7 @@ import { ThemeProvider, createTheme } from "@mui/material";
 import HomePage from "./pages/homePage";
 import Store from "./store";
 import { createContext } from "react";
+import WrapperComponent from "./components/wrapperComponent";
 const theme = createTheme({
   palette: {
     primary: {
@@ -24,7 +25,9 @@ function App() {
     <div className="App">
       <Context.Provider value={store}>
         <ThemeProvider theme={theme}>
-          <HomePage />
+          <WrapperComponent>
+            <HomePage />
+          </WrapperComponent>
         </ThemeProvider>
       </Context.Provider>
     </div>

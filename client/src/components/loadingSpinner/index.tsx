@@ -1,6 +1,7 @@
 import React from "react";
 import { Box } from "@mui/material";
-const LoadingSpinner = () => {
+import { observer } from "mobx-react-lite";
+const LoadingSpinner = observer(() => {
   return (
     <Box
       sx={{
@@ -20,6 +21,6 @@ const LoadingSpinner = () => {
       <span className="spinner-loader"></span>
     </Box>
   );
-};
+});
 
 export default LoadingSpinner;

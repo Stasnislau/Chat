@@ -27,6 +27,7 @@ model message {
   room     room?    @relation(fields: [roomId], references: [id])
   roomId   String?  @db.ObjectId
   dateSent DateTime @default(now())
+  isRead   Boolean  @default(false)
 }
 
 model room {
