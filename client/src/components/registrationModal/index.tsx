@@ -14,6 +14,10 @@ const RegistrationModal = observer(
     const store = useContext(Context);
     const [name, setName] = useState("");
     const [nickname, setNickname] = useState("");
+    const [fieldErrors, setFieldErrors] = useState({
+      name: "",
+      nickname: "",
+    });
     const createUser = async () => {
       try {
         store.setIsBeingSubmitted(true);
@@ -37,10 +41,32 @@ const RegistrationModal = observer(
         store.setIsBeingSubmitted(false);
       }
     };
+    const onSubmit = async () => {
+      if (!name) {
+        setFieldErrors({
+          ...fieldErrors,
+          name: "Name is required",
+        });
+        return;
+      }
+      if (!nickname) {
+        setFieldErrors({
+          ...fieldErrors,
+          nickname: "Nickname is required",
+        });
+        return;
+      }
+      // if (name && nickname) { // TODO: uncomment this when the other parts are done
+      //   await createUser();
+      // }
+      setIsModalOpen(false);
+    };
     return (
       <Modal
         open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          store.displayError("You need to register to proceed to the chat");
+        }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
         sx={{
@@ -182,10 +208,31 @@ const RegistrationModal = observer(
                 padding: "1rem",
                 marginTop: "1rem",
               }}
-              onClick={createUser}
+              onClick={onSubmit}
             >
               Create
             </Button>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: "1rem",
+              transform: "transition all 0.5s ease-in-out",
+            }}
+          >
+            {fieldErrors.name || fieldErrors.nickname ? (
+              <Typography
+                sx={{
+                  fontSize: "1rem",
+                  fontWeight: "400",
+                  color: "red",
+                }}
+              >
+                {fieldErrors.name || fieldErrors.nickname}
+              </Typography>
+            ) : null}
           </Box>
         </Box>
       </Modal>
