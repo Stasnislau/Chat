@@ -101,3 +101,8 @@
     background-size: 80px 80px;
   }
 }
+
+@font-face {
+  font-family: "Robot";
+  src: url("/fonts/Roboto-Regular.ttf");
+}
