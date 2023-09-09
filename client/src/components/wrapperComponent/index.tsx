@@ -18,7 +18,14 @@ const WrapperComponent = observer(({ children }: { children: ReactNode }) => {
     }
   }, [store.state.userId, setIsModalOpen, store.setUserId, isModalOpen, store]);
   return (
-    <div>
+    <div style={
+      {
+        display: "flex",
+        width: "100%",
+        height: "100%",
+        flexDirection: "column",
+      }
+    }>
       {children}
       <div
         style={{

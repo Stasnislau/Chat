@@ -122,7 +122,7 @@ const RegistrationModal = observer(
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                marginTop: "2rem",
+                marginTop: "5%",
               }}
             >
               <Typography
@@ -151,7 +151,7 @@ const RegistrationModal = observer(
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                marginTop: "1rem",
+                marginTop: "5%",
                 padding: "1rem",
               }}
             >
@@ -206,7 +206,7 @@ const RegistrationModal = observer(
                 width: "fit-content",
                 alignSelf: "center",
                 padding: "1rem",
-                marginTop: "1rem",
+                marginTop: "5%",
               }}
               onClick={onSubmit}
             >
