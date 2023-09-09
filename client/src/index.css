@@ -1,13 +1,23 @@
+.App {
+  box-sizing: border-box;
+  display: flex;
+  height: 90vh;
+  width: 96vw;
+  flex-direction: column;
+  padding: 5vh 2vw 5vh 2vw;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: white;
   color: #000000;
   background-image: url("/stars-background.svg");
-  padding: 5vh 2vw 5vh 2vw;
-
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
