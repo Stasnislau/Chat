@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 import io, { Socket } from "socket.io-client";
 import { MenuOpen, Message, AccountCircle } from "@mui/icons-material";
+import InfoComponent from "../components/chatMessagingZone/infoComponent";
+import { Context } from "../App";
 
 const HomePage = () => {
+  const store = useContext(Context);
   const [socket, setSocket] = useState<Socket>();
   const [message, setMessage] = useState("");
   const [messageHistory, setMessageHistory] = useState<string[]>([]);
-  const [user, setUser] = useState<string>("Stranger");
   const [currentRoomId, setCurrentRoomId] = useState<string>("General");
   const [isRoomsPanelOpen, setIsRoomsPanelOpen] = useState<boolean>(true);
   const handleSendMessage = (value: any) => {
@@ -157,7 +159,7 @@ const HomePage = () => {
                   alignItems: "center",
                 }}
               >
-                {user}
+                <InfoComponent userId={store.state.userId} />
               </Typography>
             </Box>
             <Typography

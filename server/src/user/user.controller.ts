@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { userDTO } from "./dto";
 import ApiError from "src/exceptions/api-error";
@@ -16,7 +16,7 @@ export class UserController {
     return user;
   }
 
-  @Post("getById/:id")
+  @Get("getById/:id")
   async getUserById(@Param("id") id: string) {
     const user = await this.userService.getUserById(id);
     if (user instanceof ApiError) {
@@ -25,7 +25,7 @@ export class UserController {
     return user;
   }
 
-  @Post("getByNickname/:nickname")
+  @Get("getByNickname/:nickname")
   async getUserByNickname(@Param("nickname") nickname: string) {
     const user = await this.userService.getUserByNickname(nickname);
     if (user instanceof ApiError) {
@@ -43,7 +43,7 @@ export class UserController {
     return user;
   }
 
-  @Post("update/:id")
+  @Put("update/:id")
   async updateUser(@Param("id") id: string, @Body() data: userDTO) {
     const user = await this.userService.updateUser(id, data);
     if (user instanceof ApiError) {

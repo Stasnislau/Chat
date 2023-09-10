@@ -6,3 +6,12 @@ export interface alertInterface {
 export interface fileObject extends File {
   preview: string;
 }
+
+export interface user{
+  id: string;
+  name: string;
+  nickname: string;
+  avatar: string;
+  roomIds: string[];
+ 
+}

@@ -16,7 +16,7 @@ model user {
   nickname String    @unique
   roomIds  String[]  @db.ObjectId
   rooms    room[]    @relation(fields: [roomIds], references: [id])
-  message  message[]
+  messages  message[]
   avatar   String 
 }
 
