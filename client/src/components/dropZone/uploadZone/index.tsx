@@ -1,8 +1,7 @@
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useDropzone } from "react-dropzone";
 import { useEffect, useState, useContext } from "react";
 import AddedImage from "../addedImage";
-import { Close } from "@mui/icons-material";
 import { fileObject } from "../../../types";
 import convertBase64 from "../../../assets/convertBase64";
 import { Context } from "../../../App";
@@ -29,7 +28,7 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
         setFile(fileObject);
       } catch (error: any) {
         store.displayError(error.message);
-      }3
+      }
     },
   });
 

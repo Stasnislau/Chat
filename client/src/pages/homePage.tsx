@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Button,
-  IconButton,
-  Typography,
-  Tabs,
-  Tab,
-  Icon,
-} from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import io, { Socket } from "socket.io-client";
 import { MenuOpen, Message, AccountCircle } from "@mui/icons-material";
 
@@ -96,12 +88,12 @@ const HomePage = () => {
       >
         <Box
           sx={{
-            display: "flex",
             flexDirection: "column",
             width: "32%",
             height: "100%",
             backgroundColor: "#FFFFFF",
             borderRight: "1px solid grey",
+            display: isRoomsPanelOpen ? "flex" : "none",
           }}
         >
           <Box
@@ -109,9 +101,8 @@ const HomePage = () => {
               display: "flex",
               flexDirection: "row",
               width: "100%",
-              height: "10%",
+              height: "10.5%",
               backgroundColor: "#FFFFFF",
-              borderBottom: "1px solid grey",
             }}
           >
             <Typography
@@ -133,18 +124,42 @@ const HomePage = () => {
             display: "flex",
             flexDirection: "column",
             width: isRoomsPanelOpen ? "68%" : "100%",
+            height: "100%",
           }}
         >
           <Box
             sx={{
               display: "flex",
-              flexDirection: "row",
+              flexDirection: "column",
               width: "100%",
               height: "100%",
               backgroundColor: "#FFFFFF",
               borderBottom: "1px solid grey",
             }}
           >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                height: "11.7%",
+                backgroundColor: "#FFFFFF",
+                borderBottom: "1px solid grey",
+              }}
+            >
+              <Typography
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  width: "100%",
+                  height: "100%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {user}
+              </Typography>
+            </Box>
             <Typography
               sx={{
                 display: "flex",
@@ -153,6 +168,7 @@ const HomePage = () => {
                 height: "100%",
                 justifyContent: "center",
                 alignItems: "center",
+                backgroundColor: "secondary.main",
               }}
             >
               {currentRoomId}

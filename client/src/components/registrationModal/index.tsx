@@ -269,12 +269,12 @@ const RegistrationModal = observer(
             </StyledTextFieldWrapper>
             <StyledUploadZoneWrapper>
               <UploadZone
-                onChange={(files) => {
+                onChange={(file) => {
                   setFieldErrors({
                     ...fieldErrors,
                     avatar: "",
                   });
-                  setAvatar(files[0]);
+                  setAvatar(file);
                 }}
               />
             </StyledUploadZoneWrapper>
