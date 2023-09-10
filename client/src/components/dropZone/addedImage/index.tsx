@@ -10,10 +10,18 @@ const AddedImage = ({ source, onDelete }: ComponentProps) => {
   return (
     <Box
       sx={{
+        width: "100%",
+        height: "100%",
+        backgroundColor: "red",
         position: "relative",
+        backgroundImage: `url(${source})`,
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        objectFit: "cover",
       }}
     >
-      <img src={source} alt="item" width={100} height={100} />
+
       <IconButton
         sx={{
           padding: "0",
