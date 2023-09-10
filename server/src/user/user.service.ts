@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import ApiError from "src/exceptions/api-error";
 import { userDTO } from "./dto";
+import cloudinary from "../cloudinary";
 
 @Injectable()
 export class UserService {
@@ -16,11 +17,27 @@ export class UserService {
     if (ifExist) {
       return ApiError.badRequest("User already exist");
     }
+    const promise = async (image) => {
+      const res = await cloudinary.uploader.upload(
+        image,
+        {
+          folder: "products",
+          resource_type: "image",
+        },
+        (error, result) => {
+          if (error) {
+            return ApiError.badGateway("Unable to upload images");
+          }
+        }
+      );
+      return res.secure_url;
+    };
+    const avatar = await promise(data.avatar);
     const user = await this.prisma.user.create({
       data: {
         name: data.name,
         nickname: data.nickname,
-        avatar: data.avatar,
+        avatar: avatar,
       },
     });
     if (!user) {
