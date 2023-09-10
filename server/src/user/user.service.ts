@@ -20,6 +20,7 @@ export class UserService {
       data: {
         name: data.name,
         nickname: data.nickname,
+        avatar: data.avatar,
       },
     });
     if (!user) {
@@ -76,6 +77,7 @@ export class UserService {
       data: {
         name: data.name,
         nickname: data.nickname,
+        avatar: data.avatar,
       },
     });
     if (!user) {

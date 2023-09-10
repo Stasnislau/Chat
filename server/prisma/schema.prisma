@@ -17,6 +17,7 @@ model user {
   roomIds  String[]  @db.ObjectId
   rooms    room[]    @relation(fields: [roomIds], references: [id])
   message  message[]
+  avatar   String 
 }
 
 model message {
