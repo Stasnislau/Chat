@@ -1,4 +1,4 @@
-import { Box, Avatar, IconButton, Typography } from "@mui/material";
+import { Box, Avatar, IconButton, Typography, Skeleton } from "@mui/material";
 import { API_URL } from "../../../constants";
 import { useContext, useState, useEffect } from "react";
 import { Context } from "../../../App";
@@ -29,7 +29,9 @@ const InfoComponent = ({ userId }: { userId: string }) => {
     }
   };
   useEffect(() => {
-    if (store.state.userId) fetchUser();
+    if (store.state.userId !== "" && userId !== "") {
+      fetchUser();
+    }
   }, [store.state.userId]);
   return (
     <Box
@@ -49,13 +51,17 @@ const InfoComponent = ({ userId }: { userId: string }) => {
           alignItems: "center",
         }}
       >
-        <Avatar
-          sx={{
-            width: "50px",
-            height: "50px",
-          }}
-          src={user?.avatar}
-        />
+        {store.state.isLoading ? (
+          <Skeleton variant="circular" width={50} height={50} />
+        ) : (
+          <Avatar
+            sx={{
+              width: "50px",
+              height: "50px",
+            }}
+            src={user?.avatar}
+          />
+        )}
         <Box
           sx={{
             display: "flex",
@@ -63,22 +69,30 @@ const InfoComponent = ({ userId }: { userId: string }) => {
             marginLeft: "10px",
           }}
         >
-          <Typography
-            sx={{
-              fontSize: "18px",
-              fontWeight: "bold",
-            }}
-          >
-            {user?.name}
-          </Typography>
-          <Typography
-            sx={{
-              fontSize: "14px",
-              fontWeight: "light",
-            }}
-          >
-            Online
-          </Typography>
+          {store.state.isLoading ? (
+            <Skeleton variant="text" width={100} height={20} />
+          ) : (
+            <Typography
+              sx={{
+                fontSize: "18px",
+                fontWeight: "bold",
+              }}
+            >
+              {user?.name}
+            </Typography>
+          )}
+          {store.state.isLoading ? (
+            <Skeleton variant="text" width={100} height={20} />
+          ) : (
+            <Typography
+              sx={{
+                fontSize: "14px",
+                fontWeight: "light",
+              }}
+            >
+              Online
+            </Typography>
+          )}
         </Box>
       </Box>
       <Box
