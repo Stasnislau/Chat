@@ -4,13 +4,12 @@ import io, { Socket } from "socket.io-client";
 import { MenuOpen, Message, AccountCircle } from "@mui/icons-material";
 import InfoComponent from "../components/chatMessagingZone/infoComponent";
 import { Context } from "../App";
+import MessengingZone from "../components/chatMessagingZone/messagingZone";
 
 const HomePage = () => {
   const store = useContext(Context);
   const [socket, setSocket] = useState<Socket>();
-  const [message, setMessage] = useState("");
   const [messageHistory, setMessageHistory] = useState<string[]>([]);
-  const [currentRoomId, setCurrentRoomId] = useState<string>("General");
   const [isRoomsPanelOpen, setIsRoomsPanelOpen] = useState<boolean>(true);
   const handleSendMessage = (value: any) => {
     socket?.emit("message", value);
@@ -29,10 +28,6 @@ const HomePage = () => {
       socket?.off("message", messageListener);
     };
   }, [socket, messageHistory]);
-  const onClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
-    handleSendMessage(message);
-  };
   return (
     <Box
       sx={{
@@ -162,19 +157,7 @@ const HomePage = () => {
                 <InfoComponent userId={store.state.userId} />
               </Typography>
             </Box>
-            <Typography
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                width: "100%",
-                height: "100%",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "secondary.main",
-              }}
-            >
-              {currentRoomId}
-            </Typography>
+            <MessengingZone />
           </Box>
         </Box>
       </Box>

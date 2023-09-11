@@ -48,6 +48,7 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
 
   const onDelete = () => {
     setFile(null);
+    
   };
   return (
     <Box

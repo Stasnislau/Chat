@@ -29,7 +29,8 @@ const AddedImage = ({ source, onDelete }: ComponentProps) => {
           top: "0.5%",
           right: "0.5%",
         }}
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           onDelete(source);
         }}
       >
