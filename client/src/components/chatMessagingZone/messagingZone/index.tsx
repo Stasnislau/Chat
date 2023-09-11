@@ -27,7 +27,7 @@ const MessagingZone = () => {
     try {
       store.setIsLoading(true);
       const response = await fetch(
-        `${API_URL}/room/get`,
+        `${API_URL}/room/getByUserId/${store.state.userId}`,
         {
           method: "GET",
           headers: {
@@ -36,6 +36,7 @@ const MessagingZone = () => {
         }
       );
       const data = await response.json();
+      console.log(data);
       if (response.status < 200 || response.status >= 300) {
         throw new Error(data.message);
       }

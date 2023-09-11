@@ -14,6 +14,7 @@ export class RoomService {
         users: {
           connect: data.userIDs.map((id) => ({ id })),
         },
+        avatar: data.avatar,
       },
     });
     if (!room) {
@@ -64,7 +65,18 @@ export class RoomService {
   }
 
   async deleteRoom(id: string) {
-    const room = await this.prisma.room.delete({
+    const room = await this.prisma.room.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!room) {
+      return ApiError.badRequest("Room not found");
+    }
+    if (!room.isDeletable) {
+      return ApiError.badRequest("Room is not deletable");
+    }
+    await this.prisma.room.delete({
       where: {
         id,
       },

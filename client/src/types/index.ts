@@ -27,4 +27,5 @@ export interface room {
   name: String;
   messages: message[];
   userIds: String[];
+  avatar: String;
 }
