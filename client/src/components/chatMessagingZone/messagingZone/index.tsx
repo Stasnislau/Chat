@@ -10,7 +10,6 @@ import MessageBubble from "../messageBuble";
 const MessagingZone = () => {
   const store = useContext(Context);
   const [socket, setSocket] = useState<Socket>();
-  const [room, setRoom] = useState<room>();
   const messageListener = (message: message) => {
     setMessageHistory([...messageHistory, message]);
   };
@@ -24,11 +23,11 @@ const MessagingZone = () => {
     socket?.emit("message", message);
   };
 
-  const fetchRoom = async () => {
+  const fetchRooms = async () => {
     try {
       store.setIsLoading(true);
       const response = await fetch(
-        `${API_URL}/room/getById/${store.state.currentRoomId}`,
+        `${API_URL}/room/get`,
         {
           method: "GET",
           headers: {
@@ -40,7 +39,6 @@ const MessagingZone = () => {
       if (response.status < 200 || response.status >= 300) {
         throw new Error(data.message);
       }
-      setRoom(data);
     } catch (error: any) {
       store.displayError(error.message);
     } finally {
@@ -48,8 +46,8 @@ const MessagingZone = () => {
     }
   };
   useEffect(() => {
-    if (store.state.userId !== "" && store.state.currentRoomId !== "") {
-      fetchRoom();
+    if (store.state.userId !== "") {
+      fetchRooms();
     }
   }, [store.state.userId, store.state.currentRoomId]);
   useEffect(() => {

@@ -95,4 +95,28 @@ export class RoomService {
       message: "Room updated",
     };
   }
+
+  async getRoomsByUserId(id: string) {
+    const rooms = await this.prisma.room.findMany({
+      where: {
+        users: {
+          some: {
+            id,
+          },
+        },
+      },
+      include: {
+        messages: {
+          orderBy: {
+            dateSent: "desc",
+          },
+          take: 1,
+        },
+      },
+    });
+    if (!rooms) {
+      return ApiError.badRequest("Rooms not found");
+    }
+    return rooms;
+  }
 }

@@ -19,8 +19,17 @@ export class ChatGateway {
     this.prisma.message.create({
       data: {
         text: message.text,
-        userId: message.userId,
-        roomId: message.roomId,
+        isRead: false,
+        user: {
+          connect: {
+            id: message.userId,
+          },
+        },
+        room: {
+          connect: {
+            id: message.roomId,
+          },
+        },
       },
     });
   }
