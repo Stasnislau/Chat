@@ -38,6 +38,6 @@ model room {
   messages   message[]
   userIds    String[]  @db.ObjectId
   users      user[]    @relation(fields: [userIds], references: [id])
-  avatar     String
+  avatar     String[]
   isDeletable Boolean   @default(true)
 }
