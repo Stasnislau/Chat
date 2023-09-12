@@ -2,23 +2,72 @@ import React, { useContext, useState } from "react";
 import { Box, Typography, Avatar } from "@mui/material";
 import { Context } from "../../App";
 import { observer } from "mobx-react-lite";
+import { API_URL } from "../../constants";
 
-const RoomBox = observer(
+const UserBox = observer(
   ({
-    roomId,
+    userId,
     name,
-    text,
-    date,
     avatar,
   }: {
-    roomId: string;
+    userId: string;
     name: string;
-    text: string;
-    date: Date;
     avatar: string;
   }) => {
     const store = useContext(Context);
+    const checkIfRoomExists = async () => {
+      try {
+        store.setIsBeingSubmitted(true);
+        const response = await fetch(`${API_URL}/room/checkRoom`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userIds: [userId, store.state.userId],
+          }),
+        });
+        const data = await response.json();
+        if (response.status < 200 || response.status >= 300) {
+          throw new Error(data.message);
+        }
+        return data as boolean;
+      } catch (error: any) {
+        store.displayError(error.message);
+      } finally {
+        store.setIsBeingSubmitted(false);
+      }
+    };
 
+    const handleUserClick = async () => {
+      if (await checkIfRoomExists()) {
+        store.stopSearching();
+        store.setCurrentRoomId(userId);
+        return;
+      }
+      try {
+        store.setIsBeingSubmitted(true);
+        const response = await fetch(`${API_URL}/room/create`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userIds: [userId, store.state.userId],
+          }),
+        });
+        const data = await response.json();
+        if (response.status < 200 || response.status >= 300) {
+          throw new Error(data.message);
+        }
+        store.stopSearching();
+        store.setCurrentRoomId(data.id);
+      } catch (error: any) {
+        store.displayError(error.message);
+      } finally {
+        store.setIsBeingSubmitted(false);
+      }
+    };
     return (
       <Box
         sx={{
@@ -29,27 +78,20 @@ const RoomBox = observer(
           padding: "1rem",
           cursor: "pointer",
           boxSizing: "border-box",
-          backgroundColor:
-            store.state.currentRoomId === roomId ? "#f5f5f5" : "#FFFFFF",
+          backgroundColor: "#FFFFFF",
           "&:hover": {
             backgroundColor: "#f5f5f5",
           },
         }}
-        onClick={() => store.setCurrentRoomId(roomId)}
+        onClick={handleUserClick}
       >
         <Avatar src={avatar} sx={{ height: "3rem", width: "3rem" }} />
         <Box sx={{ marginLeft: "1rem" }}>
           <Typography sx={{ fontWeight: "bold" }}>{name}</Typography>
-          <Typography sx={{ color: "text.secondary" }}>{text}</Typography>
-        </Box>
-        <Box sx={{ marginLeft: "auto" }}>
-          <Typography sx={{ color: "text.secondary" }}>
-            {date ? date.toLocaleString() : ""}
-          </Typography>
         </Box>
       </Box>
     );
   }
 );
 
-export default RoomBox;
+export default UserBox;
