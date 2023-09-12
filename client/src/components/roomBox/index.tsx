@@ -44,7 +44,7 @@ const RoomBox = observer(
         </Box>
         <Box sx={{ marginLeft: "auto" }}>
           <Typography sx={{ color: "text.secondary" }}>
-            {date.toDateString()}
+            {date ? date.toLocaleString() : ""}
           </Typography>
         </Box>
       </Box>

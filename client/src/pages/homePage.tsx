@@ -13,39 +13,8 @@ import { observer } from "mobx-react-lite";
 
 const HomePage = observer(() => {
   const store = useContext(Context);
-  const [socket, setSocket] = useState<Socket>();
-  const [messageHistory, setMessageHistory] = useState<string[]>([]);
   const [isRoomsPanelOpen, setIsRoomsPanelOpen] = useState<boolean>(true);
   const [rooms, setRooms] = useState<extendedRoom[]>([]);
-  const handleSendMessage = (value: any) => {
-    socket?.emit("message", value);
-  };
-  const messageListener = (message: string) => {
-    setMessageHistory([...messageHistory, message]);
-  };
-  const fetchMessages = async () => {
-    try {
-      store.setIsLoading(true);
-      const response = await fetch(
-        `${API_URL}/room/getMessages/${store.state.currentRoomId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data = await response.json();
-      if (response.status < 200 || response.status >= 300) {
-        throw new Error(data.message);
-      }
-      setMessageHistory(data);
-    } catch (error: any) {
-      store.displayError(error.message);
-    } finally {
-      store.setIsLoading(false);
-    }
-  };
   const fetchRooms = async () => {
     try {
       store.setIsLoading(true);
@@ -74,22 +43,6 @@ const HomePage = observer(() => {
       fetchRooms();
     }
   }, [store.state.userId, store.state.currentRoomId]);
-  useEffect(() => {
-    const socket = io("http://localhost:8001");
-    setSocket(socket);
-  }, [setSocket]);
-  useEffect(() => {
-    socket?.on("message", messageListener);
-    return () => {
-      socket?.off("message", messageListener);
-    };
-  }, [socket, messageHistory]);
-
-  useEffect(() => {
-    if (store.state.currentRoomId !== "") {
-      fetchMessages();
-    }
-  }, [store.state.currentRoomId]);
   return (
     <Box
       sx={{
@@ -182,7 +135,7 @@ const HomePage = observer(() => {
                 (room) =>
                   room && (
                     <RoomBox
-                      key={room.id.toString()}
+                      key={room.id}
                       roomId={room.id}
                       name={room.name}
                       text={

@@ -14,9 +14,10 @@ export class ChatGateway {
   constructor(private prisma: PrismaService) {}
   @WebSocketServer() server;
   @SubscribeMessage("message")
-  handleMessage(@MessageBody() message: message): void {
+  async handleMessage(@MessageBody() message: message): Promise<void> {
+    console.log(message, "ZASHLO");
     this.server.emit("message", message);
-    this.prisma.message.create({
+    await this.prisma.message.create({
       data: {
         text: message.text,
         isRead: false,

@@ -50,6 +50,7 @@ export class RoomService {
   }
 
   async getRoomMessages(id: string) {
+    console.log("ZAEBALO")
     const room = await this.prisma.room.findUnique({
       where: {
         id,
@@ -61,6 +62,7 @@ export class RoomService {
     if (!room) {
       return ApiError.badRequest("Room not found");
     }
+    console.log(room.messages, 'VOT ONI DOROGIE')
     return room.messages;
   }
 
