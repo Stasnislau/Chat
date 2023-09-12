@@ -34,6 +34,15 @@ export class UserController {
     return user;
   }
 
+  @Get("searchByNickname/:nickname")
+  async searchUsersByNickname(@Param("nickname") nickname: string) {
+    const user = await this.userService.searchUsersByNickname(nickname);
+    if (user instanceof ApiError) {
+      throw user;
+    }
+    return user;
+  }
+
   @Post("delete/:id")
   async deleteUser(@Param("id") id: string) {
     const user = await this.userService.deleteUser(id);

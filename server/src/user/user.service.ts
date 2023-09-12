@@ -39,7 +39,7 @@ export class UserService {
       },
       select: {
         id: true,
-      }
+      },
     });
     const user = await this.prisma.user.create({
       data: {
@@ -85,7 +85,16 @@ export class UserService {
     }
     return user;
   }
-
+  async searchUsersByNickname(nickname: string) {
+    const users = await this.prisma.user.findMany({
+      where: {
+        nickname: {
+          contains: nickname,
+        },
+      },
+    });
+    return users;
+  }
   async deleteUser(id: string) {
     const user = await this.prisma.user.delete({
       where: {
