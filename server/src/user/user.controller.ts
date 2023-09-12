@@ -51,4 +51,13 @@ export class UserController {
     }
     return user;
   }
+
+  @Get("getAll")
+  async getAllUsers() { 
+    const users = await this.userService.getAllUsers();
+    if (users instanceof ApiError) {
+      throw users;
+    }
+    return users;
+  }
 }

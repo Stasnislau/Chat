@@ -14,6 +14,7 @@ export class MessageController {
     }
     return message;
   }
+  
   @Get("getById/:id")
   async getMessageById(id: string) {
     const message = await this.messageService.getMessageById(id);

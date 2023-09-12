@@ -33,16 +33,30 @@ export class UserService {
       return res.secure_url;
     };
     const avatar = await promise(data.avatar);
+    const room = await this.prisma.room.findFirst({
+      where: {
+        isDeletable: false,
+      },
+      select: {
+        id: true,
+      }
+    });
     const user = await this.prisma.user.create({
       data: {
         name: data.name,
         nickname: data.nickname,
         avatar: avatar,
+        rooms: {
+          connect: {
+            id: room.id,
+          },
+        },
       },
     });
     if (!user) {
       return ApiError.badRequest("User not created");
     }
+
     return {
       id: user.id,
     };
@@ -105,4 +119,8 @@ export class UserService {
     };
   }
 
+  async getAllUsers() {
+    const users = await this.prisma.user.findMany();
+    return users;
+  }
 }
