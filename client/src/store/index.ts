@@ -8,6 +8,8 @@ export interface storeInterface {
   userId: string;
   addedAlert: boolean;
   alerts: alertInterface[];
+  isSearching: boolean;
+  searchText: string;
 }
 export default class Store {
   state: storeInterface;
@@ -19,6 +21,8 @@ export default class Store {
       currentRoomId: "",
       userId: "",
       addedAlert: false,
+      isSearching: false,
+      searchText: "",
     };
     makeAutoObservable(this);
   }
@@ -62,5 +66,13 @@ export default class Store {
   removeAlert = (id: number) => {
     this.state.alerts = this.state.alerts.filter((alert) => alert.id !== id);
   };
+  startSearch = (searchText: string) => {
+    this.state.isSearching = true;
+    this.state.searchText = searchText;
+  };
 
+  stopSearching = () => {
+    this.state.isSearching = false;
+    this.state.searchText = "";
+  };
 }
