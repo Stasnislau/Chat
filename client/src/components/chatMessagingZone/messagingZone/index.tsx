@@ -23,11 +23,11 @@ const MessagingZone = () => {
     socket?.emit("message", message);
   };
 
-  const fetchRooms = async () => {
+  const fetchMessages = async () => {
     try {
       store.setIsLoading(true);
       const response = await fetch(
-        `${API_URL}/room/getByUserId/${store.state.userId}`,
+        `${API_URL}/room/getMessages/${store.state.currentRoomId}`,
         {
           method: "GET",
           headers: {
@@ -36,21 +36,23 @@ const MessagingZone = () => {
         }
       );
       const data = await response.json();
-      console.log(data);
       if (response.status < 200 || response.status >= 300) {
         throw new Error(data.message);
       }
+      setMessageHistory(data);
     } catch (error: any) {
       store.displayError(error.message);
     } finally {
       store.setIsLoading(false);
     }
   };
+
   useEffect(() => {
-    if (store.state.userId !== "") {
-      fetchRooms();
+    if (store.state.currentRoomId !== "") {
+      fetchMessages();
     }
-  }, [store.state.userId, store.state.currentRoomId]);
+  }, [store.state.currentRoomId]);
+
   useEffect(() => {
     const socket = io("http://localhost:8001");
     setSocket(socket);

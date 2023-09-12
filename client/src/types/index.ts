@@ -15,17 +15,22 @@ export interface user {
   roomIds: string[];
 }
 export interface message {
-  id: String;
-  text: String;
+  id: string;
+  text: string;
   userId: String;
   roomId: String;
-  isRead: Boolean;
+  dateSent: Date;
+  isRead: boolean;
 }
 
 export interface room {
-  id: String;
-  name: String;
+  id: string;
+  name: string;
   messages: message[];
-  userIds: String[];
-  avatar: String;
+  userIds: string[];
+  avatar: string;
+}
+
+export interface extendedRoom extends room {
+  messages: message[];
 }
