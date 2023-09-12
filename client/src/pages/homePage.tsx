@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, Divider, IconButton, Typography } from "@mui/material";
 import io, { Socket } from "socket.io-client";
 import { MenuOpen, Message, AccountCircle } from "@mui/icons-material";
 import InfoComponent from "../components/chatMessagingZone/infoComponent";
@@ -9,19 +9,42 @@ import RoomBox from "../components/roomBox";
 import { extendedRoom } from "../types";
 import { API_URL } from "../constants";
 import SearchBar from "../components/searchField";
+import { observer } from "mobx-react-lite";
 
-const HomePage = () => {
+const HomePage = observer(() => {
   const store = useContext(Context);
   const [socket, setSocket] = useState<Socket>();
   const [messageHistory, setMessageHistory] = useState<string[]>([]);
   const [isRoomsPanelOpen, setIsRoomsPanelOpen] = useState<boolean>(true);
   const [rooms, setRooms] = useState<extendedRoom[]>([]);
-  // const
   const handleSendMessage = (value: any) => {
     socket?.emit("message", value);
   };
   const messageListener = (message: string) => {
     setMessageHistory([...messageHistory, message]);
+  };
+  const fetchMessages = async () => {
+    try {
+      store.setIsLoading(true);
+      const response = await fetch(
+        `${API_URL}/room/getMessages/${store.state.currentRoomId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(data.message);
+      }
+      setMessageHistory(data);
+    } catch (error: any) {
+      store.displayError(error.message);
+    } finally {
+      store.setIsLoading(false);
+    }
   };
   const fetchRooms = async () => {
     try {
@@ -61,6 +84,12 @@ const HomePage = () => {
       socket?.off("message", messageListener);
     };
   }, [socket, messageHistory]);
+
+  useEffect(() => {
+    if (store.state.currentRoomId !== "") {
+      fetchMessages();
+    }
+  }, [store.state.currentRoomId]);
   return (
     <Box
       sx={{
@@ -168,6 +197,7 @@ const HomePage = () => {
                     />
                   )
               )}
+            <Divider sx={{ width: "100%" }} />
           </Box>
         </Box>
         <Box
@@ -178,45 +208,64 @@ const HomePage = () => {
             height: "100%",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              width: "100%",
-              height: "100%",
-              backgroundColor: "#FFFFFF",
-              borderBottom: "1px solid grey",
-            }}
-          >
+          {store.state.currentRoomId === "" ? (
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 width: "100%",
-                height: "11.7%",
+                height: "100%",
+                backgroundColor: "#FFFFFF",
+                borderBottom: "1px solid grey",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography sx={{ fontSize: "1.5rem" }}>
+                Select a room to start chatting
+              </Typography>
+            </Box>
+          ) : (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                width: "100%",
+                height: "100%",
                 backgroundColor: "#FFFFFF",
                 borderBottom: "1px solid grey",
               }}
             >
-              <Typography
+              <Box
                 sx={{
                   display: "flex",
-                  flexDirection: "row",
+                  flexDirection: "column",
                   width: "100%",
-                  height: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
+                  height: "11.7%",
+                  backgroundColor: "#FFFFFF",
+                  borderBottom: "1px solid grey",
                 }}
               >
-                <InfoComponent userId={store.state.userId} />
-              </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    width: "100%",
+                    height: "100%",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <InfoComponent userId={store.state.userId} />
+                </Box>
+              </Box>
+              <MessengingZone />
             </Box>
-            <MessengingZone />
-          </Box>
+          )}
         </Box>
       </Box>
     </Box>
   );
-};
+});
 
 export default HomePage;

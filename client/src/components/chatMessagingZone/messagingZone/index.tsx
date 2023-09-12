@@ -3,11 +3,12 @@ import { Box, IconButton, Typography } from "@mui/material";
 import io, { Socket } from "socket.io-client";
 import { Context } from "../../../App";
 import { API_URL } from "../../../constants";
-import { message, room } from "../../../types";
-import ChatTextField from "../chatTextField/intex";
-import MessageBubble from "../messageBuble";
+import { message } from "../../../types";
+import ChatTextField from "../chatTextField";
+import MessageBubble from "../messageBubble";
+import { observer } from "mobx-react-lite";
 
-const MessagingZone = () => {
+const MessagingZone = observer(() => {
   const store = useContext(Context);
   const [socket, setSocket] = useState<Socket>();
   const messageListener = (message: message) => {
@@ -107,6 +108,6 @@ const MessagingZone = () => {
       </Box>
     </Box>
   );
-};
+});
 
 export default MessagingZone;
