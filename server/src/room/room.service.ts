@@ -208,4 +208,23 @@ export class RoomService {
     });
     return endRooms;
   }
+
+  async checkIfRoomExists(Ids: string[]) {
+    const room = await this.prisma.room.findFirst({
+      where: {
+        users: {
+          every: {
+            id: {
+              in: Ids,
+            },
+          },
+        },
+      },
+    });
+    if (!room) {
+      return false;
+    }
+    return true;
+  }
+
 }

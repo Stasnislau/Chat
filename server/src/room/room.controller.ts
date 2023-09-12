@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Post, Get, Put, Delete } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Param,
+  Post,
+  Get,
+  Put,
+  Delete,
+} from "@nestjs/common";
 import { RoomService } from "./room.service";
 import ApiError from "src/exceptions/api-error";
 import { roomDTO } from "./dto";
@@ -16,8 +24,8 @@ export class RoomController {
   }
 
   @Get("getById/:id")
-  async getRoomById(@Param("id") id: string) {
-    const room = await this.roomService.getRoomById(id);
+  async getRoomById(@Param("id") id: string, @Body() callingId: string) {
+    const room = await this.roomService.getRoomById(id, callingId);
     if (room instanceof ApiError) {
       throw room;
     }
@@ -66,6 +74,12 @@ export class RoomController {
     if (room instanceof ApiError) {
       throw room;
     }
+    return room;
+  }
+
+  @Get("checkRoom")
+  async checkRoom(@Body() ids: string[]) {
+    const room = await this.roomService.checkIfRoomExists(ids);
     return room;
   }
 }
