@@ -20,6 +20,9 @@ const MessagingZone = observer(() => {
       userId: store.state.userId,
       text: text,
       roomId: store.state.currentRoomId,
+      user: {
+        name: store.state.userName,
+      },
     };
     socket?.emit("message", message);
   };
@@ -77,6 +80,7 @@ const MessagingZone = observer(() => {
         flexBox: "1",
         backgroundColor: "secondary.main",
         boxSizing: "border-box",
+        resize: "none",
       }}
     >
       <Box
@@ -84,6 +88,8 @@ const MessagingZone = observer(() => {
           width: "100%",
           height: "85%",
           overflowY: "scroll",
+          boxSizing: "border-box",
+          resize: "none",
         }}
       >
         {messageHistory.map((message, index) => (
@@ -102,6 +108,7 @@ const MessagingZone = observer(() => {
           alignItems: "center",
           width: "100%",
           height: "15%",
+          boxSizing: "border-box",
         }}
       >
         <ChatTextField onSend={handleSendMessage} />

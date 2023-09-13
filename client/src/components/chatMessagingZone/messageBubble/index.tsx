@@ -17,14 +17,6 @@ const MessageBubble = ({ message, isMine }: MessageBubbleProps) => {
         margin: "0.5rem 0",
       }}
     >
-      {message?.user?.name && (
-        <Typography
-          variant="caption"
-          sx={{ alignSelf: isMine ? "flex-end" : "flex-start" }}
-        >
-          {message.user.name}
-        </Typography>
-      )}
       <Box
         sx={{
           backgroundColor: isMine ? "#a8daee" : "#FFFFFF",
@@ -33,6 +25,20 @@ const MessageBubble = ({ message, isMine }: MessageBubbleProps) => {
           maxWidth: "80%",
         }}
       >
+        {message?.user?.name && (
+          <Typography
+            variant="caption"
+            sx={{
+              alignSelf: isMine ? "flex-end" : "flex-start",
+              color: isMine ? "#FFFFFF" : "#000000",
+              backgroundColor: isMine ? "#a8daee" : "#FFFFFF",
+              borderRadius: "0.5rem",
+              marginBottom: "0.25rem",
+            }}
+          >
+            {message.user.name}
+          </Typography>
+        )}
         <Typography
           sx={{
             fontSize: "1rem",

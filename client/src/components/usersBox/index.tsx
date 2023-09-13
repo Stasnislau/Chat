@@ -42,7 +42,7 @@ const UserBox = observer(
     const handleUserClick = async () => {
       if (await checkIfRoomExists()) {
         store.stopSearching();
-        store.setCurrentRoomId(userId);
+        // store.setCurrentRoomId(userId); TODO: find the room id and set it
         return;
       }
       try {
