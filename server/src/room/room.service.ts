@@ -8,11 +8,15 @@ export class RoomService {
   constructor(private prisma: PrismaService) {}
 
   async createRoom(data: roomDTO) {
+    data.userIds = [...new Set(data.userIds)];
     let endAvatar = [];
+    let endName = "";
     if (data.userIds.length !== 2) {
-      if (!data.avatar || data.avatar === "")
-        throw ApiError.badRequest("Avatar is required");
+      if (!data.avatar || data.avatar === "" || data.name === "" || !data.name) 
+        throw ApiError.badRequest("Avatar and name are required");
       endAvatar = [data.avatar];
+      endName = data.name;
+      
     } else {
       data.userIds.forEach(async (id) => {
         const user = await this.prisma.user.findUnique({
@@ -21,17 +25,19 @@ export class RoomService {
           },
           select: {
             avatar: true,
+            name: true,
           },
         });
         if (!user) {
           return ApiError.badRequest("User not found");
         }
         endAvatar.push(user.avatar);
+        endName = user.name;
       });
     }
     const room = await this.prisma.room.create({
       data: {
-        name: data.name, // TODO: fix name for 2 users, the same way as avatar
+        name: endName, // TODO: fix name for 2 users, the same way as avatar
         avatar: endAvatar,
         users: {
           connect: data.userIds.map((id) => ({ id })),

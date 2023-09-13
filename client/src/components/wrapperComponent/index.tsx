@@ -18,7 +18,6 @@ const WrapperComponent = observer(({ children }: { children: ReactNode }) => {
       }
     }
   }, [store.state.userId, setIsModalOpen, store.setUserId, isModalOpen, store]);
-
   useEffect(() => {
     if (store.state.userId) {
       const fetchUser = async () => {
