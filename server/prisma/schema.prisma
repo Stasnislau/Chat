@@ -12,7 +12,7 @@ datasource db {
 
 model user {
   id       String    @id @default(auto()) @map("_id") @db.ObjectId
-  name     String    @unique
+  name     String    
   nickname String    @unique
   roomIds  String[]  @db.ObjectId
   rooms    room[]    @relation(fields: [roomIds], references: [id])

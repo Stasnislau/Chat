@@ -4,20 +4,24 @@ import { useContext, useState, useEffect } from "react";
 import { Context } from "../../../App";
 import { room } from "../../../types";
 import { Call, VideoCall } from "@mui/icons-material";
+import { observer } from "mobx-react-lite";
 
-const InfoComponent = ({ userId }: { userId: string }) => {
+const InfoComponent = observer(() => {
   const store = useContext(Context);
   const [room, setRoom] = useState<room>();
   const fetchRoom = async () => {
     try {
       store.setIsLoading(true);
-      const response = await fetch(`${API_URL}/room/getById/${store.state.currentRoomId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ callingId: store.state.userId }),
-      });
+      const response = await fetch(
+        `${API_URL}/room/getById/${store.state.currentRoomId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ callingId: store.state.userId }),
+        }
+      );
       const data = await response.json();
       if (response.status < 200 || response.status >= 300) {
         throw new Error(data.message);
@@ -30,10 +34,10 @@ const InfoComponent = ({ userId }: { userId: string }) => {
     }
   };
   useEffect(() => {
-    if (store.state.userId !== "" && userId !== "") {
+    if (store.state.userId !== "" && store.state.userId !== "") {
       fetchRoom();
     }
-  }, [store.state.userId]);
+  }, [store.state.currentRoomId, store.state.userId]);
   return (
     <Box
       sx={{
@@ -133,6 +137,6 @@ const InfoComponent = ({ userId }: { userId: string }) => {
       </Box>
     </Box>
   );
-};
+});
 
 export default InfoComponent;

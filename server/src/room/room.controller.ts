@@ -24,8 +24,11 @@ export class RoomController {
   }
 
   @Post("getById/:id")
-  async getRoomById(@Param("id") id: string, @Body() callingId: string) {
-    const room = await this.roomService.getRoomById(id, callingId);
+  async getRoomById(
+    @Param("id") id: string,
+    @Body() data: { callingId: string }
+  ) {
+    const room = await this.roomService.getRoomById(id, data.callingId);
     if (room instanceof ApiError) {
       throw room;
     }

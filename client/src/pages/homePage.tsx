@@ -7,7 +7,7 @@ import {
   Skeleton,
   Typography,
 } from "@mui/material";
-import { MenuOpen, Message, AccountCircle } from "@mui/icons-material";
+import { MenuOpen } from "@mui/icons-material";
 import InfoComponent from "../components/chatMessagingZone/infoComponent";
 import { Context } from "../App";
 import MessengingZone from "../components/chatMessagingZone/messagingZone";
@@ -215,7 +215,8 @@ const HomePage = observer(() => {
               boxSizing: "border-box",
             }}
           >
-            {rooms.length > 0 &&
+            {rooms &&
+              rooms.length > 0 &&
               !store.state.isSearching &&
               rooms.map(
                 (room) =>
@@ -225,10 +226,12 @@ const HomePage = observer(() => {
                       roomId={room.id}
                       name={room.name}
                       text={
-                        room.messages.length > 0 ? room.messages[0].text : ""
+                        room.messages && room.messages.length > 0
+                          ? room.messages[0].text
+                          : ""
                       }
                       date={
-                        room.messages.length > 0
+                        room.messages && room.messages.length > 0
                           ? room.messages[0].dateSent
                           : new Date()
                       }
@@ -316,7 +319,7 @@ const HomePage = observer(() => {
                     boxSizing: "border-box",
                   }}
                 >
-                  <InfoComponent userId={store.state.userId} />
+                  <InfoComponent />
                 </Box>
               </Box>
               <Box

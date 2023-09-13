@@ -60,7 +60,7 @@ export class RoomService {
     if (!room) {
       return ApiError.badRequest("Room not found");
     }
-    if (!room.isDeletable) return room;
+    if (!room.isDeletable || room.userIds.length !== 2) return room;
     const users = await this.prisma.user.findMany({
       where: {
         id: {
@@ -75,11 +75,12 @@ export class RoomService {
     if (!user) {
       return ApiError.badRequest("User not found");
     }
-    return {
+    const roomToReturn = {
       ...room,
       name: user.name,
       avatar: user.avatar,
     };
+    return roomToReturn;
   }
 
   async getRoomByName(name: string) {
@@ -197,19 +198,24 @@ export class RoomService {
         },
       },
     });
-    const users = await this.prisma.user.findMany({
-      where: {
-        rooms: {
-          some: {
-            id,
-          },
-        },
-      },
-    });
 
-    const endRooms = rooms.map((room) => {
+    const endRooms = rooms.map(async (room) => {
       if (room.userIds.length === 2 && room.isDeletable) {
+        const users = await this.prisma.user.findMany({
+          where: {
+            id: {
+              in: room.userIds,
+            },
+          },
+        });
+        if (!users) {
+          return ApiError.badRequest("User not found");
+        }
         const user = users.find((user) => user.id !== id);
+        if (!user) {
+          return ApiError.badRequest("User not found");
+        }
+
         return {
           ...room,
           name: user.name,
@@ -219,7 +225,7 @@ export class RoomService {
         return room;
       }
     });
-    return endRooms;
+    return Promise.all(endRooms);
   }
 
   async checkIfRoomExists(Ids: string[]) {
