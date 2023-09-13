@@ -6,6 +6,7 @@ export interface storeInterface {
   isBeingSubmitted: boolean;
   currentRoomId: string;
   userId: string;
+  userName: string;
   addedAlert: boolean;
   alerts: alertInterface[];
   isSearching: boolean;
@@ -20,6 +21,7 @@ export default class Store {
       alerts: [],
       currentRoomId: "",
       userId: "",
+      userName: "",
       addedAlert: false,
       isSearching: false,
       searchText: "",
@@ -45,6 +47,9 @@ export default class Store {
   };
   setUserId = (userId: string) => {
     this.state.userId = userId;
+  };
+  setUserName = (userName: string) => {
+    this.state.userName = userName;
   };
   displaySuccess = (text: string) => {
     this.state.alerts.push({

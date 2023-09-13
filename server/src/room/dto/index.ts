@@ -1,5 +1,5 @@
 export interface roomDTO {
-  name: string;
-  userIDs: string[];
+  name?: string;
+  userIds: string[];
   avatar?: string;
 }
