@@ -15,7 +15,7 @@ const MessagingZone = observer(() => {
     setMessageHistory([...messageHistory, message]);
   };
   const [messageHistory, setMessageHistory] = useState<message[]>([]);
-  const handleSendMessage = (text: string) => {
+  const handleSendMessage = (text: string, room: string) => {
     const message = {
       userId: store.state.userId,
       text: text,
@@ -24,7 +24,7 @@ const MessagingZone = observer(() => {
         name: store.state.userName,
       },
     };
-    socket?.emit("message", message);
+    socket?.emit("message", { message, room });
   };
 
   const fetchMessages = async () => {
@@ -61,6 +61,9 @@ const MessagingZone = observer(() => {
     const socket = io("http://localhost:8001");
     setSocket(socket);
   }, [setSocket]);
+  useEffect(() => {
+    socket?.emit("join-room", store.state.currentRoomId);
+  }, [socket, store.state.currentRoomId]);
   useEffect(() => {
     socket?.on("message", messageListener);
     return () => {

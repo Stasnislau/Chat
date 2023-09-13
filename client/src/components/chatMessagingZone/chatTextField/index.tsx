@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { TextField, InputAdornment, IconButton, Box } from "@mui/material";
 import { Send, Mic } from "@mui/icons-material";
+import { Context } from "../../../App";
 
 interface ChatTextFieldProps {
-  onSend: (message: string) => void;
+  onSend: (text: string, room: string) => void;
 }
 
 const ChatTextField = ({ onSend }: ChatTextFieldProps) => {
   const [message, setMessage] = useState("");
-
+  const store = useContext(Context);
   const handleSend = () => {
     if (message.trim() !== "") {
-      onSend(message);
+      onSend(message, store.state.currentRoomId);
       setMessage("");
     }
   };
