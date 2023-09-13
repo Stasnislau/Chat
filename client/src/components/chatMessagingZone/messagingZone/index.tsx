@@ -40,7 +40,6 @@ const MessagingZone = observer(() => {
       if (response.status < 200 || response.status >= 300) {
         throw new Error(data.message);
       }
-      console.log("MESSAGES", data);
       setMessageHistory(data);
     } catch (error: any) {
       store.displayError(error.message);

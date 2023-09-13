@@ -21,6 +21,9 @@ export interface message {
   roomId: String;
   dateSent: Date;
   isRead: boolean;
+  user?: {
+    name: string;
+  };
 }
 
 export interface room {
