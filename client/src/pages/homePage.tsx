@@ -1,5 +1,12 @@
 import { useState, useEffect, useContext } from "react";
-import { Box, Divider, IconButton, Typography } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Divider,
+  IconButton,
+  Skeleton,
+  Typography,
+} from "@mui/material";
 import { MenuOpen, Message, AccountCircle } from "@mui/icons-material";
 import InfoComponent from "../components/chatMessagingZone/infoComponent";
 import { Context } from "../App";
@@ -15,6 +22,30 @@ const HomePage = observer(() => {
   const store = useContext(Context);
   const [isRoomsPanelOpen, setIsRoomsPanelOpen] = useState<boolean>(true);
   const [rooms, setRooms] = useState<extendedRoom[]>([]);
+  const [user, setUser] = useState<user>();
+  const fetchUser = async () => {
+    try {
+      store.setIsLoading(true);
+      const response = await fetch(
+        `${API_URL}/user/getById/${store.state.userId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(data.message);
+      }
+      setUser(data);
+    } catch (error: any) {
+      store.displayError(error.message);
+    } finally {
+      store.setIsLoading(false);
+    }
+  };
   const fetchRooms = async () => {
     try {
       store.setIsLoading(true);
@@ -38,6 +69,11 @@ const HomePage = observer(() => {
       store.setIsLoading(false);
     }
   };
+  useEffect(() => {
+    if (store.state.userId !== "") {
+      fetchUser();
+    }
+  }, [store.state.userId]);
   const [searchResults, setSearchResults] = useState<user[]>([]);
   const fetchUsers = async () => {
     try {
@@ -116,13 +152,24 @@ const HomePage = observer(() => {
               }}
             />
           </IconButton>
-          <Box sx={{ display: "flex", flexDirection: "row" }}>
-            <IconButton>
-              <Message />
-            </IconButton>
-            <IconButton>
-              <AccountCircle />
-            </IconButton>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "10px",
+            }}
+          >
+            <Typography>
+              {store.state.isLoading ? <Skeleton variant="text" /> : user?.name}
+            </Typography>
+            {store.state.isLoading ? (
+              <Skeleton variant="circular" width={50} height={50} />
+            ) : (
+              <Avatar src={user?.avatar} />
+            )}
+            <Box />
           </Box>
         </Box>
       </Box>

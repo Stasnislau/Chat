@@ -2,26 +2,27 @@ import { Box, Avatar, IconButton, Typography, Skeleton } from "@mui/material";
 import { API_URL } from "../../../constants";
 import { useContext, useState, useEffect } from "react";
 import { Context } from "../../../App";
-import { user } from "../../../types";
+import { room } from "../../../types";
 import { Call, VideoCall } from "@mui/icons-material";
 
 const InfoComponent = ({ userId }: { userId: string }) => {
   const store = useContext(Context);
-  const [user, setUser] = useState<user>();
-  const fetchUser = async () => {
+  const [room, setRoom] = useState<room>();
+  const fetchRoom = async () => {
     try {
       store.setIsLoading(true);
-      const response = await fetch(`${API_URL}/user/getById/${userId}`, {
-        method: "GET",
+      const response = await fetch(`${API_URL}/room/getById/${store.state.currentRoomId}`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ callingId: store.state.userId }),
       });
       const data = await response.json();
       if (response.status < 200 || response.status >= 300) {
         throw new Error(data.message);
       }
-      setUser(data);
+      setRoom(data);
     } catch (error: any) {
       store.displayError(error.message);
     } finally {
@@ -30,7 +31,7 @@ const InfoComponent = ({ userId }: { userId: string }) => {
   };
   useEffect(() => {
     if (store.state.userId !== "" && userId !== "") {
-      fetchUser();
+      fetchRoom();
     }
   }, [store.state.userId]);
   return (
@@ -59,7 +60,7 @@ const InfoComponent = ({ userId }: { userId: string }) => {
               width: "50px",
               height: "50px",
             }}
-            src={user?.avatar}
+            src={room?.avatar}
           />
         )}
         <Box
@@ -78,7 +79,7 @@ const InfoComponent = ({ userId }: { userId: string }) => {
                 fontWeight: "bold",
               }}
             >
-              {user?.name}
+              {room?.name}
             </Typography>
           )}
           {store.state.isLoading ? (

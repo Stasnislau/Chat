@@ -12,11 +12,10 @@ export class RoomService {
     let endAvatar = [];
     let endName = "";
     if (data.userIds.length !== 2) {
-      if (!data.avatar || data.avatar === "" || data.name === "" || !data.name) 
+      if (!data.avatar || data.avatar === "" || data.name === "" || !data.name)
         throw ApiError.badRequest("Avatar and name are required");
       endAvatar = [data.avatar];
       endName = data.name;
-      
     } else {
       data.userIds.forEach(async (id) => {
         const user = await this.prisma.user.findUnique({
@@ -61,6 +60,7 @@ export class RoomService {
     if (!room) {
       return ApiError.badRequest("Room not found");
     }
+    if (!room.isDeletable) return room;
     const users = await this.prisma.user.findMany({
       where: {
         id: {
