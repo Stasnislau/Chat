@@ -18,7 +18,6 @@ const RoomBox = observer(
     avatar: string;
   }) => {
     const store = useContext(Context);
-
     return (
       <Box
         sx={{
@@ -35,7 +34,9 @@ const RoomBox = observer(
             backgroundColor: "#f5f5f5",
           },
         }}
-        onClick={() => store.setCurrentRoomId(roomId)}
+        onClick={() => {
+          store.setCurrentRoomId(roomId);
+        }}
       >
         <Avatar src={avatar} sx={{ height: "3rem", width: "3rem" }} />
         <Box sx={{ marginLeft: "1rem" }}>

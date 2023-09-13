@@ -79,10 +79,4 @@ export class RoomController {
     }
     return room;
   }
-
-  @Post("checkRoom")
-  async checkRoom(@Body() ids: string[]) {
-    const room = await this.roomService.checkIfRoomExists(ids);
-    return room;
-  }
 }

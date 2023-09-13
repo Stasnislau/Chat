@@ -9,6 +9,10 @@ export class RoomService {
 
   async createRoom(data: roomDTO) {
     data.userIds = [...new Set(data.userIds)];
+    const roomExists = await this.findByUserIds(data.userIds);
+    if (roomExists) {
+      return roomExists;
+    }
     let endAvatar = [];
     let endName = "";
     if (data.userIds.length !== 2) {
@@ -228,21 +232,27 @@ export class RoomService {
     return Promise.all(endRooms);
   }
 
-  async checkIfRoomExists(Ids: string[]) {
-    const room = await this.prisma.room.findFirst({
+  private async findByUserIds(ids: string[]) {
+    const rooms = await this.prisma.room.findMany({
       where: {
         users: {
           every: {
             id: {
-              in: Ids,
+              in: ids,
             },
           },
         },
       },
     });
-    if (!room) {
-      return false;
+    if (!rooms || rooms.length === 0) {
+      return null;
     }
-    return true;
+    const room = rooms
+      .filter((room) => room.userIds.length === ids.length && room.isDeletable)
+      .filter((room) => room.userIds.every((id) => ids.includes(id)))[0];
+    if (!room) {
+      return null;
+    }
+    return room;
   }
 }
