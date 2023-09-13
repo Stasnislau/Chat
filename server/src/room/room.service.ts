@@ -9,13 +9,12 @@ export class RoomService {
 
   async createRoom(data: roomDTO) {
     let endAvatar = [];
-
-    if (data.userIDs.length !== 2) {
+    if (data.userIds.length !== 2) {
       if (!data.avatar || data.avatar === "")
         throw ApiError.badRequest("Avatar is required");
       endAvatar = [data.avatar];
     } else {
-      data.userIDs.forEach(async (id) => {
+      data.userIds.forEach(async (id) => {
         const user = await this.prisma.user.findUnique({
           where: {
             id,
@@ -32,11 +31,11 @@ export class RoomService {
     }
     const room = await this.prisma.room.create({
       data: {
-        name: data.name,
-        users: {
-          connect: data.userIDs.map((id) => ({ id })),
-        },
+        name: data.name, // TODO: fix name for 2 users, the same way as avatar
         avatar: endAvatar,
+        users: {
+          connect: data.userIds.map((id) => ({ id })),
+        },
       },
     });
     if (!room) {
@@ -96,7 +95,15 @@ export class RoomService {
         id,
       },
       include: {
-        messages: true,
+        messages: {
+          include: {
+            user: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
     if (!room) {
@@ -142,7 +149,7 @@ export class RoomService {
       return ApiError.badRequest("Room cannot be updated");
     }
     if (oldRoom.userIds.length === 2) {
-      if (data.userIDs.length !== 2) {
+      if (data.userIds.length !== 2) {
         return ApiError.badRequest("You should provide name and avatar");
       }
     }
@@ -153,7 +160,7 @@ export class RoomService {
       data: {
         name: data.name,
         users: {
-          connect: data.userIDs.map((id) => ({ id })),
+          connect: data.userIds.map((id) => ({ id })),
         },
         avatar: [data.avatar],
       },
@@ -226,5 +233,4 @@ export class RoomService {
     }
     return true;
   }
-
 }
