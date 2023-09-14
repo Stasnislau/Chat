@@ -45,6 +45,35 @@ const ChatArea = observer(() => {
       avatar: string;
     }[]
   >([]);
+
+  const fetchAvatars = async () => {
+    try {
+      store.setIsLoading(true);
+      const response = await fetch(
+        `${API_URL}/user/getAvatars/${store.state.currentRoomId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.status < 200 || response.status >= 300) {
+        throw new Error(data.message);
+      }
+      setAvatars(data);
+    } catch (error: any) {
+      store.displayError(error.message);
+    } finally {
+      store.setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    if (store.state.currentRoomId !== "") {
+      fetchAvatars();
+    }
+  }, [store.state.currentRoomId]);
   return (
     <Box
       sx={{
@@ -119,7 +148,7 @@ const ChatArea = observer(() => {
               height: "88.3%",
             }}
           >
-            <MessengingZone avatars={[]} />
+            <MessengingZone avatars={avatars} />
           </Box>
         </Box>
       )}

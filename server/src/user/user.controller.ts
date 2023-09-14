@@ -69,4 +69,13 @@ export class UserController {
     }
     return users;
   }
+
+  @Get("getAvatars/:id")
+  async getAvatars(@Param("id") id: string) {
+    const avatars = await this.userService.getAvatars(id);
+    if (avatars instanceof ApiError) {
+      throw avatars;
+    }
+    return avatars;
+  }
 }

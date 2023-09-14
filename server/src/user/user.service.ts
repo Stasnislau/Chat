@@ -132,4 +132,24 @@ export class UserService {
     const users = await this.prisma.user.findMany();
     return users;
   }
+
+  async getAvatars(roomId: string)
+  {
+    const users = await this.prisma.user.findMany({
+      where: {
+        rooms: {
+          some: {
+            id: roomId,
+          },
+        },
+      },
+      select: {
+        avatar: true,
+        id: true,
+      },
+    });
+    return users;
+  }
 }
+
+

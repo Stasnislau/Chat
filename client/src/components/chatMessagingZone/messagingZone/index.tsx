@@ -114,9 +114,7 @@ const MessagingZone = observer(
               key={index}
               message={message}
               isMine={message.userId === store.state.userId}
-              avatar={
-                avatars.find((avatar) => avatar.id === message.userId)?.avatar!
-              }
+              avatars={avatars}
             />
           ))}
           <div ref={messagesEndRef} />
