@@ -25,8 +25,6 @@ export class ChatGateway {
     else {
       this.server.to(room).emit("message", message);
     }
-    console.log(message, "MESAGA");
-    console.log(room, "KOMNATKA")
     await this.prisma.message.create({
       data: {
         text: message.text,

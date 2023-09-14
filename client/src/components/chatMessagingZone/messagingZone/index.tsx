@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Box, IconButton, Typography } from "@mui/material";
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { Box } from "@mui/material";
 import io, { Socket } from "socket.io-client";
 import { Context } from "../../../App";
 import { API_URL } from "../../../constants";
@@ -71,6 +71,12 @@ const MessagingZone = observer(() => {
     };
   }, [socket, messageHistory]);
 
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
+  }, [messageHistory.length]);
+
   return (
     <Box
       sx={{
@@ -102,6 +108,7 @@ const MessagingZone = observer(() => {
             isMine={message.userId === store.state.userId}
           />
         ))}
+        <div ref={messagesEndRef} />
       </Box>
       <Box
         sx={{
