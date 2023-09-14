@@ -4,9 +4,10 @@ import { message } from "../../../types";
 interface MessageBubbleProps {
   message: message;
   isMine: boolean;
+  avatar: string;
 }
 
-const MessageBubble = ({ message, isMine }: MessageBubbleProps) => {
+const MessageBubble = ({ message, isMine, avatar }: MessageBubbleProps) => {
   return (
     <Box
       sx={{

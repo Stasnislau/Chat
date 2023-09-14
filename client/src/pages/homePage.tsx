@@ -17,6 +17,7 @@ import { API_URL } from "../constants";
 import SearchBar from "../components/searchField";
 import { observer } from "mobx-react-lite";
 import UserBox from "../components/usersBox";
+import ChatArea from "../components/chatMessagingZone/chatArea";
 
 const HomePage = observer(() => {
   const store = useContext(Context);
@@ -267,75 +268,7 @@ const HomePage = observer(() => {
             boxSizing: "border-box",
           }}
         >
-          {store.state.currentRoomId === "" ? (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                width: "100%",
-                height: "100%",
-                backgroundColor: "#FFFFFF",
-                borderBottom: "1px solid grey",
-                justifyContent: "center",
-                alignItems: "center",
-                boxSizing: "border-box",
-                resize: "none",
-              }}
-            >
-              <Typography sx={{ fontSize: "1.5rem" }}>
-                Select a room to start chatting
-              </Typography>
-            </Box>
-          ) : (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                width: "100%",
-                height: "100%",
-                backgroundColor: "#FFFFFF",
-                borderBottom: "1px solid grey",
-                boxSizing: "border-box",
-                resize: "none",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  width: "100%",
-                  height: "11.7%",
-                  backgroundColor: "#FFFFFF",
-                  borderBottom: "1px solid grey",
-                  boxSizing: "border-box",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    width: "100%",
-                    height: "100%",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    boxSizing: "border-box",
-                  }}
-                >
-                  <InfoComponent />
-                </Box>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  width: "100%",
-                  height: "88.3%",
-                }}
-              >
-                <MessengingZone />
-              </Box>
-            </Box>
-          )}
+         <ChatArea/>
         </Box>
       </Box>
     </Box>
