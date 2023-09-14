@@ -1,5 +1,11 @@
 import React, { useState, useContext } from "react";
-import { TextField, InputAdornment, IconButton, Box } from "@mui/material";
+import {
+  TextField,
+  InputAdornment,
+  IconButton,
+  Box,
+  TextareaAutosize,
+} from "@mui/material";
 import { Send, Mic } from "@mui/icons-material";
 import { Context } from "../../../App";
 
@@ -30,14 +36,19 @@ const ChatTextField = ({ onSend }: ChatTextFieldProps) => {
         display: "flex",
         flexDirection: "row",
         width: "100%",
-        padding: "0 5%px",
-        backgroundColor: "#FFFFFF",
+        boxSizing: "border-box",
       }}
     >
       <TextField
         fullWidth
+        maxRows={4}
         multiline
         value={message}
+        sx={{
+          "& .MuiInputBase-root": {
+            backgroundColor: "primary.main",
+          },
+        }}
         onChange={(event) => setMessage(event.target.value)}
         onKeyDown={handleKeyDown}
         InputProps={{

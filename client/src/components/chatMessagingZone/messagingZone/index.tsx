@@ -103,10 +103,9 @@ const MessagingZone = observer(
         <Box
           sx={{
             width: "100%",
-            height: "85%",
+            minHeight: "60%",
             overflowY: "scroll",
             boxSizing: "border-box",
-            resize: "none",
           }}
         >
           {messageHistory.map((message, index) => (
@@ -126,8 +125,8 @@ const MessagingZone = observer(
             justifyContent: "space-between",
             alignItems: "center",
             width: "100%",
-            height: "15%",
             boxSizing: "border-box",
+            minHeight: "15%",
           }}
         >
           <ChatTextField onSend={handleSendMessage} />

@@ -1,5 +1,5 @@
 import { Box, Avatar, IconButton, Typography, Skeleton } from "@mui/material";
-import { useContext, useState, useEffect } from "react";
+import {  useState, useEffect } from "react";
 import { room } from "../../../types";
 import { Call, VideoCall } from "@mui/icons-material";
 import { observer } from "mobx-react-lite";
