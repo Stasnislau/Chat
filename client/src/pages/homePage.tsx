@@ -221,22 +221,24 @@ const HomePage = observer(() => {
               rooms.map(
                 (room) =>
                   room && (
-                    <RoomBox
-                      key={room.id}
-                      roomId={room.id}
-                      name={room.name}
-                      text={
-                        room.messages && room.messages.length > 0
-                          ? room.messages[0].text
-                          : ""
-                      }
-                      date={
-                        room.messages && room.messages.length > 0
-                          ? room.messages[0].dateSent
-                          : new Date()
-                      }
-                      avatar={room.avatar}
-                    />
+                    <Box key={room.id}>
+                      <RoomBox
+                        roomId={room.id}
+                        name={room.name}
+                        text={
+                          room.messages && room.messages.length > 0
+                            ? room.messages[0].text
+                            : ""
+                        }
+                        date={
+                          room.messages && room.messages.length > 0
+                            ? room.messages[0].dateSent
+                            : new Date()
+                        }
+                        avatar={room.avatar}
+                      />
+                      <Divider sx={{ width: "100%" }} />
+                    </Box>
                   )
               )}
             {searchResults.length > 0 &&

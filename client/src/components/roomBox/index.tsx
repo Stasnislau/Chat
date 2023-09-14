@@ -1,8 +1,9 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Box, Typography, Avatar } from "@mui/material";
 import { Context } from "../../App";
 import { observer } from "mobx-react-lite";
-
+import moment from "moment";
+import { format } from "path";
 const RoomBox = observer(
   ({
     roomId,
@@ -18,6 +19,13 @@ const RoomBox = observer(
     avatar: string;
   }) => {
     const store = useContext(Context);
+    const time = moment(date).calendar(null, {
+      sameDay: "[Today] LT",
+      lastDay: "[Yesterday]",
+      lastWeek: "dddd",
+      sameElse: "DD/MM/YYYY",
+    });
+
     return (
       <Box
         sx={{
@@ -44,9 +52,7 @@ const RoomBox = observer(
           <Typography sx={{ color: "text.secondary" }}>{text}</Typography>
         </Box>
         <Box sx={{ marginLeft: "auto" }}>
-          <Typography sx={{ color: "text.secondary" }}>
-            {date ? date.toLocaleString() : ""}
-          </Typography>
+          <Typography sx={{ color: "text.secondary" }}>{time}</Typography>
         </Box>
       </Box>
     );
