@@ -21,6 +21,8 @@ const MessageBubble = ({ message, isMine, avatars }: MessageBubbleProps) => {
         flexDirection: isMine ? "row-reverse" : "row",
         alignItems: "flex-start",
         margin: "0.5rem 0",
+        width: "100%",
+        wordBreak: "break-word",
       }}
     >
       <Avatar
