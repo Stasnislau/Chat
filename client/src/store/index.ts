@@ -11,6 +11,8 @@ export interface storeInterface {
   alerts: alertInterface[];
   isSearching: boolean;
   searchText: string;
+  isFiltering: boolean;
+  filteringText: string;
 }
 export default class Store {
   state: storeInterface;
@@ -25,6 +27,8 @@ export default class Store {
       addedAlert: false,
       isSearching: false,
       searchText: "",
+      isFiltering: false,
+      filteringText: "",
     };
     makeAutoObservable(this);
   }
@@ -71,7 +75,7 @@ export default class Store {
   removeAlert = (id: number) => {
     this.state.alerts = this.state.alerts.filter((alert) => alert.id !== id);
   };
-  startSearch = (searchText: string) => {
+  startSearching = (searchText: string) => {
     this.state.isSearching = true;
     this.state.searchText = searchText;
   };
@@ -79,5 +83,15 @@ export default class Store {
   stopSearching = () => {
     this.state.isSearching = false;
     this.state.searchText = "";
+  };
+
+  startFiltering = (filteringText: string) => {
+    this.state.isFiltering = true;
+    this.state.filteringText = filteringText;
+  };
+
+  stopFiltering = () => {
+    this.state.isFiltering = false;
+    this.state.filteringText = "";
   };
 }
