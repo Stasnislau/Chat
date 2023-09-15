@@ -8,9 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { MenuOpen } from "@mui/icons-material";
-import InfoComponent from "../components/chatMessagingZone/infoComponent";
 import { Context } from "../App";
-import MessengingZone from "../components/chatMessagingZone/messagingZone";
 import RoomBox from "../components/roomBox";
 import { extendedRoom, user } from "../types";
 import { API_URL } from "../constants";
@@ -203,7 +201,7 @@ const HomePage = observer(() => {
               backgroundColor: "#FFFFFF",
             }}
           >
-            <SearchBar onSearch={() => {}} onAdd={() => {}} />
+            <SearchBar />
           </Box>
           <Box
             sx={{
@@ -219,29 +217,37 @@ const HomePage = observer(() => {
             {rooms &&
               rooms.length > 0 &&
               !store.state.isSearching &&
-              rooms.map(
-                (room) =>
-                  room && (
-                    <Box key={room.id}>
-                      <RoomBox
-                        roomId={room.id}
-                        name={room.name}
-                        text={
-                          room.messages && room.messages.length > 0
-                            ? room.messages[0].text
-                            : ""
-                        }
-                        date={
-                          room.messages && room.messages.length > 0
-                            ? room.messages[0].dateSent
-                            : new Date()
-                        }
-                        avatar={room.avatar}
-                      />
-                      <Divider sx={{ width: "100%" }} />
-                    </Box>
-                  )
-              )}
+              rooms.map((room) => {
+                if (store.state.isFiltering) {
+                  if (
+                    !room.name
+                      .toLowerCase()
+                      .includes(store.state.filteringText.toLowerCase())
+                  ) {
+                    return null;
+                  }
+                }
+                return (
+                  <Box key={room.id}>
+                    <RoomBox
+                      roomId={room.id}
+                      name={room.name}
+                      text={
+                        room.messages && room.messages.length > 0
+                          ? room.messages[0].text
+                          : ""
+                      }
+                      date={
+                        room.messages && room.messages.length > 0
+                          ? room.messages[0].dateSent
+                          : new Date()
+                      }
+                      avatar={room.avatar}
+                    />
+                    <Divider sx={{ width: "100%" }} />
+                  </Box>
+                );
+              })}
             {searchResults.length > 0 &&
               store.state.isSearching &&
               searchResults.map(
@@ -268,7 +274,7 @@ const HomePage = observer(() => {
             boxSizing: "border-box",
           }}
         >
-         <ChatArea/>
+          <ChatArea />
         </Box>
       </Box>
     </Box>
