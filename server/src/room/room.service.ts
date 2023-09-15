@@ -15,7 +15,22 @@ export class RoomService {
     }
     let endAvatar = [];
     let endName = "";
-    if (data.userIds.length !== 2) {
+    if (data.userIds.length === 1) {
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: data.userIds[0],
+        },
+        select: {
+          avatar: true,
+          name: true,
+        },
+      });
+      if (!user) {
+        return ApiError.badRequest("User not found");
+      }
+      endAvatar = [user.avatar];
+      endName = "Saved messages";
+    } else if (data.userIds.length !== 2) {
       if (!data.avatar || data.avatar === "" || data.name === "" || !data.name)
         throw ApiError.badRequest("Avatar and name are required");
       endAvatar = [data.avatar];
@@ -40,7 +55,7 @@ export class RoomService {
     }
     const room = await this.prisma.room.create({
       data: {
-        name: endName, // TODO: fix name for 2 users, the same way as avatar
+        name: endName, 
         avatar: endAvatar,
         users: {
           connect: data.userIds.map((id) => ({ id })),

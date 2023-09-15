@@ -84,7 +84,7 @@ const SearchBar = observer(() => {
             width: "100%",
             height: "50%",
             boxSizing: "border-box",
-            backgroundColor: "#FFFFFF",
+            backgroundColor: isSearchOn ? "#e9e9e9" : "#FFFFFF",
             borderRadius: "4px",
             border: "1px solid #e9e9e9",
           }}
