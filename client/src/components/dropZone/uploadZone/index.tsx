@@ -8,9 +8,11 @@ import { Context } from "../../../App";
 
 interface UploadZoneProps {
   onChange: (value: string) => void;
+  width?: string;
+  height?: string;
 }
 
-const UploadZone = ({ onChange }: UploadZoneProps) => {
+const UploadZone = ({ onChange, width, height }: UploadZoneProps) => {
   const store = useContext(Context);
   const [file, setFile] = useState<fileObject | null>(null);
 
@@ -48,15 +50,14 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
 
   const onDelete = () => {
     setFile(null);
-    
   };
   return (
     <Box
       display="flex"
       flexDirection="row"
       flexGrow="1"
-      height="100%"
-      width="100%"
+      height={height}
+      width={width}
     >
       <Box
         {...getRootProps()}
@@ -69,7 +70,8 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
           position: "relative",
           margin: "0",
           flex: "1",
-          minHeight: "150px",
+          height: "inherit",
+          flexGrow: "1",
           border: "2px dashed #ccc",
           borderRadius: "8px",
           cursor: "pointer",

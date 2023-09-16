@@ -8,14 +8,15 @@ import {
   Divider,
   Skeleton,
   TextField,
+  IconButton,
 } from "@mui/material";
 import { API_URL } from "../../../constants/index.ts";
 import { observer } from "mobx-react-lite";
 import { useContext } from "react";
 import { Context } from "../../../App.tsx";
 import { AccountBox, AlternateEmail } from "@mui/icons-material";
-import UploadZone from "../../dropZone/uploadZone/index.tsx";
 import { styled } from "@mui/material/styles";
+import EditingModal from "../editingModal/index.tsx";
 
 interface UserInfoModalProps {
   isModalOpen: boolean;
@@ -24,27 +25,16 @@ interface UserInfoModalProps {
 
 const UserInfoModal = observer(
   ({ isModalOpen, setIsModalOpen }: UserInfoModalProps) => {
-    const StyledTextField = styled(TextField)({
-      "& .MuiOutlinedInput-root": {
-        position: "relative",
-        width: "100%",
-        height: "100%",
-      },
-      "& .MuiOutlinedInput-input": {
-        height: "100%",
-        boxSizing: "border-box",
-        padding: "0 0 0 0.5rem",
-      },
-      "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-        border: "1px solid #e9e9e9",
-      },
-    });
     const store = useContext(Context);
     const [name, setName] = useState("");
     const [avatar, setAvatar] = useState("");
     const [nickname, setNickname] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isEditingEnabled, setIsEditingEnabled] = useState(false);
+    const [chosenField, setChosenField] = useState("");
+    const [newName, setNewName] = useState("");
+    const [newAvatar, setNewAvatar] = useState("");
+    const [shouldUpdate, setShouldUpdate] = useState(false);
 
     const getUserInfo = async () => {
       try {
@@ -65,6 +55,7 @@ const UserInfoModal = observer(
         setName(data.name);
         setAvatar(data.avatar);
         setNickname(data.nickname);
+        setShouldUpdate(false);
       } catch (error: any) {
         store.displayError(error.message);
       } finally {
@@ -76,14 +67,14 @@ const UserInfoModal = observer(
       try {
         store.setIsBeingSubmitted(true);
 
-        const response = await fetch(`${API_URL}/user/${store.state.userId}`, {
+        const response = await fetch(`${API_URL}/user/update/${store.state.userId}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            name,
-            avatar,
+            newName,
+            newAvatar,
           }),
         });
         const data = await response.json();
@@ -96,17 +87,15 @@ const UserInfoModal = observer(
         store.setIsBeingSubmitted(false);
       }
     };
-
-    const onSubmit = async () => {
-      if (name || avatar) {
-        await updateUser();
+    useEffect(() => {
+      if (newName !== "" || newAvatar !== "") {
+        updateUser();
       }
-      setIsModalOpen(false);
-    };
+    }, [newName, newAvatar]);
 
     useEffect(() => {
       if (store.state.userId !== "") getUserInfo();
-    }, [store.state.userId]);
+    }, [store.state.userId, shouldUpdate]);
 
     return (
       <Modal
@@ -167,7 +156,14 @@ const UserInfoModal = observer(
               {isLoading ? (
                 <Skeleton variant="circular" width="8rem" height="8rem" />
               ) : (
-                <Avatar src={avatar} sx={{ height: "8rem", width: "8rem" }} />
+                <IconButton
+                  onClick={() => {
+                    setIsEditingEnabled(true);
+                    setChosenField("avatar");
+                  }}
+                >
+                  <Avatar src={avatar} sx={{ height: "8rem", width: "8rem" }} />
+                </IconButton>
               )}
             </Box>
             <Divider
@@ -198,12 +194,16 @@ const UserInfoModal = observer(
               <Box
                 sx={{
                   width: "100%",
-                  height: "40%",
+                  height: "50%",
                   flexDirection: "column",
                   justifyContent: "space-between",
                   "&:hover": {
                     backgroundColor: "#e9e9e9",
                   },
+                }}
+                onClick={() => {
+                  setIsEditingEnabled(true);
+                  setChosenField("name");
                 }}
               >
                 <Box
@@ -247,12 +247,16 @@ const UserInfoModal = observer(
               <Box
                 sx={{
                   width: "100%",
-                  height: "40%",
+                  height: "50%",
                   flexDirection: "column",
                   justifyContent: "space-between",
                   "&:hover": {
                     backgroundColor: "#e9e9e9",
                   },
+                }}
+                onClick={() => {
+                  setIsEditingEnabled(true);
+                  setChosenField("nickname");
                 }}
               >
                 <Box
@@ -285,6 +289,24 @@ const UserInfoModal = observer(
               </Box>
             </Box>
           </Box>
+          {isEditingEnabled && (
+            <EditingModal
+              open={isEditingEnabled}
+              onClose={() => {
+                setIsEditingEnabled(false);
+                setChosenField("");
+              }}
+              chosenField={chosenField}
+              onChange={(value: string) => {
+                {
+                  chosenField === "name"
+                    ? setNewName(value)
+                    : setNewAvatar(value);
+                }
+                setIsEditingEnabled(false);
+              }}
+            />
+          )}
         </Box>
       </Modal>
     );

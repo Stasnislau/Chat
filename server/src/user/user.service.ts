@@ -110,13 +110,45 @@ export class UserService {
   }
 
   async updateUser(id: string, data: userDTO) {
+    if (data.avatar) {
+      const promise = async (image) => {
+        const res = await cloudinary.uploader.upload(
+          image,
+          {
+            folder: "products",
+            resource_type: "image",
+          },
+          (error, result) => {
+            if (error) {
+              return ApiError.badGateway("Unable to upload images");
+            }
+          }
+        );
+        return res.secure_url;
+      };
+      const avatar = await promise(data.avatar);
+      const user = await this.prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          name: data.name,
+          avatar: avatar,
+        },
+      });
+      if (!user) {
+        return ApiError.badRequest("User not found");
+      }
+      return {
+        id: user.id,
+      };
+    }
     const user = await this.prisma.user.update({
       where: {
         id,
       },
       data: {
         name: data.name,
-        nickname: data.nickname,
         avatar: data.avatar,
       },
     });
