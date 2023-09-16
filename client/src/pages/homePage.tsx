@@ -16,10 +16,13 @@ import SearchBar from "../components/searchField";
 import { observer } from "mobx-react-lite";
 import UserBox from "../components/usersBox";
 import ChatArea from "../components/chatMessagingZone/chatArea";
+import UserInfoModal from "../components/Modals/userInfoModal";
 
 const HomePage = observer(() => {
   const store = useContext(Context);
   const [isRoomsPanelOpen, setIsRoomsPanelOpen] = useState<boolean>(true);
+  const [isUserInfoModalOpen, setIsUserInfoModalOpen] =
+    useState<boolean>(false);
   const [rooms, setRooms] = useState<extendedRoom[]>([]);
   const [user, setUser] = useState<user>();
   const fetchUser = async () => {
@@ -158,6 +161,10 @@ const HomePage = observer(() => {
               alignItems: "center",
               justifyContent: "center",
               gap: "10px",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              setIsUserInfoModalOpen(true);
             }}
           >
             <Typography>
@@ -277,6 +284,12 @@ const HomePage = observer(() => {
           <ChatArea />
         </Box>
       </Box>
+      {isUserInfoModalOpen && (
+        <UserInfoModal
+          isModalOpen={isUserInfoModalOpen}
+          setIsModalOpen={setIsUserInfoModalOpen}
+        />
+      )}
     </Box>
   );
 });
