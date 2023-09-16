@@ -73,14 +73,15 @@ const UserInfoModal = observer(
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            newName,
-            newAvatar,
+            name: newName,
+            avatar: newAvatar,
           }),
         });
         const data = await response.json();
         if (response.status < 200 || response.status >= 300) {
           throw new Error(data.message);
         }
+        setShouldUpdate(true);
       } catch (error: any) {
         store.displayError(error.message);
       } finally {
@@ -197,6 +198,7 @@ const UserInfoModal = observer(
                   height: "50%",
                   flexDirection: "column",
                   justifyContent: "space-between",
+                  cursor: "pointer",
                   "&:hover": {
                     backgroundColor: "#e9e9e9",
                   },
@@ -250,6 +252,7 @@ const UserInfoModal = observer(
                   height: "50%",
                   flexDirection: "column",
                   justifyContent: "space-between",
+                  cursor: "pointer",
                   "&:hover": {
                     backgroundColor: "#e9e9e9",
                   },

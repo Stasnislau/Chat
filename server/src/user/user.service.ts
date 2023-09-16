@@ -110,54 +110,59 @@ export class UserService {
   }
 
   async updateUser(id: string, data: userDTO) {
-    if (data.avatar) {
-      const promise = async (image) => {
-        const res = await cloudinary.uploader.upload(
-          image,
-          {
-            folder: "products",
-            resource_type: "image",
-          },
-          (error, result) => {
-            if (error) {
-              return ApiError.badGateway("Unable to upload images");
+    console.log(data);
+    try {
+      if (data.avatar) {
+        const promise = async (image) => {
+          const res = await cloudinary.uploader.upload(
+            image,
+            {
+              folder: "products",
+              resource_type: "image",
+            },
+            (error, result) => {
+              if (error) {
+                return ApiError.badGateway("Unable to upload images");
+              }
             }
-          }
-        );
-        return res.secure_url;
-      };
-      const avatar = await promise(data.avatar);
+          );
+          return res.secure_url;
+        };
+        const avatar = await promise(data.avatar);
+        const user = await this.prisma.user.update({
+          where: {
+            id,
+          },
+          data: {
+            avatar: avatar,
+          },
+        });
+        if (!user) {
+          return ApiError.badRequest("User not found");
+        }
+        return {
+          id: user.id,
+        };
+      }
+      console.log("zashlo")
       const user = await this.prisma.user.update({
         where: {
           id,
         },
         data: {
           name: data.name,
-          avatar: avatar,
         },
       });
+      console.log(user);
       if (!user) {
         return ApiError.badRequest("User not found");
       }
       return {
         id: user.id,
       };
+    } catch (e) {
+      console.log(e);
     }
-    const user = await this.prisma.user.update({
-      where: {
-        id,
-      },
-      data: {
-        name: data.name,
-        avatar: data.avatar,
-      },
-    });
-    if (!user) {
-      return ApiError.badRequest("User not found");
-    }
-    return {
-      id: user.id,
-    };
   }
 
   async getAllUsers() {
@@ -165,8 +170,7 @@ export class UserService {
     return users;
   }
 
-  async getAvatars(roomId: string)
-  {
+  async getAvatars(roomId: string) {
     const users = await this.prisma.user.findMany({
       where: {
         rooms: {
@@ -183,5 +187,3 @@ export class UserService {
     return users;
   }
 }
-
-

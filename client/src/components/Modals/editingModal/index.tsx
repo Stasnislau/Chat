@@ -13,10 +13,13 @@ const EditingModal = ({
   onClose: () => void;
 }) => {
   const [fieldValue, setFieldValue] = useState("");
+  const [error, setError] = useState("");
   const onsubmit = () => {
     if (fieldValue.trim() !== "") {
       onChange(fieldValue);
       onClose();
+    } else {
+      setError("Field cannot be empty");
     }
   };
   return (
@@ -108,6 +111,7 @@ const EditingModal = ({
         {chosenField === "avatar" && (
           <Box
             sx={{
+              height: "100%",
               display: "flex",
               flexDirection: "column",
               gap: "1rem",
@@ -129,6 +133,23 @@ const EditingModal = ({
               Submit
             </Button>
           </Box>
+        )}
+        {error && (
+          <Typography
+            fontSize={12}
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              boxSizing: "border-box",
+              breakWord: "break-all",
+              color: "#FF0000",
+            }}
+          >
+            {error}
+          </Typography>
         )}
       </Box>
     </Modal>
