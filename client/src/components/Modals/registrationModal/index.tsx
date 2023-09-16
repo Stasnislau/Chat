@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Modal, Button, Box, Typography } from "@mui/material";
-import { API_URL } from "../../constants";
+import { API_URL } from "../../../constants/index.ts";
 import { observer } from "mobx-react-lite";
 import { useContext } from "react";
-import { Context } from "../../App";
-import { StyledTextField } from "../Styled/index.tsx";
-import UploadZone from "../dropZone/uploadZone/index.tsx";
+import { Context } from "../../../App.tsx";
+import { StyledTextField } from "../../Styled/index.tsx";
+import UploadZone from "../../dropZone/uploadZone/index.tsx";
 import styled from "styled-components";
 
 const StyledModal = styled(Modal)`

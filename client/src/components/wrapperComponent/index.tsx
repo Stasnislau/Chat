@@ -3,7 +3,7 @@ import { ReactNode, useContext, useEffect, useState } from "react";
 import { Context } from "../../App";
 import AlertsComponent from "../alertsComponent";
 import LoadingSpinner from "../loadingSpinner";
-import RegistrationModal from "../registrationModal";
+import RegistrationModal from "../Modals/registrationModal";
 import { API_URL } from "../../constants";
 
 const WrapperComponent = observer(({ children }: { children: ReactNode }) => {
