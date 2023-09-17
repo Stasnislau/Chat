@@ -224,37 +224,43 @@ const HomePage = observer(() => {
             {rooms &&
               rooms.length > 0 &&
               !store.state.isSearching &&
-              rooms.map((room) => {
-                if (store.state.isFiltering) {
-                  if (
-                    !room.name
-                      .toLowerCase()
-                      .includes(store.state.filteringText.toLowerCase())
-                  ) {
-                    return null;
+              rooms
+                .sort(
+                  (a, b) =>
+                    new Date(b.messages[0].dateSent).getTime() -
+                    new Date(a.messages[0].dateSent).getTime()
+                )
+                .map((room) => {
+                  if (store.state.isFiltering) {
+                    if (
+                      !room.name
+                        .toLowerCase()
+                        .includes(store.state.filteringText.toLowerCase())
+                    ) {
+                      return null;
+                    }
                   }
-                }
-                return (
-                  <Box key={room.id}>
-                    <RoomBox
-                      roomId={room.id}
-                      name={room.name}
-                      text={
-                        room.messages && room.messages.length > 0
-                          ? room.messages[0].text
-                          : ""
-                      }
-                      date={
-                        room.messages && room.messages.length > 0
-                          ? room.messages[0].dateSent
-                          : new Date()
-                      }
-                      avatar={room.avatar}
-                    />
-                    <Divider sx={{ width: "100%" }} />
-                  </Box>
-                );
-              })}
+                  return (
+                    <Box key={room.id}>
+                      <RoomBox
+                        roomId={room.id}
+                        name={room.name}
+                        text={
+                          room.messages && room.messages.length > 0
+                            ? room.messages[0].text
+                            : ""
+                        }
+                        date={
+                          room.messages && room.messages.length > 0
+                            ? room.messages[0].dateSent
+                            : new Date()
+                        }
+                        avatar={room.avatar}
+                      />
+                      <Divider sx={{ width: "100%" }} />
+                    </Box>
+                  );
+                })}
             {searchResults.length > 0 &&
               store.state.isSearching &&
               searchResults.map(
