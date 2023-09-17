@@ -13,6 +13,7 @@ export interface storeInterface {
   searchText: string;
   isFiltering: boolean;
   filteringText: string;
+  shouldUpdateRooms: boolean;
 }
 export default class Store {
   state: storeInterface;
@@ -29,6 +30,7 @@ export default class Store {
       searchText: "",
       isFiltering: false,
       filteringText: "",
+      shouldUpdateRooms: false,
     };
     makeAutoObservable(this);
   }
@@ -93,5 +95,9 @@ export default class Store {
   stopFiltering = () => {
     this.state.isFiltering = false;
     this.state.filteringText = "";
+  };
+
+  setShouldUpdateRooms = (shouldUpdateRooms: boolean) => {
+    this.state.shouldUpdateRooms = shouldUpdateRooms;
   };
 }

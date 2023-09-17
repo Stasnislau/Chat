@@ -116,7 +116,18 @@ const HomePage = observer(() => {
     if (store.state.userId !== "") {
       fetchRooms();
     }
-  }, [store.state.userId, store.state.currentRoomId]);
+  }, [
+    store.state.userId,
+    store.state.currentRoomId,
+    store.state.shouldUpdateRooms,
+  ]);
+
+  useEffect(() => {
+    if (store.state.shouldUpdateRooms) {
+      fetchRooms();
+      store.setShouldUpdateRooms(false);
+    }
+  }, [store.state.shouldUpdateRooms]);
   return (
     <Box
       sx={{

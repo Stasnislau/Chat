@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import io, { Socket } from "socket.io-client";
 import { Context } from "../../../App";
 import { API_URL } from "../../../constants";
-import { message } from "../../../types";
+import { extendedRoom, message } from "../../../types";
 import ChatTextField from "../chatTextField";
 import MessageBubble from "../messageBubble";
 import { observer } from "mobx-react-lite";
@@ -18,8 +18,13 @@ const MessagingZone = observer(
     }[];
   }) => {
     const store = useContext(Context);
+    const [rooms, setRooms] = useState<extendedRoom[]>([]);
     const [socket, setSocket] = useState<Socket>();
     const messageListener = (message: message) => {
+      if (message.roomId !== store.state.currentRoomId) {
+        store.setShouldUpdateRooms(true);
+        return;
+      }
       setMessageHistory([...messageHistory, message]);
     };
     const [messageHistory, setMessageHistory] = useState<message[]>([]);
@@ -70,8 +75,40 @@ const MessagingZone = observer(
       setSocket(socket);
     }, [setSocket]);
     useEffect(() => {
-      socket?.emit("join-room", store.state.currentRoomId);
-    }, [socket, store.state.currentRoomId]);
+      const fetchRooms = async () => {
+        try {
+          store.setIsLoading(true);
+          const response = await fetch(
+            `${API_URL}/room/getByUserId/${store.state.userId}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          const data = await response.json();
+          if (response.status < 200 || response.status >= 300) {
+            throw new Error(data.message);
+          }
+          setRooms(data);
+        } catch (error: any) {
+          store.displayError(error.message);
+        } finally {
+          store.setIsLoading(false);
+        }
+      };
+      if (store.state.userId !== "") {
+        fetchRooms();
+      }
+    }, [socket, store.state.userId]);
+
+    useEffect(() => {
+      rooms.forEach((room) => {
+        socket?.emit("join-room", room.id);
+      });
+    }, [rooms, socket, rooms]);
+
     useEffect(() => {
       socket?.on("message", messageListener);
       return () => {
