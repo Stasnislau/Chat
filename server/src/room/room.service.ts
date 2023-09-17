@@ -55,7 +55,7 @@ export class RoomService {
     }
     const room = await this.prisma.room.create({
       data: {
-        name: endName, 
+        name: endName,
         avatar: endAvatar,
         users: {
           connect: data.userIds.map((id) => ({ id })),
@@ -213,12 +213,17 @@ export class RoomService {
           orderBy: {
             dateSent: "desc",
           },
-          take: 1,
         },
       },
     });
 
     const endRooms = rooms.map(async (room) => {
+      let numberOfUnreadMessages = 0;
+      room.messages.forEach((message) => {
+        if (!message.isRead) {
+          numberOfUnreadMessages++;
+        }
+      });
       if (room.userIds.length === 2 && room.isDeletable) {
         const users = await this.prisma.user.findMany({
           where: {
@@ -239,9 +244,15 @@ export class RoomService {
           ...room,
           name: user.name,
           avatar: user.avatar,
+          messages: [room.messages[0]],
+          numberOfUnreadMessages,
         };
       } else {
-        return room;
+        return {
+          ...room,
+          messages: [room.messages[0]],
+          numberOfUnreadMessages,
+        };
       }
     });
     return Promise.all(endRooms);
