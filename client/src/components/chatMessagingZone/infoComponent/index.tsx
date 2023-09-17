@@ -1,12 +1,14 @@
 import { Box, Avatar, IconButton, Typography, Skeleton } from "@mui/material";
-import {  useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { room } from "../../../types";
 import { Call, VideoCall } from "@mui/icons-material";
 import { observer } from "mobx-react-lite";
+import RoomInfoModal from "../../Modals/roomInfoModal";
 
 const InfoComponent = observer(({ room }: { room: room | undefined }) => {
   const [isLoading, setIsLoading] = useState<boolean>(room === undefined);
-  useEffect (() => {
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  useEffect(() => {
     setIsLoading(room === undefined || !room);
   }, [room]);
   return (
@@ -25,7 +27,9 @@ const InfoComponent = observer(({ room }: { room: room | undefined }) => {
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
+          cursor: "pointer",
         }}
+        onClick={() => setIsModalOpen(true)}
       >
         {isLoading ? (
           <Skeleton variant="circular" width={50} height={50} />
@@ -106,6 +110,13 @@ const InfoComponent = observer(({ room }: { room: room | undefined }) => {
           />
         </IconButton>
       </Box>
+      {isModalOpen && (
+        <RoomInfoModal
+          roomId={room?.id!}
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+        />
+      )}
     </Box>
   );
 });

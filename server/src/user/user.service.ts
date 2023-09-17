@@ -110,59 +110,52 @@ export class UserService {
   }
 
   async updateUser(id: string, data: userDTO) {
-    console.log(data);
-    try {
-      if (data.avatar) {
-        const promise = async (image) => {
-          const res = await cloudinary.uploader.upload(
-            image,
-            {
-              folder: "products",
-              resource_type: "image",
-            },
-            (error, result) => {
-              if (error) {
-                return ApiError.badGateway("Unable to upload images");
-              }
+    if (data.avatar) {
+      const promise = async (image) => {
+        const res = await cloudinary.uploader.upload(
+          image,
+          {
+            folder: "products",
+            resource_type: "image",
+          },
+          (error, result) => {
+            if (error) {
+              return ApiError.badGateway("Unable to upload images");
             }
-          );
-          return res.secure_url;
-        };
-        const avatar = await promise(data.avatar);
-        const user = await this.prisma.user.update({
-          where: {
-            id,
-          },
-          data: {
-            avatar: avatar,
-          },
-        });
-        if (!user) {
-          return ApiError.badRequest("User not found");
-        }
-        return {
-          id: user.id,
-        };
-      }
-      console.log("zashlo")
+          }
+        );
+        return res.secure_url;
+      };
+      const avatar = await promise(data.avatar);
       const user = await this.prisma.user.update({
         where: {
           id,
         },
         data: {
-          name: data.name,
+          avatar: avatar,
         },
       });
-      console.log(user);
       if (!user) {
         return ApiError.badRequest("User not found");
       }
       return {
         id: user.id,
       };
-    } catch (e) {
-      console.log(e);
     }
+    const user = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        name: data.name,
+      },
+    });
+    if (!user) {
+      return ApiError.badRequest("User not found");
+    }
+    return {
+      id: user.id,
+    };
   }
 
   async getAllUsers() {
