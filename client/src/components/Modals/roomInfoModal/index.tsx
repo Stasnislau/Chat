@@ -22,6 +22,9 @@ import {
   PersonAdd,
 } from "@mui/icons-material";
 import EditingModal from "../editingModal/index.tsx";
+import UsersListModal from "../usersListModal/index.tsx";
+import { create } from "domain";
+import { set } from "mobx";
 
 interface UserInfoModalProps {
   isModalOpen: boolean;
@@ -119,11 +122,36 @@ const UserInfoModal = observer(
         setIsLoading(false);
       }
     };
+    const createRoom = async (additionalId: string) => {
+      try {
+        store.setIsBeingSubmitted(true);
+        const response = await fetch(`${API_URL}/room/create`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userIds: [additionalId, store.state.userId],
+          }),
+        });
+        const data = await response.json();
 
+        if (response.status < 200 || response.status >= 300) {
+          throw new Error(data.message);
+        }
+        store.stopSearching();
+        store.setCurrentRoomId(data.id);
+        setIsModalOpen(false);
+      } catch (error: any) {
+        store.displayError(error.message);
+      } finally {
+        store.setIsBeingSubmitted(false);
+      }
+    };
     useEffect(() => {
       getRoomInfo();
     }, [roomId]);
-
+    const [openModal, setOpenModal] = useState(false);
     return (
       <Modal
         open={isModalOpen}
@@ -262,10 +290,19 @@ const UserInfoModal = observer(
                   height: "35%",
                   flexDirection: "column",
                   justifyContent: "space-between",
-                  cursor: "pointer",
+                  cursor:
+                    usersInRoom && usersInRoom.length > 0 ? "pointer" : "",
                   "&:hover": {
-                    backgroundColor: "#e9e9e9",
+                    backgroundColor:
+                      usersInRoom && usersInRoom.length > 0
+                        ? "#e9e9e9"
+                        : "#FFFFFF",
                   },
+                }}
+                onClick={() => {
+                  if (usersInRoom && usersInRoom.length > 0) {
+                    setOpenModal(true);
+                  }
                 }}
               >
                 {usersInRoom && usersInRoom.length > 0 ? (
@@ -402,12 +439,20 @@ const UserInfoModal = observer(
               variant="contained"
               color="secondary"
               onClick={() => {
-                // write message functionality here
+                setIsModalOpen(false);
               }}
             >
               Write message
             </Button>
           </Box>
+          {openModal && (
+            <UsersListModal
+              usersList={usersInRoom}
+              open={openModal}
+              setOpen={setOpenModal}
+              handleClick={createRoom}
+            />
+          )}
         </Box>
       </Modal>
     );
