@@ -1,9 +1,8 @@
 import React, { useContext } from "react";
-import { Box, Typography, Avatar } from "@mui/material";
+import { Box, Typography, Avatar, Badge } from "@mui/material";
 import { Context } from "../../App";
 import { observer } from "mobx-react-lite";
 import moment from "moment";
-import { format } from "path";
 const RoomBox = observer(
   ({
     roomId,
@@ -11,12 +10,14 @@ const RoomBox = observer(
     text,
     date,
     avatar,
+    numberOfUnreadMessages,
   }: {
     roomId: string;
     name: string;
     text: string;
     date: Date;
     avatar: string;
+    numberOfUnreadMessages?: number;
   }) => {
     const store = useContext(Context);
     const time = moment(date).calendar(null, {
@@ -28,31 +29,62 @@ const RoomBox = observer(
 
     return (
       <Box
-        sx={{
-          width: "100%",
-          height: "fit-content",
-          display: "flex",
-          alignItems: "center",
-          padding: "1rem",
-          cursor: "pointer",
-          boxSizing: "border-box",
-          backgroundColor:
-            store.state.currentRoomId === roomId ? "#f5f5f5" : "#FFFFFF",
-          "&:hover": {
-            backgroundColor: "#f5f5f5",
-          },
-        }}
         onClick={() => {
           store.setCurrentRoomId(roomId);
         }}
+        sx={{
+          display: "flex",
+          width: "100%",
+          flexDirection: "row",
+          "&:hover": {
+            backgroundColor: "#e0e0e0",
+            cursor: "pointer",
+          },
+        }}
       >
-        <Avatar src={avatar} sx={{ height: "3rem", width: "3rem" }} />
-        <Box sx={{ marginLeft: "1rem" }}>
-          <Typography sx={{ fontWeight: "bold" }}>{name}</Typography>
-          <Typography sx={{ color: "text.secondary" }}>{text}</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            width: "60%",
+            height: "4.5rem",
+            flexDirection: "row",
+            overflow: "hidden",
+            breakWord: "break-all",
+            margin: "0",
+          }}
+        >
+          <Avatar
+            sx={{
+              margin: "0.5rem",
+              height: "3rem",
+              width: "3rem",
+            }}
+            src={avatar}
+          />
+          <Box sx={{ display: "flex", flexDirection: "column" }}>
+            <Typography sx={{ fontWeight: "bold" }}>{name}</Typography>
+            <Typography sx={{ color: "gray" }}>{text}</Typography>
+            <Typography sx={{ color: "gray" }}>{time}</Typography>
+          </Box>
         </Box>
-        <Box sx={{ marginLeft: "auto" }}>
-          <Typography sx={{ color: "text.secondary" }}>{time}</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            width: "40%",
+            height: "4.5rem",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            marginRight: "10%",
+          }}
+        >
+          {numberOfUnreadMessages && numberOfUnreadMessages > 0 ? (
+            <Badge
+              badgeContent={numberOfUnreadMessages}
+              color="secondary"
+              sx={{ alignSelf: "flex-end" }}
+            />
+          ) : null}
         </Box>
       </Box>
     );

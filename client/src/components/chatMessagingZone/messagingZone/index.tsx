@@ -39,6 +39,7 @@ const MessagingZone = observer(
         },
       };
       socket?.emit("message", { message, room });
+      store.setShouldUpdateRooms(true);
     };
     const fetchMessages = async () => {
       try {

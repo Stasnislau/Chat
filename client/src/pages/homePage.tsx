@@ -208,6 +208,7 @@ const HomePage = observer(() => {
             borderRight: "1px solid grey",
             display: isRoomsPanelOpen ? "flex" : "none",
             boxSizing: "border-box",
+            position: "relative",
           }}
         >
           <Box
@@ -230,6 +231,7 @@ const HomePage = observer(() => {
               resize: "vertical",
               overflowY: "scroll",
               boxSizing: "border-box",
+              position: "relative",
             }}
           >
             {rooms &&
@@ -267,6 +269,7 @@ const HomePage = observer(() => {
                             : new Date()
                         }
                         avatar={room.avatar}
+                        numberOfUnreadMessages={room.numberOfUnreadMessages}
                       />
                       <Divider sx={{ width: "100%" }} />
                     </Box>
