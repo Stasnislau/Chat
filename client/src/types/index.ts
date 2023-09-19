@@ -39,3 +39,4 @@ export interface room {
 export interface extendedRoom extends room {
   messages: message[];
 }
+

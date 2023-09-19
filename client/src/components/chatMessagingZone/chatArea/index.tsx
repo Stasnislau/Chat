@@ -10,6 +10,7 @@ import { room } from "../../../types";
 const ChatArea = observer(() => {
   const store = useContext(Context);
   const [room, setRoom] = useState<room>();
+  const [shouldUpdateRoom, setShouldUpdateRoom] = useState<boolean>(false);
   const fetchRoom = async () => {
     try {
       store.setIsLoading(true);
@@ -39,6 +40,12 @@ const ChatArea = observer(() => {
       fetchRoom();
     }
   }, [store.state.currentRoomId, store.state.userId]);
+  useEffect(() => {
+    if (shouldUpdateRoom) {
+      fetchRoom();
+      setShouldUpdateRoom(false);
+    }
+  }, [shouldUpdateRoom]);
   const [avatars, setAvatars] = useState<
     {
       id: string;
@@ -148,7 +155,10 @@ const ChatArea = observer(() => {
               height: "88.3%",
             }}
           >
-            <MessengingZone avatars={avatars} />
+            <MessengingZone
+              avatars={avatars}
+              setShouldUpdateRoom={setShouldUpdateRoom}
+            />
           </Box>
         </Box>
       )}

@@ -11,11 +11,13 @@ import { observer } from "mobx-react-lite";
 const MessagingZone = observer(
   ({
     avatars,
+    setShouldUpdateRoom,
   }: {
     avatars: {
       id: string;
       avatar: string;
     }[];
+    setShouldUpdateRoom: (value: boolean) => void;
   }) => {
     const store = useContext(Context);
     const [rooms, setRooms] = useState<extendedRoom[]>([]);
@@ -77,7 +79,6 @@ const MessagingZone = observer(
           isOnline: true,
         });
       }
-      // Handle page unload (close or navigate away)
       const handleUnload = () => {
         if (store.state.userId) {
           socket?.emit("online-status", {
@@ -86,9 +87,7 @@ const MessagingZone = observer(
           });
         }
       };
-      // Add the "beforeunload" event listener
       window.addEventListener("beforeunload", handleUnload);
-      // Cleanup function to remove the event listener when the component unmounts
       return () => {
         window.removeEventListener("beforeunload", handleUnload);
       };
@@ -139,6 +138,14 @@ const MessagingZone = observer(
         socket?.off("message", messageListener);
       };
     }, [socket, messageHistory]);
+
+    useEffect(() => {
+      socket?.on("changed-online-status", (roomId: string) => {
+        if (roomId === store.state.currentRoomId) {
+          setShouldUpdateRoom(true);
+        }
+      });
+    }, [socket, store.state.currentRoomId]);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 

@@ -9,7 +9,6 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { message } from "@prisma/client";
 import { Socket } from "socket.io";
 
-
 @WebSocketGateway(8001, {
   cors: "*",
 })
@@ -52,7 +51,7 @@ export class ChatGateway {
   }
   @SubscribeMessage("online-status")
   async handleOnline(
-    @MessageBody() data: { userId: string, isOnline: boolean },
+    @MessageBody() data: { userId: string; isOnline: boolean },
     @ConnectedSocket() client: Socket
   ): Promise<void> {
     const { userId, isOnline } = data;
@@ -76,5 +75,8 @@ export class ChatGateway {
       });
       if (!user) return;
     }
+    rooms.forEach((room) => {
+      client.to(room.id).emit("changed-online-status", room.id);
+    });
   }
 }
