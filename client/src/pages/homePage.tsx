@@ -238,11 +238,18 @@ const HomePage = observer(() => {
               rooms.length > 0 &&
               !store.state.isSearching &&
               rooms
-                .sort(
-                  (a, b) =>
+                .sort((a, b) => {
+                  if (!a.messages || a.messages.length === 0) {
+                    return -1;
+                  }
+                  if (!b.messages || b.messages.length === 0) {
+                    return 1;
+                  }
+                  return (
                     new Date(b.messages[0].dateSent).getTime() -
                     new Date(a.messages[0].dateSent).getTime()
-                )
+                  );
+                })
                 .map((room) => {
                   if (store.state.isFiltering) {
                     if (
@@ -259,13 +266,13 @@ const HomePage = observer(() => {
                         roomId={room.id}
                         name={room.name}
                         text={
-                          room.messages && room.messages.length > 0
-                            ? room.messages[0].text
+                          room && room.messages && room.messages.length > 0
+                            ? room?.messages[0]?.text
                             : ""
                         }
                         date={
                           room.messages && room.messages.length > 0
-                            ? room.messages[0].dateSent
+                            ? room?.messages[0]?.dateSent
                             : new Date()
                         }
                         avatar={room.avatar}
