@@ -18,6 +18,7 @@ model user {
   rooms    room[]    @relation(fields: [roomIds], references: [id])
   messages message[]
   avatar   String
+  isOnline Boolean   @default(false)
 }
 
 model message {
@@ -40,5 +41,6 @@ model room {
   users      user[]    @relation(fields: [userIds], references: [id])
   avatar     String[]
   isDeletable Boolean   @default(true)
+  
 }
 

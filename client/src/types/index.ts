@@ -33,6 +33,7 @@ export interface room {
   userIds: string[];
   avatar: string;
   numberOfUnreadMessages?: number;
+  isOnline?: boolean;
 }
 
 export interface extendedRoom extends room {

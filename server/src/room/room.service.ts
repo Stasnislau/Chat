@@ -98,6 +98,7 @@ export class RoomService {
       ...room,
       name: user.name,
       avatar: user.avatar,
+      isOnline: user.isOnline,
     };
     return roomToReturn;
   }
@@ -220,7 +221,7 @@ export class RoomService {
     const endRooms = rooms.map(async (room) => {
       let numberOfUnreadMessages = 0;
       room.messages.forEach((message) => {
-        if (!message.isRead) {
+        if (!message.isRead && message.userId !== id) {
           numberOfUnreadMessages++;
         }
       });
@@ -246,6 +247,7 @@ export class RoomService {
           avatar: user.avatar,
           messages: [room.messages[0]],
           numberOfUnreadMessages,
+          isOnline: user.isOnline,
         };
       } else {
         return {

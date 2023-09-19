@@ -11,6 +11,21 @@ const InfoComponent = observer(({ room }: { room: room | undefined }) => {
   useEffect(() => {
     setIsLoading(room === undefined || !room);
   }, [room]);
+  const [isOnline, setIsOnline] = useState<string>("");
+  useEffect(() => {
+    if (room) {
+      if (room.isOnline !== undefined) {
+        if (room.isOnline) {
+          setIsOnline("Online");
+        } else {
+          setIsOnline("Offline");
+        }
+      }
+      else {
+        setIsOnline("");
+      }
+    }
+  }, [room]);
   return (
     <Box
       sx={{
@@ -68,9 +83,10 @@ const InfoComponent = observer(({ room }: { room: room | undefined }) => {
               sx={{
                 fontSize: "14px",
                 fontWeight: "light",
+                color: room?.isOnline ? "green" : "red",
               }}
             >
-              Online
+              {isOnline}
             </Typography>
           )}
         </Box>

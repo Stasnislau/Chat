@@ -9,6 +9,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { message } from "@prisma/client";
 import { Socket } from "socket.io";
 
+
 @WebSocketGateway(8001, {
   cors: "*",
 })
@@ -16,10 +17,9 @@ export class ChatGateway {
   constructor(private prisma: PrismaService) {}
   @WebSocketServer() server;
   @SubscribeMessage("message")
-  async handleMessage(@MessageBody() data: {
-    message: message;
-    room: string;
-  }): Promise<void> {
+  async handleMessage(
+    @MessageBody() data: { message: message; room: string }
+  ): Promise<void> {
     const { message, room } = data;
     if (room === "") return;
     else {
@@ -49,5 +49,32 @@ export class ChatGateway {
   ): Promise<void> {
     if (room === "") return;
     else client.join(room);
+  }
+  @SubscribeMessage("online-status")
+  async handleOnline(
+    @MessageBody() data: { userId: string, isOnline: boolean },
+    @ConnectedSocket() client: Socket
+  ): Promise<void> {
+    const { userId, isOnline } = data;
+    client.join(userId);
+    const rooms = await this.prisma.room.findMany({
+      where: {
+        userIds: {
+          has: userId,
+        },
+      },
+    });
+    if (!rooms) return;
+    if (rooms.length > 0) {
+      const user = await this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          isOnline: isOnline,
+        },
+      });
+      if (!user) return;
+    }
   }
 }

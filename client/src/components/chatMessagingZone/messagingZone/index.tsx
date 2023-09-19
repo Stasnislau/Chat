@@ -28,7 +28,6 @@ const MessagingZone = observer(
       setMessageHistory([...messageHistory, message]);
     };
     const [messageHistory, setMessageHistory] = useState<message[]>([]);
-
     const handleSendMessage = (text: string, room: string) => {
       const message = {
         userId: store.state.userId,
@@ -70,6 +69,30 @@ const MessagingZone = observer(
         fetchMessages();
       }
     }, [store.state.currentRoomId]);
+
+    useEffect(() => {
+      if (store.state.userId) {
+        socket?.emit("online-status", {
+          userId: store.state.userId,
+          isOnline: true,
+        });
+      }
+      // Handle page unload (close or navigate away)
+      const handleUnload = () => {
+        if (store.state.userId) {
+          socket?.emit("online-status", {
+            userId: store.state.userId,
+            isOnline: false,
+          });
+        }
+      };
+      // Add the "beforeunload" event listener
+      window.addEventListener("beforeunload", handleUnload);
+      // Cleanup function to remove the event listener when the component unmounts
+      return () => {
+        window.removeEventListener("beforeunload", handleUnload);
+      };
+    }, [store.state.userId, socket]);
 
     useEffect(() => {
       const socket = io("http://localhost:8001");
