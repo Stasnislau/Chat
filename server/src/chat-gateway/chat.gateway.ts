@@ -79,4 +79,19 @@ export class ChatGateway {
       client.to(room.id).emit("changed-online-status", room.id);
     });
   }
+  @SubscribeMessage("read-message")
+  async handleReadMessage(
+    @MessageBody() data: { messageId: string },
+    @ConnectedSocket() client: Socket
+  ): Promise<void> {
+    await this.prisma.message.update({
+      where: {
+        id: data.messageId,
+      },
+      data: {
+        isRead: true,
+      },
+    });
+    client.emit("read-message", data.messageId);
+  }
 }
