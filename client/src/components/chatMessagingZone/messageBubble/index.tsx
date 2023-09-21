@@ -24,6 +24,8 @@ const MessageBubble = ({ message, isMine, avatars }: MessageBubbleProps) => {
         width: "100%",
         wordBreak: "break-word",
       }}
+      component="div"
+      className="message-bubble"
     >
       <Avatar
         src={avatar}

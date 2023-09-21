@@ -45,7 +45,7 @@ const RoomBox = observer(
         <Box
           sx={{
             display: "flex",
-            width: "60%",
+            width: "80%",
             height: "4.5rem",
             flexDirection: "row",
             overflow: "hidden",
@@ -70,7 +70,7 @@ const RoomBox = observer(
         <Box
           sx={{
             display: "flex",
-            width: "40%",
+            width: "20%",
             height: "4.5rem",
             flexDirection: "column",
             justifyContent: "center",

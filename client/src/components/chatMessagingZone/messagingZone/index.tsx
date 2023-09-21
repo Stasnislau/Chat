@@ -7,6 +7,7 @@ import { extendedRoom, message } from "../../../types";
 import ChatTextField from "../chatTextField";
 import MessageBubble from "../messageBubble";
 import { observer } from "mobx-react-lite";
+import { set } from "mobx";
 
 const MessagingZone = observer(
   ({
@@ -65,7 +66,27 @@ const MessagingZone = observer(
         store.setIsLoading(false);
       }
     };
-
+    function getVisibleMessages(): message[] {
+      const messageBubbles = document.querySelectorAll(".message-bubble");
+      const messageHistoryContainer = document.querySelector(
+        ".message-history-container"
+      );
+      const messageHistoryRect =
+        messageHistoryContainer?.getBoundingClientRect();
+      const visibleMessages = [];
+      for (let i = 0; i < messageBubbles.length; i++) {
+        const messageBubble = messageBubbles[i];
+        const messageBubbleRect = messageBubble.getBoundingClientRect();
+        if (!messageHistoryRect) return [];
+        if (
+          messageBubbleRect.top >= messageHistoryRect.top &&
+          messageBubbleRect.bottom <= messageHistoryRect.bottom
+        ) {
+          visibleMessages.push(messageHistory[i]);
+        }
+      }
+      return visibleMessages;
+    }
     useEffect(() => {
       if (store.state.currentRoomId !== "") {
         fetchMessages();
@@ -174,6 +195,33 @@ const MessagingZone = observer(
             minHeight: "60%",
             overflowY: "scroll",
             boxSizing: "border-box",
+          }}
+          component="div"
+          className="message-history-container"
+          onScroll={() => {
+            const visibleMessages = getVisibleMessages()?.filter(
+              (message) =>
+                !message.isRead && message.userId !== store.state.userId
+            );
+            if (visibleMessages.length === 0) return;
+            if (visibleMessages && visibleMessages.length > 0) {
+              visibleMessages.forEach((message) => {
+                if (!message.isRead && message.userId !== store.state.userId) {
+                  socket?.emit("read-message", {
+                    messageId: message.id,
+                  });
+                  setMessageHistory((prev) =>
+                    prev.map((prevMessage) => {
+                      if (prevMessage.id === message.id) {
+                        return { ...prevMessage, isRead: true };
+                      }
+                      return prevMessage;
+                    })
+                  );
+                }
+              });
+              store.setShouldUpdateRooms(true);
+            }
           }}
         >
           {messageHistory.map((message, index) => (
