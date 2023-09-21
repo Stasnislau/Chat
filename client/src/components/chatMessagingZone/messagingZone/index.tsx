@@ -31,6 +31,19 @@ const MessagingZone = observer(
     };
 
     const [messageHistory, setMessageHistory] = useState<message[]>([]);
+
+    const handleSendVoiceMessage = (recording: string) => {
+      const message = {
+        userId: store.state.userId,
+        roomId: store.state.currentRoomId,
+        text: "",
+        user: {
+          name: store.state.userName,
+        },
+      }
+      socket?.emit("message", { message, room: store.state.currentRoomId });
+      store.setShouldUpdateRooms(true);
+    }
     const handleSendMessage = (text: string, room: string) => {
       const message = {
         userId: store.state.userId,
@@ -246,7 +259,7 @@ const MessagingZone = observer(
             minHeight: "15%",
           }}
         >
-          <ChatTextField onSend={handleSendMessage} onRecord={setRecord}/>
+          <ChatTextField onSend={handleSendMessage} onRecord={setRecord} />
         </Box>
       </Box>
     );

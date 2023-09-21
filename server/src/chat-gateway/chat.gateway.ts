@@ -28,6 +28,7 @@ export class ChatGateway {
       data: {
         text: message.text,
         isRead: false,
+        audioUrl: message.audioUrl,
         user: {
           connect: {
             id: message.userId,

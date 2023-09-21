@@ -21,6 +21,7 @@ export interface message {
   roomId: String;
   dateSent: Date;
   isRead: boolean;
+  audioUrl?: string;
   user?: {
     name: string;
   };
