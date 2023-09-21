@@ -7,8 +7,6 @@ import { extendedRoom, message } from "../../../types";
 import ChatTextField from "../chatTextField";
 import MessageBubble from "../messageBubble";
 import { observer } from "mobx-react-lite";
-import { set } from "mobx";
-
 const MessagingZone = observer(
   ({
     avatars,
@@ -23,6 +21,7 @@ const MessagingZone = observer(
     const store = useContext(Context);
     const [rooms, setRooms] = useState<extendedRoom[]>([]);
     const [socket, setSocket] = useState<Socket>();
+    const [record, setRecord] = useState<Blob | null>(null);
     const messageListener = (message: message) => {
       if (message.roomId !== store.state.currentRoomId) {
         store.setShouldUpdateRooms(true);
@@ -30,6 +29,7 @@ const MessagingZone = observer(
       }
       setMessageHistory([...messageHistory, message]);
     };
+
     const [messageHistory, setMessageHistory] = useState<message[]>([]);
     const handleSendMessage = (text: string, room: string) => {
       const message = {
@@ -43,6 +43,7 @@ const MessagingZone = observer(
       socket?.emit("message", { message, room });
       store.setShouldUpdateRooms(true);
     };
+
     const fetchMessages = async () => {
       try {
         store.setIsLoading(true);
@@ -245,7 +246,7 @@ const MessagingZone = observer(
             minHeight: "15%",
           }}
         >
-          <ChatTextField onSend={handleSendMessage} />
+          <ChatTextField onSend={handleSendMessage} onRecord={setRecord}/>
         </Box>
       </Box>
     );

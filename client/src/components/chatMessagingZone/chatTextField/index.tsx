@@ -1,21 +1,25 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useRef } from "react";
 import {
   TextField,
   InputAdornment,
   IconButton,
   Box,
-  TextareaAutosize,
 } from "@mui/material";
 import { Send, Mic } from "@mui/icons-material";
 import { Context } from "../../../App";
+import Recorder from "recorder-js";
 
 interface ChatTextFieldProps {
   onSend: (text: string, room: string) => void;
+  onRecord: (recording: Blob) => void;
 }
 
-const ChatTextField = ({ onSend }: ChatTextFieldProps) => {
+const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
+  const [isRecording, setIsRecording] = useState(false);
   const [message, setMessage] = useState("");
   const store = useContext(Context);
+  const recorderRef = useRef<Recorder | null>(null);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const handleSend = () => {
     if (message.trim() !== "") {
       onSend(message, store.state.currentRoomId);
@@ -30,6 +34,50 @@ const ChatTextField = ({ onSend }: ChatTextFieldProps) => {
     }
   };
 
+  const handleRecord = async () => {
+    if (!isRecording) {
+      const audioContext = new AudioContext();
+      const recorder = new Recorder(
+        audioContext
+      );
+      try {
+        recorder.start();
+        setIsRecording(true);
+        recorderRef.current = recorder;
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      const recorder = recorderRef.current;
+
+      if (recorder) {
+        recorder.stop(
+        ).then(({ blob, buffer }) => {
+          setAudioBlob(blob);
+          onRecord(blob);
+        });
+
+        const formData = new FormData();
+        if (audioBlob) {
+          formData.append("audio", audioBlob, "recording.wav");
+        }
+
+        const response = await fetch("/upload-audio", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (response.ok) {
+          console.log("Audio file uploaded successfully");
+        } else {
+          console.error("Error uploading audio file");
+        }
+
+        setIsRecording(false);
+        recorderRef.current = null;
+      }
+    }
+  };
   return (
     <Box
       sx={{
@@ -61,7 +109,11 @@ const ChatTextField = ({ onSend }: ChatTextFieldProps) => {
           ),
           startAdornment: (
             <InputAdornment position="start">
-              <IconButton>
+              <IconButton onClick={
+                () => {
+                  setIsRecording(!isRecording);
+                }
+              }>
                 <Mic />
               </IconButton>
             </InputAdornment>

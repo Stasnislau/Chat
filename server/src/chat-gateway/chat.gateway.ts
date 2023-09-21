@@ -84,6 +84,7 @@ export class ChatGateway {
     @MessageBody() data: { messageId: string },
     @ConnectedSocket() client: Socket
   ): Promise<void> {
+    if (!data || !data.messageId) return;
     await this.prisma.message.update({
       where: {
         id: data.messageId,
