@@ -7,8 +7,7 @@ import {
 } from "@mui/material";
 import { Send, Mic } from "@mui/icons-material";
 import { Context } from "../../../App";
-import Recorder from "recorder-js";
-
+import RecordRTC from "recordrtc";
 interface ChatTextFieldProps {
   onSend: (text: string, room: string) => void;
   onRecord: (recording: Blob) => void;
@@ -18,8 +17,10 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   const [isRecording, setIsRecording] = useState(false);
   const [message, setMessage] = useState("");
   const store = useContext(Context);
-  const recorderRef = useRef<Recorder | null>(null);
+  const [recorder, setRecorder] = useState<RecordRTC | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
+const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null);
   const handleSend = () => {
     if (message.trim() !== "") {
       onSend(message, store.state.currentRoomId);
@@ -35,30 +36,38 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   };
 
   const handleRecord = async () => {
-    if (!isRecording) {
-      const audioContext = new AudioContext();
-      const recorder = new Recorder(
-        audioContext
-      );
-      try {
-        recorder.start();
-        setIsRecording(true);
-        recorderRef.current = recorder;
-      } catch (error) {
-        console.error(error);
-      }
-    } else {
-      const recorder = recorderRef.current;
+    if (isRecording) {
+      // Start recording
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
 
-      if (recorder) {
-        recorder.stop(
-        ).then(({ blob, buffer }) => {
-          setAudioBlob(blob);
-          onRecord(blob);
+      const options = {
+        type: 'audio' as "audio" | "video" | "canvas" | "gif" | undefined,
+        mimeType: "audio/webm" as "audio/webm" | "audio/webm;codecs=pcm" | "video/mp4" | "video/webm" | "video/webm;codecs=vp9" | "video/webm;codecs=vp8" | "video/webm;codecs=h264" | "video/x-matroska;codecs=avc1" | "video/mpeg" | "audio/wav" | "audio/ogg" | undefined,
+        recorderType: RecordRTC.StereoAudioRecorder,
+        numberOfAudioChannels: 1 as 1 | 2,
+      };
+
+      const newRecorder = new RecordRTC(stream, options);
+      newRecorder.startRecording();
+
+      setIsRecording(true);
+      setRecorder(newRecorder);
+    } else {
+      // Stop recording and send the audio file to the server
+      const currentRecorder = recorder;
+
+      if (currentRecorder) {
+        currentRecorder.stopRecording(() => {
+          setAudioBlob(currentRecorder.getBlob());
         });
+
+        setRecorder(null);
       }
     }
   };
+  
   useEffect(() => {
     handleRecord();
   }
@@ -72,7 +81,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
         boxSizing: "border-box",
       }}
     >
-      { !audioBlob ? 
+      {!audioBlob ?
         <TextField
           fullWidth
           maxRows={4}
@@ -106,16 +115,64 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
             ),
           }}
         />
-        :
-        <Box sx={{
-          width: "100%",
-          minHeight: "60%",
-          overflowY: "scroll",
-          boxSizing: "border-box",
-        }}>
-          <audio controls src={URL.createObjectURL(audioBlob)} />
-        </Box>
-      }
+        : (
+          <Box sx={{
+            width: "100%",
+            boxSizing: "border-box",
+            display: "flex",
+            border: "1px solid black",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}>
+            <Box sx={{
+              height: "100%",
+              boxSizing: "border-box",
+
+            }}>
+
+              <IconButton
+                sx={
+                  {
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                  }
+                }
+                onClick={
+                  () => {
+                    setIsRecording(!isRecording);
+                  }
+                }>
+                <Mic />
+              </IconButton>
+            </Box>
+            <Box sx={{
+              height: "100%",
+              boxSizing: "border-box",
+              display: "flex",
+              alignItems: "center",
+            }}>
+              <audio controls src={URL.createObjectURL(audioBlob)} />
+            </Box>
+            <Box
+              sx={{
+                height: "100%",
+                boxSizing: "border-box",
+                display: "flex",
+                alignItems: "center",
+
+              }}
+            >
+              <IconButton onClick={() => {
+                setAudioBlob(null);
+              }}>
+                <Send />
+              </IconButton>
+            </Box>
+
+          </Box>
+        )}
     </Box>
   );
 };
