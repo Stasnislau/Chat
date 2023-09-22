@@ -32,7 +32,7 @@ const MessagingZone = observer(
 
     const [messageHistory, setMessageHistory] = useState<message[]>([]);
 
-    const handleSendVoiceMessage = (recording: string) => {
+    const handleSendVoiceMessage = (recording: Blob) => {
       const message = {
         userId: store.state.userId,
         roomId: store.state.currentRoomId,

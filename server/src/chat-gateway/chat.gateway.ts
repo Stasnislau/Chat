@@ -6,9 +6,10 @@ import {
   WebSocketServer,
 } from "@nestjs/websockets";
 import { PrismaService } from "src/prisma/prisma.service";
-import { message } from "@prisma/client";
 import { Socket } from "socket.io";
-
+import { messageDTO } from "./dto";
+import cloudinary from "../cloudinary";
+import ApiError from "src/exceptions/api-error";
 @WebSocketGateway(8001, {
   cors: "*",
 })
@@ -17,18 +18,31 @@ export class ChatGateway {
   @WebSocketServer() server;
   @SubscribeMessage("message")
   async handleMessage(
-    @MessageBody() data: { message: message; room: string }
+    @MessageBody() data: { message: messageDTO; room: string }
   ): Promise<void> {
     const { message, room } = data;
     if (room === "") return;
     else {
       this.server.to(room).emit("message", message);
     }
+    const res = await cloudinary.uploader.upload(
+      message.audioBlob.toString(),
+      {
+        folder: "products",
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error) {
+          return ApiError.badGateway("Unable to upload the audiofile");
+        }
+      }
+    );
+    const audioUrl = res.secure_url;
     await this.prisma.message.create({
       data: {
         text: message.text,
         isRead: false,
-        audioUrl: message.audioUrl,
+        audioUrl: audioUrl,
         user: {
           connect: {
             id: message.userId,
