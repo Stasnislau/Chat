@@ -4,10 +4,11 @@ import {
   InputAdornment,
   IconButton,
   Box,
+  Typography,
 } from "@mui/material";
 import { Send, Mic } from "@mui/icons-material";
 import { Context } from "../../../App";
-import { set } from "mobx";
+import moment from "moment";
 interface ChatTextFieldProps {
   onSend: (text: string, room: string) => void;
   onRecord: (recording: Blob) => void;
@@ -19,6 +20,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
   const [volume, setVolume] = useState(0);
+  const [timer, setTimer] = useState<number>(0);
   const handleSend = () => {
     if (message.trim() !== "") {
       onSend(message, store.state.currentRoomId);
@@ -36,6 +38,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   const handleRecord = async () => {
     if (!isRecording) {
       setAudioBlob(null);
+      setTimer(0);
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
       });
@@ -59,6 +62,30 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
         }
       }
       currentRecorder.start();
+      const updateVolume = () => {
+        const currentRecorder = recorder;
+        if (currentRecorder) {
+          const audioContext = new AudioContext();
+          const audioSource = audioContext.createMediaStreamSource(currentRecorder.stream);
+          const analyser = audioContext.createAnalyser();
+
+          audioSource.connect(analyser);
+          analyser.fftSize = 256;
+          const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+          const update = () => {
+            analyser.getByteFrequencyData(dataArray);
+            const sum = dataArray.reduce((a, b) => a + b, 0);
+            const average = sum / dataArray.length;
+            setVolume(average);
+            requestAnimationFrame(update);
+          };
+
+          update();
+        }
+      };
+
+      updateVolume();
     } else {
       const currentRecorder = recorder;
       if (currentRecorder) {
@@ -69,18 +96,14 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (recorder) {
-  //     const interval = setInterval(() => {
-  //       setVolume(recorder.stream.getAudioTracks()[0].getSettings().volume);
-  //     }, 100);
-
-  //     return () => {
-  //       clearInterval(interval);
-  //     };
-  //   }
-  // }, [recorder]);
-
+  useEffect(() => {
+    if (isRecording) {
+      const interval = setInterval(() => {
+        setTimer((timer) => timer + 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isRecording]);
   return (
     <Box
       sx={{
@@ -140,9 +163,13 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
 
             }}
           >
-            <IconButton onClick={handleRecord}>
-              <Send />
-            </IconButton>
+            <Typography sx={{
+              marginRight: "10px",
+              marginLeft: "10px",
+            }}>
+              {moment.utc(timer * 1000).format("mm:ss")}
+            </Typography>
+
           </Box>
         </Box>
           : (
