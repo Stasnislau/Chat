@@ -5,6 +5,7 @@ import {
   IconButton,
   Box,
   Typography,
+  Button,
 } from "@mui/material";
 import { Send, Mic } from "@mui/icons-material";
 import { Context } from "../../../App";
@@ -54,12 +55,12 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
       currentRecorder.ondataavailable = (event) => {
         blobData = event.data;
       }
-
       currentRecorder.onstop = () => {
-        setIsRecording(false);
         if (blobData) {
           setAudioBlob(blobData);
         }
+        setIsRecording(false);
+
       }
       currentRecorder.start();
       const updateVolume = () => {
@@ -113,99 +114,9 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
         boxSizing: "border-box",
       }}
     >
-      {!audioBlob ?
-        isRecording ? <Box sx={{
-          width: "100%",
-          boxSizing: "border-box",
-          display: "flex",
-          border: "1px solid black",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          backgroundColor: "primary.main",
-        }}>
-          <Box sx={{
-            height: "100%",
-            boxSizing: "border-box",
-
-          }}>
-
-            <IconButton
-              sx={
-                {
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                }
-              }
-              onClick={
-                handleRecord
-              }>
-              <Mic />
-            </IconButton>
-          </Box>
-          <Box sx={{
-            height: "100%",
-            boxSizing: "border-box",
-            display: "flex",
-            alignItems: "center",
-          }}>
-            <div className="meter">
-              <div className="meter__bar" />
-            </div>
-          </Box>
-          <Box
-            sx={{
-              height: "100%",
-              boxSizing: "border-box",
-              display: "flex",
-              alignItems: "center",
-
-            }}
-          >
-            <Typography sx={{
-              marginRight: "10px",
-              marginLeft: "10px",
-            }}>
-              {moment.utc(timer * 1000).format("mm:ss")}
-            </Typography>
-
-          </Box>
-        </Box>
-          : (
-            <TextField
-              fullWidth
-              maxRows={4}
-              multiline
-              value={message}
-              sx={{
-                "& .MuiInputBase-root": {
-                  backgroundColor: "primary.main",
-                },
-              }}
-              onChange={(event) => setMessage(event.target.value)}
-              onKeyDown={handleKeyDown}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={handleSend}>
-                      <Send />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <IconButton onClick={
-                      handleRecord
-                    }>
-                      <Mic />
-                    </IconButton>
-                  </InputAdornment>
-                )
-              }}
-            />)
-        : (
-          <Box sx={{
+      {!audioBlob ? (
+        isRecording ?
+          (<Box sx={{
             width: "100%",
             boxSizing: "border-box",
             display: "flex",
@@ -241,6 +152,121 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
               display: "flex",
               alignItems: "center",
             }}>
+              <Button
+                onClick={() => {
+                  recorder?.pause();
+                  setIsRecording(false);
+                  setAudioBlob(null);
+                }}
+                sx={{
+                  color: "red",
+
+                }}
+              >
+                Stop
+              </Button>
+            </Box>
+            <Box
+              sx={{
+                height: "100%",
+                boxSizing: "border-box",
+                display: "flex",
+                alignItems: "center",
+
+              }}
+            >
+              <Typography sx={{
+                marginRight: "10px",
+                marginLeft: "10px",
+              }}>
+                {moment.utc(timer * 1000).format("mm:ss")}
+              </Typography>
+
+            </Box>
+          </Box>)
+          : (
+            <TextField
+              fullWidth
+              maxRows={4}
+              multiline
+              value={message}
+              sx={{
+                "& .MuiInputBase-root": {
+                  backgroundColor: "primary.main",
+                },
+              }}
+              onChange={(event) => setMessage(event.target.value)}
+              onKeyDown={handleKeyDown}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleSend}>
+                      <Send />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <IconButton onClick={
+                      handleRecord
+                    }>
+                      <Mic />
+                    </IconButton>
+                  </InputAdornment>
+                )
+              }}
+            />)
+      )
+        : (
+          <Box sx={{
+            width: "100%",
+            boxSizing: "border-box",
+            display: "flex",
+            border: "1px solid black",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            backgroundColor: "primary.main",
+          }}>
+            <Box sx={{
+              height: "100%",
+              boxSizing: "border-box",
+
+            }}>
+              <Typography sx={{
+                marginRight: "10px",
+                color: "red",
+                zIndex: 1000,
+              }}
+              >
+                {isRecording ?
+                  "RECORDING" : "RECORDED"
+                } SUKA TUT
+                {audioBlob ?
+                  "TRUE"
+                  : "FALSE"}
+              </Typography>
+              <IconButton
+                sx={
+                  {
+                    height: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                  }
+                }
+                onClick={
+                  handleRecord
+                }>
+                <Mic />
+              </IconButton>
+            </Box>
+            <Box sx={{
+              height: "100%",
+              boxSizing: "border-box",
+              display: "flex",
+              alignItems: "center",
+            }}>
+
               <audio controls src={URL.createObjectURL(audioBlob)} />
             </Box>
             <Box
@@ -258,7 +284,6 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
                 <Send />
               </IconButton>
             </Box>
-
           </Box>
         )}
     </Box>
