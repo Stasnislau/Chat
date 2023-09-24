@@ -6,6 +6,7 @@ import {
   Box,
   Typography,
   Button,
+  styled,
 } from "@mui/material";
 import { Send, Mic } from "@mui/icons-material";
 import { Context } from "../../../App";
@@ -14,8 +15,9 @@ interface ChatTextFieldProps {
   onSend: (text: string, room: string) => void;
   onRecord: (recording: Blob) => void;
 }
+
 const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
-  const [isRecording, setIsRecording] = useState(false);
+  const [isRecording, setIsRecording] = useState<boolean | null>(null);
   const [message, setMessage] = useState("");
   const store = useContext(Context);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -28,74 +30,98 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
       setMessage("");
     }
   };
-
+  const CustomIconButton = ({ volume, ...rest }
+    : { volume: number } & React.ComponentProps<typeof IconButton>
+  ) => {
+    return <IconButton {...rest} />;
+  };
+  useEffect(() => {
+    console.log(audioBlob);
+  }, [audioBlob]);
+  const CircleIconButton = styled(CustomIconButton)`
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    border: 2px solid red; /* Change the border color as desired */
+    border-radius: 50%;
+    width: calc(50px + ${({ volume }) => volume}px);
+    height: calc(50px + ${({ volume }) => volume}px);
+    top: -${({ volume }) => volume}px;
+    left: -${({ volume }) => volume}px;
+  }
+`;
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       handleSend();
     }
   };
+  useEffect(() => {
+    const func = async () => {
+      console.log(isRecording);
+      if (isRecording === null) return;
+      if (isRecording) {
+        setAudioBlob(null);
+        setTimer(0);
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
 
-  const handleRecord = async () => {
-    if (!isRecording) {
-      setAudioBlob(null);
-      setTimer(0);
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      });
-
-      if (!stream) {
-        store.displayError("Cannot access microphone");
-      }
-      setIsRecording(true);
-      const currentRecorder = new window.MediaRecorder(stream);
-
-      let blobData: Blob | null = null;
-      setRecorder(currentRecorder);
-      currentRecorder.ondataavailable = (event) => {
-        blobData = event.data;
-      }
-      currentRecorder.onstop = () => {
-        if (blobData) {
-          setAudioBlob(blobData);
+        if (!stream) {
+          store.displayError("Cannot access microphone");
         }
-        setIsRecording(false);
+        const currentRecorder = new window.MediaRecorder(stream);
 
-      }
-      currentRecorder.start();
-      const updateVolume = () => {
+        let blobData: Blob | null = null;
+        setRecorder(currentRecorder);
+        currentRecorder.ondataavailable = (event) => {
+          blobData = event.data;
+        }
+        currentRecorder.onstop = () => {
+          if (blobData) {
+            setAudioBlob(blobData);
+          }
+
+        }
+        currentRecorder.start();
+        const updateVolume = () => {
+          const currentRecorder = recorder;
+          if (currentRecorder) {
+            const audioContext = new AudioContext();
+            const audioSource = audioContext.createMediaStreamSource(currentRecorder.stream);
+            const analyser = audioContext.createAnalyser();
+
+            audioSource.connect(analyser);
+            analyser.fftSize = 256;
+            const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+            const update = () => {
+              analyser.getByteFrequencyData(dataArray);
+              const sum = dataArray.reduce((a, b) => a + b, 0);
+              const average = sum / dataArray.length;
+              setVolume(average);
+              requestAnimationFrame(update);
+            };
+
+            update();
+          }
+        };
+
+        updateVolume();
+      } else if (!isRecording) {
         const currentRecorder = recorder;
         if (currentRecorder) {
-          const audioContext = new AudioContext();
-          const audioSource = audioContext.createMediaStreamSource(currentRecorder.stream);
-          const analyser = audioContext.createAnalyser();
-
-          audioSource.connect(analyser);
-          analyser.fftSize = 256;
-          const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-          const update = () => {
-            analyser.getByteFrequencyData(dataArray);
-            const sum = dataArray.reduce((a, b) => a + b, 0);
-            const average = sum / dataArray.length;
-            setVolume(average);
-            requestAnimationFrame(update);
-          };
-
-          update();
+          currentRecorder.stop();
+          currentRecorder.stream.getTracks().forEach((track) => track.stop());
+          setRecorder(null);
+          setIsRecording(null);
         }
-      };
-
-      updateVolume();
-    } else {
-      const currentRecorder = recorder;
-      if (currentRecorder) {
-        currentRecorder.stop();
-        currentRecorder.stream.getTracks().forEach((track) => track.stop());
-        setRecorder(null);
       }
-    }
-  };
+    };
+    func();
+  }
+    , [isRecording]);
 
   useEffect(() => {
     if (isRecording) {
@@ -129,10 +155,16 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
             <Box sx={{
               height: "100%",
               boxSizing: "border-box",
+            }}
+              onClick={
+                () => {
+                  setIsRecording(false);
+                  console.log(recorder, "ALE");
+                }
+              }>
 
-            }}>
-
-              <IconButton
+              <CircleIconButton
+                volume={volume}
                 sx={
                   {
                     height: "100%",
@@ -140,11 +172,9 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
                     alignItems: "center",
                   }
                 }
-                onClick={
-                  handleRecord
-                }>
+              >
                 <Mic />
-              </IconButton>
+              </CircleIconButton>
             </Box>
             <Box sx={{
               height: "100%",
@@ -155,7 +185,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
               <Button
                 onClick={() => {
                   recorder?.pause();
-                  setIsRecording(false);
+                  setIsRecording(null);
                   setAudioBlob(null);
                 }}
                 sx={{
@@ -208,8 +238,12 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
                 startAdornment: (
                   <InputAdornment position="start">
                     <IconButton onClick={
-                      handleRecord
-                    }>
+                      () => {
+                        if (isRecording === null)
+                          setIsRecording(true);
+                      }
+                    }
+                    >
                       <Mic />
                     </IconButton>
                   </InputAdornment>
@@ -233,19 +267,6 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
               boxSizing: "border-box",
 
             }}>
-              <Typography sx={{
-                marginRight: "10px",
-                color: "red",
-                zIndex: 1000,
-              }}
-              >
-                {isRecording ?
-                  "RECORDING" : "RECORDED"
-                } SUKA TUT
-                {audioBlob ?
-                  "TRUE"
-                  : "FALSE"}
-              </Typography>
               <IconButton
                 sx={
                   {
@@ -255,7 +276,10 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
                   }
                 }
                 onClick={
-                  handleRecord
+                  () => {
+                    if (isRecording === null)
+                      setIsRecording(true);
+                  }
                 }>
                 <Mic />
               </IconButton>
@@ -279,14 +303,15 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
               }}
             >
               <IconButton onClick={() => {
-                handleRecord();
+                // TODO: send audio blob to server
+
               }}>
                 <Send />
               </IconButton>
             </Box>
           </Box>
         )}
-    </Box>
+    </Box >
   );
 };
 
