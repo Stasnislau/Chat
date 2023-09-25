@@ -35,20 +35,24 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   ) => {
     return <IconButton {...rest} />;
   };
-  useEffect(() => {
-    console.log(audioBlob);
-  }, [audioBlob]);
   const CircleIconButton = styled(CustomIconButton)`
+  background-color: red;
   position: relative;
+  &:hover{
+    background-color: red;
+  }
   &::before {
     content: "";
     position: absolute;
     border: 2px solid red; /* Change the border color as desired */
     border-radius: 50%;
-    width: calc(50px + ${({ volume }) => volume}px);
-    height: calc(50px + ${({ volume }) => volume}px);
-    top: -${({ volume }) => volume}px;
-    left: -${({ volume }) => volume}px;
+    opacity: 0.5;
+    overflow: hidden;
+    background-color: #DC143C;
+    width: calc(40px + ${({ volume }) => Math.sqrt(volume)}px);
+    height: calc(40px + ${({ volume }) => Math.sqrt(volume)}px);
+    top: calc(50%-${({ volume }) => volume}px);
+    left: calc(50%-${({ volume }) => volume}px);
   }
 `;
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -59,7 +63,6 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   };
   useEffect(() => {
     const func = async () => {
-      console.log(isRecording);
       if (isRecording === null) return;
       if (isRecording) {
         setAudioBlob(null);
@@ -156,12 +159,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
               height: "100%",
               boxSizing: "border-box",
             }}
-              onClick={
-                () => {
-                  setIsRecording(false);
-                  console.log(recorder, "ALE");
-                }
-              }>
+            >
 
               <CircleIconButton
                 volume={volume}
@@ -170,6 +168,11 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
                     height: "100%",
                     display: "flex",
                     alignItems: "center",
+                  }
+                }
+                onClick={
+                  () => {
+                    setIsRecording(false);
                   }
                 }
               >
