@@ -7,10 +7,12 @@ import {
   Typography,
   Button,
   styled,
+  Icon,
 } from "@mui/material";
 import { Send, Mic } from "@mui/icons-material";
 import { Context } from "../../../App";
 import moment from "moment";
+import useMicFrequency from "../../../hooks/useMicFrequency";
 interface ChatTextFieldProps {
   onSend: (text: string, room: string) => void;
   onRecord: (recording: Blob) => void;
@@ -22,7 +24,6 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   const store = useContext(Context);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
-  const [volume, setVolume] = useState(0);
   const [timer, setTimer] = useState<number>(0);
   const handleSend = () => {
     if (message.trim() !== "") {
@@ -30,27 +31,22 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
       setMessage("");
     }
   };
-  const CustomIconButton = ({ volume, ...rest }
-    : { volume: number } & React.ComponentProps<typeof IconButton>
+  const frequency = useMicFrequency({ isEnabled: Boolean(isRecording) });
+  const CustomBox = ({ volume, ...rest }
+    : { volume: number } & React.ComponentProps<typeof Box>
   ) => {
-    return <IconButton {...rest} />;
+    return <Box {...rest} />;
   };
-  const CircleIconButton = styled(CustomIconButton)`
-  background-color: red;
-  position: relative;
-  &:hover{
-    background-color: red;
-  }
-  &::before {
-    content: "";
+  const StyledBox = styled(CustomBox)`
+  & {
     position: absolute;
     border: 2px solid red; /* Change the border color as desired */
     border-radius: 50%;
     opacity: 0.5;
     overflow: hidden;
     background-color: #DC143C;
-    width: calc(40px + ${({ volume }) => Math.sqrt(volume)}px);
-    height: calc(40px + ${({ volume }) => Math.sqrt(volume)}px);
+    width: calc(40px + ${({ volume }) => Math.sqrt(volume) * 1}px);
+    height: calc(40px + ${({ volume }) => Math.sqrt(volume) * 1}px);
     top: calc(50%-${({ volume }) => volume}px);
     left: calc(50%-${({ volume }) => volume}px);
   }
@@ -85,33 +81,8 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
           if (blobData) {
             setAudioBlob(blobData);
           }
-
         }
         currentRecorder.start();
-        const updateVolume = () => {
-          const currentRecorder = recorder;
-          if (currentRecorder) {
-            const audioContext = new AudioContext();
-            const audioSource = audioContext.createMediaStreamSource(currentRecorder.stream);
-            const analyser = audioContext.createAnalyser();
-
-            audioSource.connect(analyser);
-            analyser.fftSize = 256;
-            const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-            const update = () => {
-              analyser.getByteFrequencyData(dataArray);
-              const sum = dataArray.reduce((a, b) => a + b, 0);
-              const average = sum / dataArray.length;
-              setVolume(average);
-              requestAnimationFrame(update);
-            };
-
-            update();
-          }
-        };
-
-        updateVolume();
       } else if (!isRecording) {
         const currentRecorder = recorder;
         if (currentRecorder) {
@@ -134,6 +105,12 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
       return () => clearInterval(interval);
     }
   }, [isRecording]);
+
+  useEffect(() => {
+    // ask for mic permission
+    navigator.mediaDevices.getUserMedia({ audio: true });
+  }
+    , []);
   return (
     <Box
       sx={{
@@ -154,30 +131,46 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
             justifyContent: "space-between",
             alignItems: "center",
             backgroundColor: "primary.main",
+            // TODO: вставлять сюда
           }}>
             <Box sx={{
               height: "100%",
               boxSizing: "border-box",
             }}
             >
-
-              <CircleIconButton
-                volume={volume}
+              <IconButton
                 sx={
                   {
+                    position: "relative",
                     height: "100%",
                     display: "flex",
                     alignItems: "center",
+                    backgroundColor: "red",
+                    "&:hover": {
+                      backgroundColor: "red",
+                    },
                   }
                 }
                 onClick={
                   () => {
+                    console.log("CLICKED suka blyat na hui");
                     setIsRecording(false);
                   }
                 }
               >
+                <StyledBox
+                  volume={frequency}
+                  sx={
+                    {
+                      pointerEvents: "none",
+                      width: "100%",
+                      position: "absolute",
+                      height: "100%",
+                    }
+                  }
+                />
                 <Mic />
-              </CircleIconButton>
+              </IconButton>
             </Box>
             <Box sx={{
               height: "100%",
