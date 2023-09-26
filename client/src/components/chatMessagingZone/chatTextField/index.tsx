@@ -13,6 +13,7 @@ import { Send, Mic } from "@mui/icons-material";
 import { Context } from "../../../App";
 import moment from "moment";
 import useMicFrequency from "../../../hooks/useMicFrequency";
+import AudioPlayer from "../audioPlayer";
 interface ChatTextFieldProps {
   onSend: (text: string, room: string) => void;
   onRecord: (recording: Blob) => void;
@@ -40,7 +41,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   const StyledBox = styled(CustomBox)`
   & {
     position: absolute;
-    border: 2px solid red; /* Change the border color as desired */
+    border: 2px solid red; 
     border-radius: 50%;
     opacity: 0.5;
     overflow: hidden;
@@ -107,13 +108,13 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   }, [isRecording]);
 
   useEffect(() => {
-    // ask for mic permission
     navigator.mediaDevices.getUserMedia({ audio: true });
   }
     , []);
   return (
     <Box
       sx={{
+        position: "relative",
         display: "flex",
         flexDirection: "row",
         width: "100%",
@@ -123,6 +124,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
       {!audioBlob ? (
         isRecording ?
           (<Box sx={{
+            position: "relative",
             width: "100%",
             boxSizing: "border-box",
             display: "flex",
@@ -131,12 +133,13 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
             justifyContent: "space-between",
             alignItems: "center",
             backgroundColor: "primary.main",
-            // TODO: вставлять сюда
+            height: "100%",
+            
           }}>
             <Box sx={{
               height: "100%",
               boxSizing: "border-box",
-            }}
+            }} 
             >
               <IconButton
                 sx={
@@ -153,7 +156,6 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
                 }
                 onClick={
                   () => {
-                    console.log("CLICKED suka blyat na hui");
                     setIsRecording(false);
                   }
                 }
@@ -287,7 +289,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
               alignItems: "center",
             }}>
 
-              <audio controls src={URL.createObjectURL(audioBlob)} />
+              <AudioPlayer audioBlob={audioBlob} />
             </Box>
             <Box
               sx={{
