@@ -67,21 +67,24 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: true,
         });
+        let chunks: Blob[] = [];
 
         if (!stream) {
           store.displayError("Cannot access microphone");
         }
         const currentRecorder = new window.MediaRecorder(stream);
 
-        let blobData: Blob | null = null;
         setRecorder(currentRecorder);
         currentRecorder.ondataavailable = (event) => {
-          blobData = event.data;
+          chunks.push(event.data);
         }
-        currentRecorder.onstop = () => {
-          if (blobData) {
-            setAudioBlob(blobData);
-          }
+        currentRecorder.onstop = async () => {
+          const blob = new Blob(chunks, { type: "audio/webm" });
+          blob.arrayBuffer().then((buffer) => {
+            console.log("novi buffer", buffer);
+            setAudioBlob(blob);
+            chunks = [];
+          })
         }
         currentRecorder.start();
       } else if (!isRecording) {
@@ -134,12 +137,12 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
             alignItems: "center",
             backgroundColor: "primary.main",
             height: "100%",
-            
+
           }}>
             <Box sx={{
               height: "100%",
               boxSizing: "border-box",
-            }} 
+            }}
             >
               <IconButton
                 sx={
@@ -288,7 +291,6 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
               display: "flex",
               alignItems: "center",
             }}>
-
               <AudioPlayer audioBlob={audioBlob} />
             </Box>
             <Box

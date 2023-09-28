@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { IconButton } from '@mui/material';
+import { Box, IconButton, Slider, Typography } from '@mui/material';
 import { PlayArrow, Pause } from '@mui/icons-material';
-import "./index.scss";
 
 const AudioPlayer = ({
     audioBlob
@@ -9,22 +8,45 @@ const AudioPlayer = ({
     {
         audioBlob: Blob
     }) => {
-    // state
     const [isPlaying, setIsPlaying] = useState(false);
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
-    // references
     const audioPlayer = useRef<HTMLAudioElement>(null);
     const progressBar = useRef<HTMLInputElement>(null);
+    const [audioUrl, setAudioUrl] = useState<string>('');
     const animationRef = useRef<number>(0);
+    const convert = (blob: Blob) => {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(blob);
 
+            fileReader.onload = () => {
+                resolve(fileReader.result);
+            };
+
+            fileReader.onerror = (error) => {
+                reject(error);
+            };
+        }
+        );
+    }
     useEffect(() => {
-        console.log(audioPlayer?.current);
+        if (audioBlob) {
+            convert(audioBlob).then((result) => {
+                setAudioUrl(result as string);
+            })
+        }
+    }, [audioBlob]);
+    useEffect(() => {
+
+        console.log(audioPlayer?.current?.readyState, "state");
+        console.log(audioPlayer?.current?.onloadedmetadata, "metadata")
+        console.log(audioPlayer?.current, "audioPlayer")
+        console.log(audioPlayer.current?.duration, "duration")
         if (audioPlayer && audioPlayer.current && audioPlayer.current?.readyState > 0) {
             const audio = audioPlayer.current;
             if (audio) {
                 const seconds = Math.floor(audio.duration);
-                console.log(seconds)
                 setDuration(seconds);
                 if (progressBar.current) {
                     progressBar.current.max = seconds.toString();
@@ -60,56 +82,93 @@ const AudioPlayer = ({
         const audio = audioPlayer.current;
         if (audio && progressBar.current) {
             progressBar.current.value = audio.currentTime.toString();
-            changePlayerCurrentTime();
+            setCurrentTime(audio.currentTime);
             animationRef.current = requestAnimationFrame(whilePlaying);
         }
     };
 
-    const changeRange = () => {
+    useEffect(() => {
         const audio = audioPlayer.current;
         if (audio && progressBar.current) {
-            audio.currentTime = Number(progressBar.current.value);
-            changePlayerCurrentTime();
+            audio.addEventListener('ended', () => {
+                setIsPlaying(false);
+                setCurrentTime(0);
+                if (!progressBar?.current)
+                    return;
+                progressBar.current.value = '0';
+                cancelAnimationFrame(animationRef.current);
+            });
         }
-    };
-
-    const changePlayerCurrentTime = () => {
-        if (progressBar.current) {
-            progressBar.current.style.setProperty('--seek-before-width', `${Number(progressBar.current.value) / duration * 100}%`);
-            setCurrentTime(Number(progressBar.current.value));
-        }
-    };
-
-    const backThirty = () => {
-        if (progressBar.current) {
-            progressBar.current.value = (Number(progressBar.current.value) - 30).toString();
-            changeRange();
-        }
-    };
-
-    const forwardThirty = () => {
-        if (progressBar.current) {
-            progressBar.current.value = (Number(progressBar.current.value) + 30).toString();
-            changeRange();
-        }
-    };
+    }, [audioPlayer?.current?.addEventListener]);
 
 
     return (
-        <div className="audio-player">
-            <audio ref={audioPlayer} src={URL.createObjectURL(audioBlob)} preload="metadata"></audio>
-            <IconButton onClick={togglePlayPause} className="play-pause">
+        <Box sx={
+            {
+                alignItems: "center",
+                display: "flex",
+                width: "100%",
+                maWidth: "300px",
+            }
+        }>
+            <audio ref={audioPlayer} src={audioUrl} preload="metadata" />
+            <IconButton onClick={togglePlayPause}>
                 {isPlaying ? <Pause /> : <PlayArrow className="play" />}
             </IconButton>
 
-            <div className="current-time">{calculateTime(currentTime)}</div>
+            <Typography sx={
+                {
+                    fontSize: '16px',
+                    marginRight: '10px',
+                }
 
-            <div>
-                <input type="range" className="progress-bar" defaultValue="0" ref={progressBar} onChange={changeRange} />
-            </div>
+            }>{calculateTime(currentTime)}</Typography>
+            <Slider
+                ref={progressBar}
+                aria-label="time-indicator"
+                size="small"
+                value={currentTime}
+                min={0}
+                step={duration / 100}
+                max={duration}
+                onChange={(_, value) => {
+                    console.log(value, "value")
+                    setCurrentTime(value as number)
+                }}
+                sx={{
+                    color: 'red',
+                    width: {
+                        mobile: '50px',
+                        tablet: '200px',
+                        laptop: '300px',
+                        desktop: '400px',
+                    },
+                    height: 4,
+                    '& .MuiSlider-thumb': {
+                        width: 8,
+                        height: 8,
+                        transition: '0.3s cubic-bezier(.47,1.64,.41,.8)',
+                        '&:before': {
+                            boxShadow: '0 2px 12px 0 rgba(0,0,0,0.4)',
+                        },
+                        '&.Mui-active': {
+                            width: 20,
+                            height: 20,
+                        },
+                    },
+                    '& .MuiSlider-rail': {
+                        opacity: 0.28,
+                    },
+                }}
+            />
 
-            <div className="duration">{(duration && !isNaN(duration)) && calculateTime(duration)}</div>
-        </div>
+            <Typography sx={
+                {
+                    fontSize: '16px',
+                    marginLeft: '10px',
+                }
+            }>{(duration && !isNaN(duration)) && calculateTime(duration)}</Typography>
+        </Box >
     );
 };
 
