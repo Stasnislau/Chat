@@ -127,7 +127,12 @@ const MessagingZone = observer(
         window.removeEventListener("beforeunload", handleUnload);
       };
     }, [store.state.userId, socket]);
-
+    useEffect(() => {
+      if (record) {
+        handleSendVoiceMessage(record);
+      }
+    }
+      , [record]);
     useEffect(() => {
       const socket = io("http://localhost:8001");
       setSocket(socket);

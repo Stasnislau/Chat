@@ -1,6 +1,7 @@
 import { Avatar, Box, Typography } from "@mui/material";
 import { message } from "../../../types";
 import moment from "moment";
+import AudioPlayer from "../audioPlayer";
 
 interface MessageBubbleProps {
   message: message;
@@ -49,7 +50,8 @@ const MessageBubble = ({ message, isMine, avatars }: MessageBubbleProps) => {
         <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
           {message?.user?.name}
         </Typography>
-        <Typography variant="body1">{message.text}</Typography>
+        {message?.audioUrl ? <AudioPlayer audioUrl={message.audioUrl} /> :
+          <Typography variant="body1">{message.text}</Typography>}
         <Typography variant="caption" sx={{ color: "text.secondary" }}>
           {time}
         </Typography>
