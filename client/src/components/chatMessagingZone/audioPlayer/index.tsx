@@ -3,40 +3,17 @@ import { Box, IconButton, Slider, Typography } from '@mui/material';
 import { PlayArrow, Pause } from '@mui/icons-material';
 
 const AudioPlayer = ({
-    audioBlob
+    audioUrl: audioUrl,
 }:
     {
-        audioBlob: Blob
+        audioUrl: string;
     }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [duration, setDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
     const audioPlayer = useRef<HTMLAudioElement>(null);
     const progressBar = useRef<HTMLInputElement>(null);
-    const [audioUrl, setAudioUrl] = useState<string>('');
     const animationRef = useRef<number>(0);
-    const convert = (blob: Blob) => {
-        return new Promise((resolve, reject) => {
-            const fileReader = new FileReader();
-            fileReader.readAsDataURL(blob);
-
-            fileReader.onload = () => {
-                resolve(fileReader.result);
-            };
-
-            fileReader.onerror = (error) => {
-                reject(error);
-            };
-        }
-        );
-    }
-    useEffect(() => {
-        if (audioBlob) {
-            convert(audioBlob).then((result) => {
-                setAudioUrl(result as string);
-            })
-        }
-    }, [audioBlob]);
     useEffect(() => {
 
         console.log(audioPlayer?.current?.readyState, "state");
