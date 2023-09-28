@@ -7,13 +7,11 @@ import {
   Typography,
   Button,
   styled,
-  Icon,
 } from "@mui/material";
 import { Send, Mic } from "@mui/icons-material";
 import { Context } from "../../../App";
 import moment from "moment";
 import useMicFrequency from "../../../hooks/useMicFrequency";
-import AudioPlayer from "../audioPlayer";
 interface ChatTextFieldProps {
   onSend: (text: string, room: string) => void;
   onRecord: (recording: Blob) => void;
@@ -77,9 +75,9 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
         setRecorder(currentRecorder);
         currentRecorder.ondataavailable = (event) => {
           chunks.push(event.data);
-        }
+        };
         currentRecorder.onstop = async () => {
-          const blob = new Blob(chunks, { type: "audio/webm" });
+          const blob = new Blob(chunks, { 'type': currentRecorder.mimeType });
           blob.arrayBuffer().then((buffer) => {
             console.log("novi buffer", buffer);
             setAudioBlob(blob);
@@ -100,6 +98,12 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
     func();
   }
     , [isRecording]);
+
+  useEffect(() => {
+    if (audioBlob) {
+      onRecord(audioBlob);
+    }
+  }, [audioBlob]);
 
   useEffect(() => {
     if (isRecording) {
@@ -124,7 +128,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
         boxSizing: "border-box",
       }}
     >
-      {!audioBlob ? (
+      {
         isRecording ?
           (<Box sx={{
             position: "relative",
@@ -139,6 +143,44 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
             height: "100%",
 
           }}>
+            <Box
+              sx={{
+                height: "100%",
+                boxSizing: "border-box",
+                display: "flex",
+                alignItems: "center",
+
+              }}
+            >
+              <Typography sx={{
+                marginRight: "10px",
+                marginLeft: "10px",
+              }}>
+                {moment.utc(timer * 1000).format("mm:ss")}
+              </Typography>
+
+            </Box>
+            <Box sx={{
+              height: "100%",
+              boxSizing: "border-box",
+              display: "flex",
+              alignItems: "center",
+            }}>
+              <Button
+                onClick={() => {
+                  recorder?.pause();
+                  setIsRecording(null);
+                  setAudioBlob(null);
+                }}
+                sx={{
+                  color: "red",
+
+                }}
+              >
+                Stop
+              </Button>
+            </Box>
+
             <Box sx={{
               height: "100%",
               boxSizing: "border-box",
@@ -174,45 +216,8 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
                     }
                   }
                 />
-                <Mic />
+                <Send />
               </IconButton>
-            </Box>
-            <Box sx={{
-              height: "100%",
-              boxSizing: "border-box",
-              display: "flex",
-              alignItems: "center",
-            }}>
-              <Button
-                onClick={() => {
-                  recorder?.pause();
-                  setIsRecording(null);
-                  setAudioBlob(null);
-                }}
-                sx={{
-                  color: "red",
-
-                }}
-              >
-                Stop
-              </Button>
-            </Box>
-            <Box
-              sx={{
-                height: "100%",
-                boxSizing: "border-box",
-                display: "flex",
-                alignItems: "center",
-
-              }}
-            >
-              <Typography sx={{
-                marginRight: "10px",
-                marginLeft: "10px",
-              }}>
-                {moment.utc(timer * 1000).format("mm:ss")}
-              </Typography>
-
             </Box>
           </Box>)
           : (
@@ -251,66 +256,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
                 )
               }}
             />)
-      )
-        : (
-          <Box sx={{
-            width: "100%",
-            boxSizing: "border-box",
-            display: "flex",
-            border: "1px solid black",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            backgroundColor: "primary.main",
-          }}>
-            <Box sx={{
-              height: "100%",
-              boxSizing: "border-box",
-
-            }}>
-              <IconButton
-                sx={
-                  {
-                    height: "100%",
-                    display: "flex",
-                    alignItems: "center",
-                  }
-                }
-                onClick={
-                  () => {
-                    if (isRecording === null)
-                      setIsRecording(true);
-                  }
-                }>
-                <Mic />
-              </IconButton>
-            </Box>
-            <Box sx={{
-              height: "100%",
-              boxSizing: "border-box",
-              display: "flex",
-              alignItems: "center",
-            }}>
-              <AudioPlayer audioBlob={audioBlob} />
-            </Box>
-            <Box
-              sx={{
-                height: "100%",
-                boxSizing: "border-box",
-                display: "flex",
-                alignItems: "center",
-
-              }}
-            >
-              <IconButton onClick={() => {
-                // TODO: send audio blob to server
-
-              }}>
-                <Send />
-              </IconButton>
-            </Box>
-          </Box>
-        )}
+      }
     </Box >
   );
 };
