@@ -32,7 +32,8 @@ const MessagingZone = observer(
 
     const [messageHistory, setMessageHistory] = useState<message[]>([]);
 
-    const handleSendVoiceMessage = (recording: Blob) => {
+    const handleSendVoiceMessage = async (recording: Blob) => {
+      const audio = recording;
       const message = {
         userId: store.state.userId,
         roomId: store.state.currentRoomId,
@@ -40,6 +41,7 @@ const MessagingZone = observer(
         user: {
           name: store.state.userName,
         },
+        audio: audio,
       }
       socket?.emit("message", { message, room: store.state.currentRoomId });
       store.setShouldUpdateRooms(true);

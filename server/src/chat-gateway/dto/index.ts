@@ -2,7 +2,7 @@ export interface messageDTO {
     text: string;
     user: string;
     date: Date;
-    audioBlob?: Blob;
+    audio?: Blob;
     roomId: string;
     userId: string;
 }

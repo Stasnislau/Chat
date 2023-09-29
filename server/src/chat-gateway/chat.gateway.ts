@@ -10,6 +10,8 @@ import { Socket } from "socket.io";
 import { messageDTO } from "./dto";
 import cloudinary from "../cloudinary";
 import ApiError from "src/exceptions/api-error";
+import { Readable } from "stream";
+import { streamToBuffer } from '@jorgeferrero/stream-to-buffer';
 @WebSocketGateway(8001, {
   cors: "*",
 })
@@ -22,39 +24,57 @@ export class ChatGateway {
   ): Promise<void> {
     const { message, room } = data;
     if (room === "") return;
-    else {
+    if (!message.audio) {
       this.server.to(room).emit("message", message);
+      await this.prisma.message.create({
+        data: {
+          text: message.text,
+          isRead: false,
+          user: {
+            connect: {
+              id: message.userId,
+            },
+          },
+          room: {
+            connect: {
+              id: message.roomId,
+            },
+          },
+        },
+      });
+    } else {
+      const buffer = await streamToBuffer(Readable.from([message.audio]));
+      const uploadOptions = {
+        folder: "voice-messages",
+        resource_type: "auto" as const,
+      };
+      cloudinary.uploader
+        .upload_stream(uploadOptions, async (error, result) => {
+          if (error) {
+            return ApiError.badGateway("Unable to upload images");
+          }
+          const audioUrl = result.secure_url;
+          this.server.to(room).emit("message", { ...message, audioUrl });
+          await this.prisma.message.create({
+            data: {
+              text: message.text,
+              isRead: false,
+              audioUrl: audioUrl,
+              user: {
+                connect: {
+                  id: message.userId,
+                },
+              },
+              room: {
+                connect: {
+                  id: message.roomId,
+                },
+              },
+            },
+          });
+        })
+        .end(buffer);
     }
-    const res = await cloudinary.uploader.upload(
-      message.audioBlob.toString(),
-      {
-        folder: "products",
-        resource_type: "image",
-      },
-      (error, result) => {
-        if (error) {
-          return ApiError.badGateway("Unable to upload the audiofile");
-        }
-      }
-    );
-    const audioUrl = res.secure_url;
-    await this.prisma.message.create({
-      data: {
-        text: message.text,
-        isRead: false,
-        audioUrl: audioUrl,
-        user: {
-          connect: {
-            id: message.userId,
-          },
-        },
-        room: {
-          connect: {
-            id: message.roomId,
-          },
-        },
-      },
-    });
   }
   @SubscribeMessage("join-room")
   async handleJoinRoom(
