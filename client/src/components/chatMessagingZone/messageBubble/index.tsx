@@ -1,8 +1,8 @@
-import { Avatar, Box, IconButton, Typography } from "@mui/material";
+import { Avatar, Box, CircularProgress, IconButton, Typography } from "@mui/material";
 import { message } from "../../../types";
 import moment from "moment";
 import AudioPlayer from "../audioPlayer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 
 interface MessageBubbleProps {
@@ -18,7 +18,19 @@ const MessageBubble = ({ message, isMine, avatars }: MessageBubbleProps) => {
   const avatar = avatars.find((avatar) => avatar.id === message.userId)?.avatar;
   const [isConverted, setIsConverted] = useState(false);
   const [convertedText, setConvertedText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const time = moment(message.dateSent).format("HH:mm");
+
+  useEffect(() => {
+    if (isConverted) {
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
+      setConvertedText(message.text);
+    }
+  }, [isConverted]);
+
   return (
     <Box
       sx={{
@@ -66,6 +78,7 @@ const MessageBubble = ({ message, isMine, avatars }: MessageBubbleProps) => {
             marginLeft: isMine ? "0.5rem" : "0.25rem",
             marginRight: isMine ? "0.25rem" : "0.5rem",
             display: message.audioUrl ? "flex" : "none",
+            backgroundColor: isMine ? "#a8daee" : "#FFFFFF",
           }} onClick={() => setIsConverted(!isConverted)}>
             <TextSnippetIcon />
           </IconButton>
@@ -74,7 +87,9 @@ const MessageBubble = ({ message, isMine, avatars }: MessageBubbleProps) => {
               marginLeft: isMine ? "0.5rem" : "0.25rem",
               marginRight: isMine ? "0.25rem" : "0.5rem",
             }}
-          >{convertedText}</Typography> :
+          >{isLoading ? <CircularProgress color="primary" /> :
+            convertedText
+            }</Typography> :
             <AudioPlayer audioUrl={message.audioUrl} />}
         </Box> :
           <Typography variant="body1">{message.text}</Typography>}

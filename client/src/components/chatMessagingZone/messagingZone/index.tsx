@@ -22,6 +22,7 @@ const MessagingZone = observer(
     const [rooms, setRooms] = useState<extendedRoom[]>([]);
     const [socket, setSocket] = useState<Socket>();
     const [record, setRecord] = useState<Blob | null>(null);
+    const [text, setText] = useState<string>("");
     const messageListener = (message: message) => {
       if (message.roomId !== store.state.currentRoomId) {
         store.setShouldUpdateRooms(true);
@@ -31,13 +32,17 @@ const MessagingZone = observer(
     };
 
     const [messageHistory, setMessageHistory] = useState<message[]>([]);
+    const onRecord = (recording: Blob, text: string) => {
+      setRecord(recording);
+      setText(text);
+    }
 
     const handleSendVoiceMessage = async (recording: Blob) => {
       const audio = recording;
       const message = {
         userId: store.state.userId,
         roomId: store.state.currentRoomId,
-        text: "",
+        text: text,
         user: {
           name: store.state.userName,
         },
@@ -266,7 +271,7 @@ const MessagingZone = observer(
             minHeight: "15%",
           }}
         >
-          <ChatTextField onSend={handleSendMessage} onRecord={setRecord} />
+          <ChatTextField onSend={handleSendMessage} onRecord={onRecord} />
         </Box>
       </Box>
     );

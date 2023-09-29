@@ -14,7 +14,7 @@ import moment from "moment";
 import useMicFrequency from "../../../hooks/useMicFrequency";
 interface ChatTextFieldProps {
   onSend: (text: string, room: string) => void;
-  onRecord: (recording: Blob) => void;
+  onRecord: (recording: Blob, text: string) => void;
 }
 
 const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
@@ -24,6 +24,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
   const [timer, setTimer] = useState<number>(0);
+  const [recordedText, setRecordedText] = useState<string>("");
   const handleSend = () => {
     if (message.trim() !== "") {
       onSend(message, store.state.currentRoomId);
@@ -57,6 +58,33 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
     }
   };
   useEffect(() => {
+    const recordText = () => {
+      if ('webkitSpeechRecognition' in window) {
+        const SpeechRecognition = (window as any).SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+        recognition.start();
+        recognition.onresult = (event: any) => {
+          if (isRecording) {
+            const speechResult = event.results[0][0].transcript;
+            setRecordedText(speechResult);
+          }
+          else {
+            recognition.stop();
+          }
+        }
+        recognition.onspeechend = () => {
+          recognition.stop();
+        }
+        recognition.onerror = (event: any) => {
+          console.log(event.error);
+        }
+      } else {
+        return
+      }
+    }
     const func = async () => {
       if (isRecording === null) return;
       if (isRecording) {
@@ -89,6 +117,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
           })
         }
         currentRecorder.start();
+        recordText();
       } else if (!isRecording) {
         const currentRecorder = recorder;
         if (currentRecorder) {
@@ -105,7 +134,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
 
   useEffect(() => {
     if (audioBlob) {
-      onRecord(audioBlob);
+      onRecord(audioBlob, recordedText);
     }
   }, [audioBlob]);
 

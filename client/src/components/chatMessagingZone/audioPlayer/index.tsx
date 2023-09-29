@@ -15,11 +15,6 @@ const AudioPlayer = ({
     const progressBar = useRef<HTMLInputElement>(null);
     const animationRef = useRef<number>(0);
     useEffect(() => {
-
-        console.log(audioPlayer?.current?.readyState, "state");
-        console.log(audioPlayer?.current?.onloadedmetadata, "metadata")
-        console.log(audioPlayer?.current, "audioPlayer")
-        console.log(audioPlayer.current?.duration, "duration")
         if (audioPlayer && audioPlayer.current && audioPlayer.current?.readyState > 0) {
             const audio = audioPlayer.current;
             if (audio) {
