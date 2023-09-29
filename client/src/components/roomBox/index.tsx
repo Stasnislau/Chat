@@ -63,7 +63,7 @@ const RoomBox = observer(
           />
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Typography sx={{ fontWeight: "bold" }}>{name}</Typography>
-            <Typography sx={{ color: "gray" }}>{text}</Typography>
+            <Typography sx={{ color: "gray" }}>{text ? text : "Voice message"}</Typography>
             <Typography sx={{ color: "gray" }}>{time}</Typography>
           </Box>
         </Box>
