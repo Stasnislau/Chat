@@ -79,7 +79,6 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
         currentRecorder.onstop = async () => {
           const blob = new Blob(chunks, { 'type': currentRecorder.mimeType });
           blob.arrayBuffer().then((buffer) => {
-            console.log("novi buffer", buffer);
             setAudioBlob(blob);
             chunks = [];
           })
@@ -108,8 +107,8 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   useEffect(() => {
     if (isRecording) {
       const interval = setInterval(() => {
-        setTimer((timer) => timer + 1);
-      }, 1000);
+        setTimer((timer) => timer + 50);
+      }, 50);
       return () => clearInterval(interval);
     }
   }, [isRecording]);
@@ -156,7 +155,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
                 marginRight: "10px",
                 marginLeft: "10px",
               }}>
-                {moment.utc(timer * 1000).format("mm:ss")}
+                {moment.utc(timer).format("mm:ss")}
               </Typography>
 
             </Box>
