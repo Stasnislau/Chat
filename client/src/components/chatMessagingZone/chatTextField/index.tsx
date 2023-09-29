@@ -78,8 +78,13 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
         };
         currentRecorder.onstop = async () => {
           const blob = new Blob(chunks, { 'type': currentRecorder.mimeType });
-          blob.arrayBuffer().then((buffer) => {
-            setAudioBlob(blob);
+          const metadata = {
+            type: "audio/webm",
+            duration: timer,
+          };
+          const blobWithMetadata = new Blob([blob, JSON.stringify(metadata)]);
+          blobWithMetadata.arrayBuffer().then((buffer) => {
+            setAudioBlob(blobWithMetadata);
             chunks = [];
           })
         }
