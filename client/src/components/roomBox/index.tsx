@@ -11,6 +11,7 @@ const RoomBox = observer(
     date,
     avatar,
     numberOfUnreadMessages,
+    audio,
   }: {
     roomId: string;
     name: string;
@@ -18,6 +19,7 @@ const RoomBox = observer(
     date: Date;
     avatar: string;
     numberOfUnreadMessages?: number;
+    audio?: boolean;
   }) => {
     const store = useContext(Context);
     const time = moment(date).calendar(null, {
@@ -63,7 +65,7 @@ const RoomBox = observer(
           />
           <Box sx={{ display: "flex", flexDirection: "column" }}>
             <Typography sx={{ fontWeight: "bold" }}>{name}</Typography>
-            <Typography sx={{ color: "gray" }}>{text ? text : "Voice message"}</Typography>
+            <Typography sx={{ color: "gray" }}>{audio ? "Voice message" : text}</Typography>
             <Typography sx={{ color: "gray" }}>{time}</Typography>
           </Box>
         </Box>

@@ -277,6 +277,7 @@ const HomePage = observer(() => {
                         }
                         avatar={room.avatar}
                         numberOfUnreadMessages={room.numberOfUnreadMessages}
+                        audio={room.messages[0]?.audioUrl ? true : false}
                       />
                       <Divider sx={{ width: "100%" }} />
                     </Box>
