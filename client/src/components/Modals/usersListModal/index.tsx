@@ -43,8 +43,8 @@ const UsersListModal = ({
             display: "flex",
             flexDirection: "row",
             flexWrap: "wrap",
-            overflowY: "scroll",
-            height: "100%",
+            overflowY: "auto",
+            maxHeight: "100%",
             width: "100%",
           }}
         >

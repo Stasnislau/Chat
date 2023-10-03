@@ -208,19 +208,20 @@ const MessagingZone = observer(
           width: "100%",
           position: "relative",
           padding: "0 2%",
-          height: "100%",
-          flexBox: "1",
           backgroundColor: "secondary.main",
           boxSizing: "border-box",
           resize: "none",
+          flexGrow: 1,
+          height: 0,
         }}
       >
         <Box
           sx={{
             width: "100%",
-            minHeight: "60%",
             overflowY: "scroll",
             boxSizing: "border-box",
+            flexGrow: 1,
+            height: 0,
           }}
           component="div"
           className="message-history-container"
@@ -268,7 +269,7 @@ const MessagingZone = observer(
             alignItems: "center",
             width: "100%",
             boxSizing: "border-box",
-            minHeight: "15%",
+            padding: "2% 0 ",
           }}
         >
           <ChatTextField onSend={handleSendMessage} onRecord={onRecord} />

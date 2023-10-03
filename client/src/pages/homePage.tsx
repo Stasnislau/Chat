@@ -135,7 +135,6 @@ const HomePage = observer(() => {
         flexDirection: "column",
         width: "100%",
         height: "100%",
-        flexBox: "1",
         border: "1px solid white",
       }}
     >
@@ -229,7 +228,7 @@ const HomePage = observer(() => {
               width: "100%",
               height: "89.5%",
               resize: "vertical",
-              overflowY: "scroll",
+              overflowY: "auto",
               boxSizing: "border-box",
               position: "relative",
             }}
@@ -305,7 +304,7 @@ const HomePage = observer(() => {
             display: "flex",
             flexDirection: "column",
             width: isRoomsPanelOpen ? "68%" : "100%",
-            height: "100%",
+            flexGrow: 1,
             boxSizing: "border-box",
           }}
         >

@@ -87,7 +87,8 @@ const ChatArea = observer(() => {
         display: "flex",
         flexDirection: "column",
         width: "100%",
-        height: "100%",
+        flexGrow: 1,
+        height: 0,
       }}
     >
       {store.state.currentRoomId === "" ? (
@@ -96,7 +97,8 @@ const ChatArea = observer(() => {
             display: "flex",
             flexDirection: "column",
             width: "100%",
-            height: "100%",
+            flexGrow: 1,
+            height: 0,
             backgroundColor: "#FFFFFF",
             borderBottom: "1px solid grey",
             justifyContent: "center",
@@ -115,11 +117,11 @@ const ChatArea = observer(() => {
             display: "flex",
             flexDirection: "column",
             width: "100%",
-            height: "100%",
             backgroundColor: "#FFFFFF",
             borderBottom: "1px solid grey",
             boxSizing: "border-box",
-            resize: "none",
+            flexGrow: 1,
+            height: 0,
           }}
         >
           <Box
@@ -127,7 +129,7 @@ const ChatArea = observer(() => {
               display: "flex",
               flexDirection: "column",
               width: "100%",
-              height: "11.7%",
+              height: "10.5%",
               backgroundColor: "#FFFFFF",
               borderBottom: "1px solid grey",
               boxSizing: "border-box",
@@ -138,7 +140,6 @@ const ChatArea = observer(() => {
                 display: "flex",
                 flexDirection: "row",
                 width: "100%",
-                height: "100%",
                 justifyContent: "center",
                 alignItems: "center",
                 boxSizing: "border-box",
@@ -152,7 +153,8 @@ const ChatArea = observer(() => {
               display: "flex",
               flexDirection: "column",
               width: "100%",
-              height: "88.3%",
+              flexGrow: 1,
+              height: 0,
             }}
           >
             <MessagingZone
