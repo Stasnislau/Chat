@@ -3,7 +3,7 @@ import { Context } from "../../../App";
 import { observer } from "mobx-react-lite";
 import { useContext, useState, useEffect } from "react";
 import InfoComponent from "../infoComponent";
-import MessengingZone from "../messagingZone";
+import MessagingZone from "../messagingZone";
 import { API_URL } from "../../../constants";
 import { room } from "../../../types";
 
@@ -155,7 +155,7 @@ const ChatArea = observer(() => {
               height: "88.3%",
             }}
           >
-            <MessengingZone
+            <MessagingZone
               avatars={avatars}
               setShouldUpdateRoom={setShouldUpdateRoom}
             />
