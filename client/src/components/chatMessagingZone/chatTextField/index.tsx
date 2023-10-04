@@ -12,6 +12,7 @@ import { Send, Mic } from "@mui/icons-material";
 import { Context } from "../../../App";
 import moment from "moment";
 import useMicFrequency from "../../../hooks/useMicFrequency";
+import fixWebmDuration from "fix-webm-duration";
 interface ChatTextFieldProps {
   onSend: (text: string, room: string) => void;
   onRecord: (recording: Blob, text: string) => void;
@@ -25,6 +26,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
   const [timer, setTimer] = useState<number>(0);
   const [recordedText, setRecordedText] = useState<string>("");
+  const [startTime, setStartTime] = useState(0);
   const handleSend = () => {
     if (message.trim() !== "") {
       onSend(message, store.state.currentRoomId);
@@ -105,18 +107,18 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
           chunks.push(event.data);
         };
         currentRecorder.onstop = async () => {
-          const blob = new Blob(chunks, { 'type': currentRecorder.mimeType });
-          const metadata = {
-            type: "audio/webm",
-            duration: timer,
-          };
-          const blobWithMetadata = new Blob([blob, JSON.stringify(metadata)]);
-          blobWithMetadata.arrayBuffer().then((buffer) => {
-            setAudioBlob(blobWithMetadata);
-            chunks = [];
-          })
+          const duration = Date.now() - startTime;
+          const blob = new Blob(chunks, { type: "audio/webm" });
+          fixWebmDuration(blob, duration, function (fixedBlob: Blob) {
+            setAudioBlob(fixedBlob);
+          });
+
+          chunks = [];
         }
+
+
         currentRecorder.start();
+        setStartTime(Date.now());
         recordText();
       } else if (!isRecording) {
         const currentRecorder = recorder;
@@ -173,7 +175,6 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
             justifyContent: "space-between",
             alignItems: "center",
             backgroundColor: "primary.main",
-            height: "100%",
 
           }}>
             <Box
