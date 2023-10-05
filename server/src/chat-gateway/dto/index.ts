@@ -5,4 +5,5 @@ export interface messageDTO {
     audio?: Blob;
     roomId: string;
     userId: string;
+    duration?: string;
 }

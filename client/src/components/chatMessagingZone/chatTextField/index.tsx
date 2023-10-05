@@ -12,10 +12,9 @@ import { Send, Mic } from "@mui/icons-material";
 import { Context } from "../../../App";
 import moment from "moment";
 import useMicFrequency from "../../../hooks/useMicFrequency";
-import fixWebmDuration from "fix-webm-duration";
 interface ChatTextFieldProps {
   onSend: (text: string, room: string) => void;
-  onRecord: (recording: Blob, text: string) => void;
+  onRecord: (recording: Blob, text: string, duration: number) => void;
 }
 
 const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
@@ -26,7 +25,8 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
   const [timer, setTimer] = useState<number>(0);
   const [recordedText, setRecordedText] = useState<string>("");
-  const [startTime, setStartTime] = useState(0);
+  const [finalDuration, setFinalDuration] = useState(0);
+  let startTime = useRef(0);
   const handleSend = () => {
     if (message.trim() !== "") {
       onSend(message, store.state.currentRoomId);
@@ -104,21 +104,22 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
 
         setRecorder(currentRecorder);
         currentRecorder.ondataavailable = (event) => {
-          chunks.push(event.data);
+          if (event && event.data && event.data.size > 0)
+            chunks.push(event.data);
         };
         currentRecorder.onstop = async () => {
-          const duration = Date.now() - startTime;
+          const duration = Date.now() - startTime.current;
           const blob = new Blob(chunks, { type: "audio/webm" });
-          fixWebmDuration(blob, duration, function (fixedBlob: Blob) {
-            setAudioBlob(fixedBlob);
-          });
-
+          setAudioBlob(blob);
+          setFinalDuration(duration); 
+          startTime.current = 0;
           chunks = [];
         }
-
-
+        const timeOfStart = Date.now();
+        startTime.current = timeOfStart;
+        
         currentRecorder.start();
-        setStartTime(Date.now());
+
         recordText();
       } else if (!isRecording) {
         const currentRecorder = recorder;
@@ -136,7 +137,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
 
   useEffect(() => {
     if (audioBlob) {
-      onRecord(audioBlob, recordedText);
+      onRecord(audioBlob, recordedText, finalDuration);
     }
   }, [audioBlob]);
 

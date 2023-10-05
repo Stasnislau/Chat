@@ -11,7 +11,7 @@ import { messageDTO } from "./dto";
 import cloudinary from "../cloudinary";
 import ApiError from "src/exceptions/api-error";
 import { Readable } from "stream";
-import { streamToBuffer } from '@jorgeferrero/stream-to-buffer';
+import { streamToBuffer } from "@jorgeferrero/stream-to-buffer";
 @WebSocketGateway(8001, {
   cors: "*",
 })
@@ -43,15 +43,19 @@ export class ChatGateway {
         },
       });
     } else {
+      if (message.duration === "0") return;
+
       const buffer = await streamToBuffer(Readable.from([message.audio]));
+      console.log(message.duration)
       const uploadOptions = {
         folder: "voice-messages",
         resource_type: "auto" as const,
+        context: `duration=${message.duration}`,
       };
       cloudinary.uploader
         .upload_stream(uploadOptions, async (error, result) => {
           if (error) {
-            return ApiError.badGateway("Unable to upload images");
+            return ApiError.badGateway("Unable to upload message");
           }
           const audioUrl = result.secure_url;
           this.server.to(room).emit("message", { ...message, audioUrl });
