@@ -12,9 +12,10 @@ import { Send, Mic } from "@mui/icons-material";
 import { Context } from "../../../App";
 import moment from "moment";
 import useMicFrequency from "../../../hooks/useMicFrequency";
+import fixWebmDuration from "fix-webm-duration";
 interface ChatTextFieldProps {
   onSend: (text: string, room: string) => void;
-  onRecord: (recording: Blob, text: string, duration: number) => void;
+  onRecord: (recording: Blob, text: string) => void;
 }
 
 const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
@@ -25,7 +26,6 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
   const [timer, setTimer] = useState<number>(0);
   const [recordedText, setRecordedText] = useState<string>("");
-  const [finalDuration, setFinalDuration] = useState(0);
   let startTime = useRef(0);
   const handleSend = () => {
     if (message.trim() !== "") {
@@ -110,14 +110,15 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
         currentRecorder.onstop = async () => {
           const duration = Date.now() - startTime.current;
           const blob = new Blob(chunks, { type: "audio/webm" });
-          setAudioBlob(blob);
-          setFinalDuration(duration); 
+          fixWebmDuration(blob, duration, function (fixedBlob: Blob) {
+            setAudioBlob(fixedBlob);
+          });
           startTime.current = 0;
           chunks = [];
         }
         const timeOfStart = Date.now();
         startTime.current = timeOfStart;
-        
+
         currentRecorder.start();
 
         recordText();
@@ -137,7 +138,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
 
   useEffect(() => {
     if (audioBlob) {
-      onRecord(audioBlob, recordedText, finalDuration);
+      onRecord(audioBlob, recordedText);
     }
   }, [audioBlob]);
 

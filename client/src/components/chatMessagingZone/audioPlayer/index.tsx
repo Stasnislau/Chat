@@ -10,7 +10,6 @@ const AudioPlayer = ({
     }) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [duration, setDuration] = useState(0);
-    const [currentTime, setCurrentTime] = useState(0);
     const audioPlayer = useRef<HTMLAudioElement>(null);
     const progressBar = useRef<HTMLInputElement>(null);
     const animationRef = useRef<number>(0);
@@ -19,6 +18,7 @@ const AudioPlayer = ({
             const audio = audioPlayer.current;
             if (audio) {
                 const seconds = Math.floor(audio.duration);
+
                 setDuration(seconds);
                 if (progressBar.current) {
                     progressBar.current.max = seconds.toString();
@@ -54,7 +54,6 @@ const AudioPlayer = ({
         const audio = audioPlayer.current;
         if (audio && progressBar.current) {
             progressBar.current.value = audio.currentTime.toString();
-            setCurrentTime(audio.currentTime);
             animationRef.current = requestAnimationFrame(whilePlaying);
         }
     };
@@ -64,7 +63,6 @@ const AudioPlayer = ({
         if (audio && progressBar.current) {
             audio.addEventListener('ended', () => {
                 setIsPlaying(false);
-                setCurrentTime(0);
                 if (!progressBar?.current)
                     return;
                 progressBar.current.value = '0';
@@ -72,7 +70,6 @@ const AudioPlayer = ({
             });
         }
     }, [audioPlayer?.current?.addEventListener]);
-
 
     return (
         <Box sx={
@@ -83,7 +80,9 @@ const AudioPlayer = ({
                 maWidth: "300px",
             }
         }>
-            <audio ref={audioPlayer} src={audioUrl} preload="metadata" />
+            <audio ref={audioPlayer} preload="auto">
+                <source src={audioUrl} />
+            </audio>
             <IconButton onClick={togglePlayPause}>
                 {isPlaying ? <Pause /> : <PlayArrow className="play" />}
             </IconButton>
@@ -94,18 +93,22 @@ const AudioPlayer = ({
                     marginRight: '10px',
                 }
 
-            }>{calculateTime(currentTime)}</Typography>
+            }>{calculateTime(Number(audioPlayer.current?.currentTime))}</Typography>
             <Slider
                 ref={progressBar}
                 aria-label="time-indicator"
                 size="small"
-                value={currentTime}
+                value={Number(progressBar.current)}
                 min={0}
                 step={duration / 100}
                 max={duration}
                 onChange={(_, value) => {
-                    console.log(value, "value")
-                    setCurrentTime(value as number)
+                    if (audioPlayer && audioPlayer.current) {
+                        audioPlayer.current.currentTime = Number(value);
+                        if (progressBar.current) {
+                            progressBar.current.value = value.toString();
+                        }
+                    }
                 }}
                 sx={{
                     color: 'red',

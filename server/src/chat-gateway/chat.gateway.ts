@@ -43,14 +43,11 @@ export class ChatGateway {
         },
       });
     } else {
-      if (message.duration === "0") return;
-
       const buffer = await streamToBuffer(Readable.from([message.audio]));
-      console.log(message.duration)
       const uploadOptions = {
         folder: "voice-messages",
         resource_type: "auto" as const,
-        context: `duration=${message.duration}`,
+        MediaMetadata: true,
       };
       cloudinary.uploader
         .upload_stream(uploadOptions, async (error, result) => {
