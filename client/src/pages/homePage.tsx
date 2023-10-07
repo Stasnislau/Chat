@@ -238,10 +238,10 @@ const HomePage = observer(() => {
               !store.state.isSearching &&
               rooms
                 .sort((a, b) => {
-                  if (!a.messages || a.messages.length === 0) {
+                  if (!a || !a.messages || a.messages.length === 0 || a.messages[0] === null) {
                     return -1;
                   }
-                  if (!b.messages || b.messages.length === 0) {
+                  if (!b || !b.messages || b.messages.length === 0 || b.messages[0] === null) {
                     return 1;
                   }
                   return (
