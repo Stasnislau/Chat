@@ -43,6 +43,22 @@ const AudioPlayer = ({
   };
 
   useEffect(() => {
+    const audio = audioPlayer.current;
+    if (audio) {
+      const handleCanPlayThrough = () => {
+        audio.play();
+        audio.pause();
+        setDuration(audio.duration);
+      };
+      audio.addEventListener("canplaythrough", handleCanPlayThrough);
+      return () => {
+        audio.removeEventListener("canplaythrough", handleCanPlayThrough);
+        cancelAnimationFrame(animationRef.current);
+      };
+    }
+  }, [audioPlayer?.current?.addEventListener]);
+
+  useEffect(() => {
     if (isPlaying) {
       const intervalId = setInterval(whilePlaying, 50);
       return () => clearInterval(intervalId);
