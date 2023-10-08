@@ -1,9 +1,20 @@
 import { Box, Button, IconButton, Modal } from "@mui/material";
 import { useEffect, useState, useContext } from "react";
-import { Context } from "../../App";
-import { room } from "../../types";
+import { Context } from "../../../App";
+import { room } from "../../../types";
 
+interface AddUsersModalProps {
+    isAddUsersModalOpen: boolean;
+    setIsAddUsersModalOpen: (isOpen: boolean) => void;
+    onClose: () => void;
+}
 const AddUsersModal = (
+    {
+        isAddUsersModalOpen,
+        setIsAddUsersModalOpen,
+        onClose,
+    }: AddUsersModalProps
+
 ) => {
     const store = useContext(Context);
     const [room, setRoom] = useState<room>({} as room);
@@ -40,32 +51,26 @@ const AddUsersModal = (
         }
     }
         , [store.state.currentRoomId, store.state.userId]);
-    // return (
-    //     // <Modal
-    //     //     open={store.state.isAddUsersModalOpen}
-    //     //     onClose={() => store.setIsAddUsersModalOpen(false)}
-    //     //     aria-labelledby="modal-modal-title"
-    //     //     aria-describedby="modal-modal-description"
-    //     // >
-    //     //     <Box sx={{
-    //     //         position: "absolute",
-    //     //         top: "50%",
-    //     //         left: "50%",
-    //     //         transform: "translate(-50%, -50%)",
-    //     //         width: 400,
-    //     //         bgcolor: "background.paper",
-    //     //         border: "2px solid #000",
-    //     //         boxShadow: 24,
-    //     //         p: 4,
-    //     //     }}>
-    //     //         <h2 id="modal-modal-title">Add Users</h2>
-    //     //         <p id="modal-modal-description">
-    //     //             Add users to your room
-    //     //         </p>
-    //     //         <Button onClick={() => store.setIsAddUsersModalOpen(false)}>Close</Button>
-    //     //     </Box>
-    //     // </Modal>
-    // )
+    return (
+        <Modal
+            open={isAddUsersModalOpen}
+            onClose={onClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box sx={{
+
+                boxShadow: 24,
+                p: 4,
+            }}>
+                <h2 id="modal-modal-title">Add Users</h2>
+                <p id="modal-modal-description">
+                    Add users to your room
+                </p>
+                <Button onClick={onClose}>Close</Button>
+            </Box>
+        </Modal>
+    )
 }
 
 export default AddUsersModal;

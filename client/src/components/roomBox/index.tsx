@@ -63,7 +63,8 @@ const RoomBox = observer(
             }}
             src={avatar}
           />
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "space-around"        
+        }}>
             <Typography sx={{ fontWeight: "bold" }}>{name}</Typography>
             <Typography sx={{ color: "gray" }}>{audio ? "Voice message" : text}</Typography>
             <Typography sx={{ color: "gray" }}>{time}</Typography>
