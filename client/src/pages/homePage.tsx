@@ -12,7 +12,7 @@ import { Context } from "../App";
 import RoomBox from "../components/roomBox";
 import { extendedRoom, user } from "../types";
 import { API_URL } from "../constants";
-import SearchBar from "../components/searchField";
+import SearchField from "../components/searchField";
 import { observer } from "mobx-react-lite";
 import UserBox from "../components/usersBox";
 import ChatArea from "../components/chatMessagingZone/chatArea";
@@ -219,7 +219,7 @@ const HomePage = observer(() => {
               backgroundColor: "#FFFFFF",
             }}
           >
-            <SearchBar />
+            <SearchField />
           </Box>
           <Box
             sx={{

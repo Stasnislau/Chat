@@ -4,6 +4,7 @@ import {
   TextField,
   IconButton,
 } from "@mui/material";
+import CreateRoomModal from "../Modals/createRoomModal";
 import { Search } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import PostAddIcon from "@mui/icons-material/PostAdd";
@@ -25,9 +26,10 @@ const StyledTextField = styled(TextField)({
     border: "1px solid #e9e9e9",
   },
 });
-const SearchBar = observer(() => {
+const SearchField = observer(() => {
   const [searchText, setSearchText] = useState("");
   const [isSearchOn, setIsSearchOn] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const store = useContext(Context);
 
@@ -90,14 +92,21 @@ const SearchBar = observer(() => {
             },
           }}
           onClick={() => {
-            setIsSearchOn(!isSearchOn);
+            // setIsSearchOn(!isSearchOn);
+            setIsModalOpen(true);
           }}
         >
           <PostAddIcon />
         </IconButton>
       </Box>
+      {isModalOpen && (
+        <CreateRoomModal
+          isOpen={isModalOpen}
+          setIsOpen={setIsModalOpen}
+        />
+      )}
     </Box>
   );
 });
 
-export default SearchBar;
+export default SearchField;
