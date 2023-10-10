@@ -1,25 +1,25 @@
-import React from 'react';
 import { Box, TextField, styled, } from '@mui/material';
 import { Search } from '@mui/icons-material';
 
+const StyledTextField = styled(TextField)({
+    "& .MuiOutlinedInput-root": {
+        position: "relative",
+        width: "100%",
+        height: "100%",
+    },
+    "& .MuiOutlinedInput-input": {
+        height: "100%",
+        boxSizing: "border-box",
+        padding: "0 0 0 0.5rem",
+    },
+    "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+        border: "1px solid #e9e9e9",
+    },
+});
 
 const LocalSearchField = ({ searchText, setSearchText }:
     { searchText: string, setSearchText: (value: string) => void }) => {
-    const StyledTextField = styled(TextField)({
-        "& .MuiOutlinedInput-root": {
-            position: "relative",
-            width: "100%",
-            height: "100%",
-        },
-        "& .MuiOutlinedInput-input": {
-            height: "100%",
-            boxSizing: "border-box",
-            padding: "0 0 0 0.5rem",
-        },
-        "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-            border: "1px solid #e9e9e9",
-        },
-    });
+
     return (
         <Box width="100%" position="relative" display="flex">
             <Box

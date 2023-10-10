@@ -1,5 +1,5 @@
 import { Box, Button, IconButton, Modal, Typography } from "@mui/material";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { Context } from "../../../App";
 import LocalSearchField from "../localSearchField";
 import { user } from "../../../types";
@@ -14,6 +14,7 @@ const CreateRoomModal = (
     setIsOpen,
   }: createRoomModalProps) => {
   {
+
     const [searchText, setSearchText] = useState("");
     const [users, setUsers] = useState<user[]>([]);
     const store = useContext(Context);
@@ -33,20 +34,20 @@ const CreateRoomModal = (
         <Box
           sx={{
             backgroundColor: "#FFFFFF",
-            height: "50%",
+            height: "60%",
             width: {
               mobile: "90%",
-              tablet: "50%",
-              laptop: "30%",
-              desktop: "30%",
+              tablet: "70%",
+              laptop: "50%",
+              desktop: "40%",
             },
             borderRadius: "1rem",
             boxShadow: 24,
-            padding: "1%",
             display: "flex",
             flexDirection: "column",
             borderBox: "box-sizing",
             border: "none",
+            p: 4,
           }}
         >
           {/* Two levels: upper with the LocalSearchBar which search for people and a part for actually choosing whether we want 1 person in our chat or more.  */}
@@ -55,6 +56,7 @@ const CreateRoomModal = (
               display: "flex",
               height: "60%",
               width: "100%",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
               fontFamily: "Roboto",
@@ -71,9 +73,10 @@ const CreateRoomModal = (
               }
             }
             >
-              < LocalSearchField
+              <LocalSearchField
                 searchText={searchText}
                 setSearchText={setSearchText}
+                key="search"
               />
             </Box>
             <Box sx={
@@ -84,11 +87,12 @@ const CreateRoomModal = (
                 justifyContent: "center",
                 fontFamily: "Roboto",
                 flexGrow: 1,
+                border: "1px solid black",
               }
             }
-
             >
               {/* TODO: Add the list of people that we can choose from. */}
+
             </Box>
           </Box>
         </Box>
