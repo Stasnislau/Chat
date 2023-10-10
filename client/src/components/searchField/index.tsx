@@ -34,14 +34,7 @@ const SearchField = observer(() => {
   const store = useContext(Context);
 
   useEffect(() => {
-    if (searchText === "") {
-      store.stopSearching();
-      store.stopFiltering();
-    } else if (isSearchOn && searchText !== "") {
-      store.startSearching(searchText);
-    } else if (!isSearchOn && searchText !== "") {
-      store.startFiltering(searchText);
-    }
+      store.setSearchingText(searchText);
   }, [isSearchOn, searchText]);
 
   return (

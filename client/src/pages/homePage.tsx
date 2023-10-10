@@ -103,16 +103,6 @@ const HomePage = observer(() => {
   };
 
   useEffect(() => {
-    if (
-      store.state.searchText !== "" &&
-      store.state.searchText.length > 2 &&
-      store.state.isSearching
-    ) {
-      fetchUsers();
-    }
-  }, [store.state.searchText, store.state.isSearching]);
-
-  useEffect(() => {
     if (store.state.userId !== "") {
       fetchRooms();
     }
@@ -235,7 +225,6 @@ const HomePage = observer(() => {
           >
             {rooms &&
               rooms.length > 0 &&
-              !store.state.isSearching &&
               rooms
                 .sort((a, b) => {
                   if (!a || !a.messages || a.messages.length === 0 || a.messages[0] === null) {
@@ -250,11 +239,11 @@ const HomePage = observer(() => {
                   );
                 })
                 .map((room) => {
-                  if (store.state.isFiltering) {
+                  if (store.state.searchText !== "" && store.state.searchText.length > 0) {
                     if (
                       !room.name
                         .toLowerCase()
-                        .includes(store.state.filteringText.toLowerCase())
+                        .includes(store.state.searchText.toLowerCase())
                     ) {
                       return null;
                     }
@@ -282,19 +271,6 @@ const HomePage = observer(() => {
                     </Box>
                   );
                 })}
-            {searchResults.length > 0 &&
-              store.state.isSearching &&
-              searchResults.map(
-                (user) =>
-                  user && (
-                    <UserBox
-                      key={user.id}
-                      userId={user.id}
-                      name={user.nickname}
-                      avatar={user.avatar}
-                    />
-                  )
-              )}
 
             <Divider sx={{ width: "100%" }} />
           </Box>

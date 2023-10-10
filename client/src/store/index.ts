@@ -9,11 +9,8 @@ export interface storeInterface {
   userName: string;
   addedAlert: boolean;
   alerts: alertInterface[];
-  isSearching: boolean;
-  searchText: string;
-  isFiltering: boolean;
-  filteringText: string;
   shouldUpdateRooms: boolean;
+  searchText: string;
 }
 export default class Store {
   state: storeInterface;
@@ -26,10 +23,7 @@ export default class Store {
       userId: "",
       userName: "",
       addedAlert: false,
-      isSearching: false,
       searchText: "",
-      isFiltering: false,
-      filteringText: "",
       shouldUpdateRooms: false,
     };
     makeAutoObservable(this);
@@ -77,27 +71,11 @@ export default class Store {
   removeAlert = (id: number) => {
     this.state.alerts = this.state.alerts.filter((alert) => alert.id !== id);
   };
-  startSearching = (searchText: string) => {
-    this.state.isSearching = true;
-    this.state.searchText = searchText;
-  };
-
-  stopSearching = () => {
-    this.state.isSearching = false;
-    this.state.searchText = "";
-  };
-
-  startFiltering = (filteringText: string) => {
-    this.state.isFiltering = true;
-    this.state.filteringText = filteringText;
-  };
-
-  stopFiltering = () => {
-    this.state.isFiltering = false;
-    this.state.filteringText = "";
-  };
 
   setShouldUpdateRooms = (shouldUpdateRooms: boolean) => {
     this.state.shouldUpdateRooms = shouldUpdateRooms;
   };
+  setSearchingText = (searchingText: string) => {
+    this.state.searchText = searchingText;
+  }
 }
