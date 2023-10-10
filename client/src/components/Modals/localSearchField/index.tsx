@@ -3,17 +3,21 @@ import { Search } from '@mui/icons-material';
 
 const StyledTextField = styled(TextField)({
     "& .MuiOutlinedInput-root": {
+        display: "flex",
         position: "relative",
         width: "100%",
-        height: "100%",
+        flexGrow: 1,
     },
     "& .MuiOutlinedInput-input": {
-        height: "100%",
+        display: "flex",
+        flexGrow: 1,
         boxSizing: "border-box",
         padding: "0 0 0 0.5rem",
+        width: "100%",
     },
     "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-        border: "1px solid #e9e9e9",
+        border: "1px solid black",
+        width: "100%",
     },
 });
 
@@ -25,9 +29,9 @@ const LocalSearchField = ({ searchText, setSearchText }:
             <Box
                 sx={{
                     display: "flex",
-                    width: "75%",
+                    width: "100%",
                     height: "100%",
-                    paddingLeft: "5%",
+                    padding: "0 5%",
                     boxSizing: "border-box",
                     alignItems: "center",
                 }}
@@ -35,7 +39,7 @@ const LocalSearchField = ({ searchText, setSearchText }:
                 <StyledTextField
                     type="text"
                     placeholder="Search.."
-                    sx={{ width: "100%", height: "50%", boxSizing: "border-box" }}
+                    sx={{ width: "100%", height: "100%", boxSizing: "border-box" }}
                     value={searchText}
                     onChange={(event) => {
                         setSearchText(event.target.value);
@@ -45,16 +49,6 @@ const LocalSearchField = ({ searchText, setSearchText }:
                     }}
                 />
             </Box>
-            <Box
-                sx={{
-                    display: "flex",
-                    width: "25%",
-                    height: "100%",
-                    boxSizing: "border-box",
-                    alignItems: "center",
-                    padding: "0 7.5%",
-                }}
-            />
         </Box>
     );
 
