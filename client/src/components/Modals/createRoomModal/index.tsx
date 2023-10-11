@@ -5,6 +5,7 @@ import LocalSearchField from "../localSearchField";
 import { user } from "../../../types";
 import UserBoxBadged from "../../userBoxBadged";
 import { API_URL } from "../../../constants";
+import useDebounce from "../../../hooks/useDebounce";
 
 interface createRoomModalProps {
   isOpen: boolean,
@@ -23,7 +24,6 @@ const CreateRoomModal = (
     const [searchResults, setSearchResults] = useState<user[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    // фетчить новых юхеров по мере добавления их в чосенЮзерс и удалять если их убрали из списка айдишников
 
     const fetchChosenUsers = async () => {
       try {
@@ -76,26 +76,25 @@ const CreateRoomModal = (
         setIsLoading(false);
       }
     };
-
-    useEffect(() => {
-      const func = async () => {
-        if (selectedUserIds.length > 0) {
-          await fetchChosenUsers();
-        }
+    const callFetching = useDebounce(async () => {
+      if (selectedUserIds.length > 0) {
+        await fetchChosenUsers();
       }
-      func();
+    }, 500)
+    useEffect(() => {
+      callFetching();
     }, [selectedUserIds.length]);
 
     useEffect(() => {
       const func = async () => {
         if (
-          searchText !== "" && searchText.length > 2
+          searchText && searchText.length > 2
         ) {
           await fetchUsers();
         }
       }
       func();
-    }, [fetchUsers, searchText]);
+    }, [ searchText]);
 
     useEffect(() => {
       if (!searchText || searchText.length < 3) {
@@ -180,60 +179,60 @@ const CreateRoomModal = (
                 />
               </Box>
               {
-                <Box sx={
-                  {
-                    display: "flex",
-                    width: "100%",
-                    justifyContent: "center",
-                    fontFamily: "Roboto",
-                    flexGrow: 1,
-                    borderTop: "1px solid black",
-                    borderBottom: "1px solid black",
-                    margin: "1rem 0 1rem 0",
-                    boxSizing: "border-box",
-                    overflowY: "auto",
-                  }
-                }
-                >
-                  {searchResults && searchResults.length > 0 && searchResults.map((user) => {
-                    return (
-                      <Box sx={
+                isLoading ?
+                  (
+                    <Box sx={
+                      {
+                        display: "flex",
+                        width: "100%",
+                        flexDirection: "column",
+                        justifyContent: "flex-start",
+                        fontFamily: "Roboto",
+                        flexGrow: 1,
+                        borderTop: "1px solid black",
+                        borderBottom: "1px solid black",
+                        margin: "1rem 0 1rem 0",
+                        boxSizing: "border-box",
+                        overflowY: "auto",
+                      }
+                    }
+                    >
+                      <Typography sx={
                         {
-                          display: "flex",
-                          width: "100%",
-                          flexDirection: "row",
-                          fontFamily: "Roboto",
-                          flexWrap: "wrap",
+                          fontSize: 20,
+                          textAlign: "center",
                         }
-                      }>
-                        <UserBoxBadged
-                          userId={user.id}
-                          name={user.name}
-                          avatar={user.avatar}
-                          isChosen={selectedUserIds.includes(user.id)}
-                          handleUserClick={(id: string) => {
-                            if (selectedUserIds.includes(user.id)) {
-                              if (selectedUserIds.length === 1) {
-                                return;
-                              }
-                              setSelectedUserIds(selectedUserIds.filter((userId) => userId !== user.id));
-                            } else {
-                              setSelectedUserIds([...selectedUserIds, user.id]);
-                            }
-                          }}
-                        />
-                      </Box>
-
-                    )
-                  })}
-                  {
-                    !searchResults || searchResults.length === 0  && chosenUsers && chosenUsers.length !== 0 && !isLoading && chosenUsers.map((user) => {
+                      } fontWeight="bold" textAlign="left" paddingBottom="1rem">
+                        <Skeleton variant="text" />
+                        <Skeleton variant="text" />
+                        <Skeleton variant="text" />
+                      </Typography>
+                    </Box>
+                  )
+                  :
+                  <Box sx={
+                    {
+                      display: "flex",
+                      width: "100%",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      fontFamily: "Roboto",
+                      flexGrow: 1,
+                      borderTop: "1px solid black",
+                      borderBottom: "1px solid black",
+                      margin: "1rem 0 1rem 0",
+                      boxSizing: "border-box",
+                      overflowY: "auto",
+                    }
+                  }
+                  >
+                    {searchResults && searchResults.length > 0 && searchResults.map((user) => {
                       return (
                         <Box sx={
                           {
                             display: "flex",
                             width: "100%",
-                            flexDirection: "row",
+                            flexDirection: "column",
                             fontFamily: "Roboto",
                             flexWrap: "wrap",
                           }
@@ -255,17 +254,42 @@ const CreateRoomModal = (
                             }}
                           />
                         </Box>
-                      )
-                    })
-                  }
-                  <Box sx={
-                    {
-                      display: selectedUserIds.length > 2 ? "flex" : "none",
-                    }}
-                  >
 
+                      )
+                    })}
+                    {
+                      !searchResults || searchResults.length === 0 && !searchText && chosenUsers && chosenUsers.length > 0 && !isLoading && chosenUsers.map((user) => {
+                        return (
+                          <Box sx={
+                            {
+                              display: "flex",
+                              width: "100%",
+                              flexDirection: "row",
+                              fontFamily: "Roboto",
+                              flexWrap: "wrap",
+                            }
+                          }>
+                            <UserBoxBadged
+                              userId={user.id}
+                              name={user.name}
+                              avatar={user.avatar}
+                              isChosen={selectedUserIds.includes(user.id)}
+                              handleUserClick={(id: string) => {
+                                if (selectedUserIds.includes(user.id)) {
+                                  if (selectedUserIds.length === 1) {
+                                    return;
+                                  }
+                                  setSelectedUserIds(selectedUserIds.filter((userId) => userId !== user.id));
+                                } else {
+                                  setSelectedUserIds([...selectedUserIds, user.id]);
+                                }
+                              }}
+                            />
+                          </Box>
+                        )
+                      })
+                    }
                   </Box>
-                </Box>
               }
             </Box>
 
