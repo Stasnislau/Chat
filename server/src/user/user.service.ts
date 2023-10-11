@@ -179,4 +179,14 @@ export class UserService {
     });
     return users;
   }
+
+  getUsers(ids: string[]) {
+    return this.prisma.user.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+    });
+  }
 }

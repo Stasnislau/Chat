@@ -78,4 +78,13 @@ export class UserController {
     }
     return avatars;
   }
+
+  @Post("getUsersByIds")
+  async getUsers(@Body() data: { ids: string[] }) {
+    const users = await this.userService.getUsers(data.ids);
+    if (users instanceof ApiError) {
+      throw users;
+    }
+    return users;
+  }
 }
