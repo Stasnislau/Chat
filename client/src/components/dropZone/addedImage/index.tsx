@@ -1,27 +1,33 @@
-import { Box, IconButton } from "@mui/material";
+import { Box, IconButton, Avatar } from "@mui/material";
 import { Cancel } from "@mui/icons-material";
 
 interface ComponentProps {
   source: string;
   onDelete: (source: string) => void;
+  height: number;
 }
 
-const AddedImage = ({ source, onDelete }: ComponentProps) => {
+const AddedImage = ({ source, onDelete, height }: ComponentProps) => {
   return (
     <Box
       sx={{
-        width: "100%",
+        width: 1,
         height: "100%",
-        backgroundColor: "red",
         position: "relative",
-        backgroundImage: `url(${source})`,
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-        objectFit: "cover",
+        // backgroundImage: `url(${source})`,
+        // backgroundPosition: "center",
+        // backgroundRepeat: "no-repeat",
+        // backgroundSize: "cover",
+        // objectFit: "cover",
       }}
     >
-
+      <Avatar
+        src={source}
+        sx={{
+          height: `${height}px`,
+          objectFit: "cover",
+        }}
+      />
       <IconButton
         sx={{
           padding: "0",

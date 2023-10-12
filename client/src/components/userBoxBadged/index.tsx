@@ -26,7 +26,7 @@ const UserBoxBadged = observer(
                     height: "fit-content",
                     display: "flex",
                     alignItems: "center",
-                    padding: "1rem",
+                    p: 1,
                     cursor: "pointer",
                     boxSizing: "border-box",
                     backgroundColor: "#FFFFFF",

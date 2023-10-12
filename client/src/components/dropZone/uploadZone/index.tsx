@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import { useDropzone } from "react-dropzone";
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import AddedImage from "../addedImage";
 import { fileObject } from "../../../types";
 import convertBase64 from "../../../assets/convertBase64";
@@ -8,12 +8,12 @@ import { Context } from "../../../App";
 
 interface UploadZoneProps {
   onChange: (value: string) => void;
-  width?: string;
-  height?: string;
 }
 
-const UploadZone = ({ onChange, width, height }: UploadZoneProps) => {
+const UploadZone = ({ onChange }: UploadZoneProps) => {
   const store = useContext(Context);
+  const [height, setHeight] = useState<number>(0);
+  const boxRef = useRef<HTMLDivElement>(null);
   const [file, setFile] = useState<fileObject | null>(null);
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -48,44 +48,58 @@ const UploadZone = ({ onChange, width, height }: UploadZoneProps) => {
     func();
   }, [file]);
 
+  useEffect(() => {
+    const box = boxRef.current;
+    if (box && !file) {
+      console.log(box.clientHeight, 'box')
+      setHeight(box.clientHeight);
+    }
+  }, [boxRef])
+
   const onDelete = () => {
     setFile(null);
   };
   return (
     <Box
-      display="flex"
-      flexDirection="row"
-      flexGrow="1"
-      height={height}
-      width={width}
+      ref={boxRef}
+      sx={
+        {
+          display: "flex",
+          flexDirection: "column",
+          flexGrow: 1,
+          width: 1,
+        }
+      }
     >
       <Box
         {...getRootProps()}
         sx={{
-          width: file ? "100%" : "70%",
+          width: file && file == null ? 0.7 : 1,
           backgroundColor: "#f5f5f5",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           position: "relative",
-          margin: "0",
-          flex: "1",
-          height: "inherit",
-          flexGrow: "1",
+          flexGrow: 1,
           border: "2px dashed #ccc",
           borderRadius: "8px",
           cursor: "pointer",
-          overflow: "hidden",
         }}
       >
         {file ? (
-          <AddedImage source={file.preview} onDelete={onDelete} />
+          <AddedImage source={file.preview} onDelete={onDelete} height={height} />
         ) : (
           <Typography
-            fontSize="1.2rem"
-            color="#777"
+
             sx={{
               fontFamily: "Arial, sans-serif",
+              fontSize: {
+                mobile: "0.8rem",
+                tablet: "1rem",
+                laptop: "1.2rem",
+                desktop: "1.4rem",
+              },
+              color: "#777",
             }}
           >
             Drag or click to upload avatar (max 1MB)

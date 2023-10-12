@@ -7,6 +7,8 @@ import UserBoxBadged from "../../userBoxBadged";
 import { API_URL } from "../../../constants";
 import useDebounce from "../../../hooks/useDebounce";
 import UploadZone from "../../dropZone/uploadZone";
+import React from "react";
+import UsersList from "./UsersList";
 
 interface createRoomModalProps {
   isOpen: boolean,
@@ -138,11 +140,13 @@ const CreateRoomModal = (
             p: 4,
           }}
         >
-          <Typography sx={
-            {
-              fontSize: 20,
-            }
-          } fontWeight="bold" textAlign="left" paddingBottom="1rem">
+          <Typography
+            sx={
+              {
+                fontSize: 20,
+                fontWeight: "bold",
+              }
+            }>
             Create chat
           </Typography>
           <Box sx={{
@@ -150,7 +154,6 @@ const CreateRoomModal = (
             flexDirection: "column",
             flexGrow: 1,
             justifyContent: "space-between",
-            alignItems: "center",
             width: 1,
           }}
           >
@@ -158,18 +161,14 @@ const CreateRoomModal = (
               {
                 display: "flex",
                 width: "100%",
-                flexGrow: 1,
                 flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
                 fontFamily: "Roboto",
               }
             }>
               <Box sx={
                 {
                   display: "flex",
-                  width: "100%",
-                  height: "fit-content",
+                  width: 1,
                   alignItems: "center",
                   justifyContent: "center",
                   fontFamily: "Roboto",
@@ -195,7 +194,7 @@ const CreateRoomModal = (
                         flexGrow: 1,
                         borderTop: "1px solid black",
                         borderBottom: "1px solid black",
-                        margin: "1rem 0 1rem 0",
+                        m: 1,
                         boxSizing: "border-box",
                         overflowY: "auto",
                       }
@@ -213,22 +212,7 @@ const CreateRoomModal = (
                     </Box>
                   )
                   :
-                  (<Box sx={
-                    {
-                      display: "flex",
-                      width: 1,
-                      flexDirection: "column",
-                      justifyContent: "flex-start",
-                      fontFamily: "Roboto",
-                      flexGrow: 1,
-                      borderTop: "1px solid black",
-                      borderBottom: "1px solid black",
-                      margin: "1rem 0 1rem 0",
-                      boxSizing: "border-box",
-                      overflowY: "auto",
-                    }
-                  }
-                  >
+                  (<UsersList>
                     {searchResults && searchResults.length > 0 && searchResults.map((user) => {
                       return (
                         <Box sx={
@@ -291,7 +275,7 @@ const CreateRoomModal = (
                         )
                       })
                     }
-                  </Box>)
+                  </UsersList>)
               }
             </Box>
             <Box sx={{
@@ -299,8 +283,9 @@ const CreateRoomModal = (
               flexDirection: "column",
               justifyContent: "flex-start",
               fontFamily: "Roboto",
-              marginBottom: 2,
+              marginBottom: 1,
               display: selectedUserIds && selectedUserIds.length > 2 ? "flex" : "none",
+              flexGrow: 1,
             }}
             >
               <FormControl sx={{
@@ -328,10 +313,6 @@ const CreateRoomModal = (
                   aria-describedby="chatName"
                   label="Chat name"
                   color="secondary"
-                  sx={{
-
-                  }
-                  }
                   onChange={(e) => {
                     setChatName(e.target.value);
                   }}
@@ -344,15 +325,15 @@ const CreateRoomModal = (
                 fontFamily: "Roboto",
                 display: "flex",
                 alignItems: "center",
+                flexGrow: 1,
               }}>
                 <UploadZone onChange={setChatPicture} />
               </Box>
-
             </Box>
             <Box sx={
               {
                 display: "flex",
-                width: "100%",
+                width: 1,
                 alignItems: "center",
                 justifyContent: "center",
                 fontFamily: "Roboto",
@@ -363,7 +344,7 @@ const CreateRoomModal = (
                 sx={
                   {
                     display: "flex",
-                    width: "30%",
+                    width: 0.3,
                     alignItems: "center",
                     justifyContent: "center",
                     fontFamily: "Roboto",
