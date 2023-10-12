@@ -38,6 +38,7 @@ const LocalSearchField = ({ searchText, setSearchText }:
             >
                 <StyledTextField
                     type="text"
+                    color="secondary"
                     placeholder="Search.."
                     sx={{ width: "100%", height: "100%", boxSizing: "border-box" }}
                     value={searchText}

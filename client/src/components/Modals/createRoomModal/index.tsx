@@ -1,4 +1,4 @@
-import { Box, Button, Divider, IconButton, Modal, Skeleton, Typography } from "@mui/material";
+import { Box, Button, Divider, FormControl, IconButton, InputLabel, Modal, Skeleton, TextField, Typography } from "@mui/material";
 import { useEffect, useState, useContext } from "react";
 import { Context } from "../../../App";
 import LocalSearchField from "../localSearchField";
@@ -6,6 +6,7 @@ import { user } from "../../../types";
 import UserBoxBadged from "../../userBoxBadged";
 import { API_URL } from "../../../constants";
 import useDebounce from "../../../hooks/useDebounce";
+import UploadZone from "../../dropZone/uploadZone";
 
 interface createRoomModalProps {
   isOpen: boolean,
@@ -23,6 +24,9 @@ const CreateRoomModal = (
     const [chosenUsers, setChosenUsers] = useState<user[]>([]);
     const [searchResults, setSearchResults] = useState<user[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [chatName, setChatName] = useState("");
+    const [chatPicture, setChatPicture] = useState<string>();
+
 
 
     const fetchChosenUsers = async () => {
@@ -94,7 +98,7 @@ const CreateRoomModal = (
         }
       }
       func();
-    }, [ searchText]);
+    }, [searchText]);
 
     useEffect(() => {
       if (!searchText || searchText.length < 3) {
@@ -147,7 +151,7 @@ const CreateRoomModal = (
             flexGrow: 1,
             justifyContent: "space-between",
             alignItems: "center",
-            width: "100%",
+            width: 1,
           }}
           >
             <Box sx={
@@ -184,7 +188,7 @@ const CreateRoomModal = (
                     <Box sx={
                       {
                         display: "flex",
-                        width: "100%",
+                        width: 1,
                         flexDirection: "column",
                         justifyContent: "flex-start",
                         fontFamily: "Roboto",
@@ -205,15 +209,14 @@ const CreateRoomModal = (
                       } fontWeight="bold" textAlign="left" paddingBottom="1rem">
                         <Skeleton variant="text" />
                         <Skeleton variant="text" />
-                        <Skeleton variant="text" />
                       </Typography>
                     </Box>
                   )
                   :
-                  <Box sx={
+                  (<Box sx={
                     {
                       display: "flex",
-                      width: "100%",
+                      width: 1,
                       flexDirection: "column",
                       justifyContent: "flex-start",
                       fontFamily: "Roboto",
@@ -231,7 +234,7 @@ const CreateRoomModal = (
                         <Box sx={
                           {
                             display: "flex",
-                            width: "100%",
+                            width: 1,
                             flexDirection: "column",
                             fontFamily: "Roboto",
                             flexWrap: "wrap",
@@ -254,7 +257,6 @@ const CreateRoomModal = (
                             }}
                           />
                         </Box>
-
                       )
                     })}
                     {
@@ -289,10 +291,64 @@ const CreateRoomModal = (
                         )
                       })
                     }
-                  </Box>
+                  </Box>)
               }
             </Box>
+            <Box sx={{
+              width: 1,
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              fontFamily: "Roboto",
+              marginBottom: 2,
+              display: selectedUserIds && selectedUserIds.length > 2 ? "flex" : "none",
+            }}
+            >
+              <FormControl sx={{
+                width: 1,
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                fontFamily: "Roboto",
+                marginBottom: 2,
+                color: "black",
+                "&.MuiOutlinedInput-root": {
+                  "fieldset": {
+                    borderColor: "black",
+                  },
+                  ":hover fieldset": {
+                    borderColor: "black",
+                  },
+                  ".Mui-focused fieldset": {
+                    borderColor: "black",
+                  },
 
+                },
+              }}>
+                <TextField
+                  id="chatName"
+                  aria-describedby="chatName"
+                  label="Chat name"
+                  color="secondary"
+                  sx={{
+
+                  }
+                  }
+                  onChange={(e) => {
+                    setChatName(e.target.value);
+                  }}
+                />
+              </FormControl>
+              <Box sx={{
+                width: 1,
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                fontFamily: "Roboto",
+                display: "flex",
+                alignItems: "center",
+              }}>
+                <UploadZone onChange={setChatPicture} />
+              </Box>
+
+            </Box>
             <Box sx={
               {
                 display: "flex",
