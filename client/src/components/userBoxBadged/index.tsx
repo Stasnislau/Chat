@@ -38,7 +38,7 @@ const UserBoxBadged = observer(
             >
                 <Avatar src={avatar} sx={{
                     height: "3rem", width: "3rem",
-                    outline: isChosen ? "2px solid green" : "none"
+                    outline: isChosen ? "3px solid green" : "none"
                 }} />
                 <Box sx={{ marginLeft: "1rem" }}>
                     <Typography sx={{ fontWeight: "bold" }}>{name}</Typography>
