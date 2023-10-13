@@ -55,7 +55,7 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
       setHeight(box.clientHeight);
     }
   }, [boxRef])
-
+  
   const onDelete = () => {
     setFile(null);
   };

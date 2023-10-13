@@ -8,12 +8,14 @@ import { API_URL } from "../../../constants";
 import useDebounce from "../../../hooks/useDebounce";
 import UploadZone from "../../dropZone/uploadZone";
 import UsersList from "./UsersList";
+import UserSkeleton from "./userSkeleton";
+import { observer } from "mobx-react-lite";
 
 interface createRoomModalProps {
   isOpen: boolean,
   setIsOpen: (isOpen: boolean) => void,
 }
-const CreateRoomModal = (
+const CreateRoomModal = observer((
   {
     isOpen,
     setIsOpen,
@@ -182,45 +184,13 @@ const CreateRoomModal = (
               {
                 isLoading ?
                   (
-                    <Box sx={
-                      {
-                        display: "flex",
-                        width: 1,
-                        flexDirection: "column",
-                        justifyContent: "flex-start",
-                        fontFamily: "Roboto",
-                        flexGrow: 1,
-                        borderTop: "1px solid black",
-                        borderBottom: "1px solid black",
-                        m: 1,
-                        boxSizing: "border-box",
-                        overflowY: "auto",
-                      }
-                    }
+                    <UsersList isFull={selectedUserIds && selectedUserIds.length < 3}
                     >
-                      <Typography sx={
-                        {
-                          fontSize: 20,
-                          textAlign: "left",
-                          fontWeight: "bold",
-                          paddingLeft: 1,
-                        }
-                      }>
-                        <Skeleton variant="text" />
-                        <Skeleton variant="text" />
-                      </Typography>
-                      <Typography sx={
-                        {
-                          fontSize: 20,
-                          textAlign: "left",
-                          fontWeight: "bold",
-                          paddingLeft: 1,
-                        }
-                      }>
-                        <Skeleton variant="text" />
-                        <Skeleton variant="text" />
-                      </Typography>
-                    </Box>
+                      <UserSkeleton />
+                      <UserSkeleton />
+                      <UserSkeleton />
+                      <UserSkeleton />
+                    </UsersList>
                   )
                   :
                   (<UsersList isFull={selectedUserIds && selectedUserIds.length < 3}>
@@ -380,6 +350,6 @@ const CreateRoomModal = (
       </Modal>
     )
   }
-}
+});
 
 export default CreateRoomModal;
