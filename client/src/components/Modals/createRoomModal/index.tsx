@@ -28,7 +28,10 @@ const CreateRoomModal = observer((
     const [searchResults, setSearchResults] = useState<user[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [chatName, setChatName] = useState("");
-    const [chatPicture, setChatPicture] = useState<string>();
+    const [chatPicture, setChatPicture] = useState<string>("");
+    const [error, setError] = useState<string>("");
+
+
 
     const fetchChosenUsers = async () => {
       try {
@@ -57,6 +60,33 @@ const CreateRoomModal = observer((
         setIsLoading(false);
       }
     }
+    const createRoom = async () => {
+      try {
+        store.setIsBeingSubmitted(true);
+        const response = await fetch(`${API_URL}/room/create`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userIds: selectedUserIds,
+            name: chatName,
+            avatar: chatPicture,
+          }),
+        });
+        const data = await response.json();
+
+        if (response.status < 200 || response.status >= 300) {
+          throw new Error(data.message);
+        }
+        store.setCurrentRoomId(data.id);
+        setIsOpen(false);
+      } catch (error: any) {
+        store.displayError(error.message);
+      } finally {
+        store.setIsBeingSubmitted(false);
+      }
+    };
     const fetchUsers = async () => {
       try {
         setIsLoading(true);
@@ -106,7 +136,22 @@ const CreateRoomModal = observer((
         setSearchResults([]);
       }
     }, [searchText]);
-
+    const onSubmit = async () => {
+      if (selectedUserIds.length < 3) {
+        await createRoom();
+      }
+      else {
+        if (!chatName) {
+          setError("Chat name is required");
+          return;
+        }
+        if (!chatPicture) {
+          setError("Chat picture is required");
+          return;
+        }
+        await createRoom();
+      }
+    }
     return (
       <Modal
         open={isOpen}
@@ -187,9 +232,9 @@ const CreateRoomModal = observer((
                     <UsersList isFull={selectedUserIds && selectedUserIds.length < 3}
                     >
                       <UserSkeleton key="skeleton-1" />
-                      <UserSkeleton key="skeleton-2"/>
-                      <UserSkeleton key="skeleton-3"/>
-                      <UserSkeleton key="skeleton-4"/>
+                      <UserSkeleton key="skeleton-2" />
+                      <UserSkeleton key="skeleton-3" />
+                      <UserSkeleton key="skeleton-4" />
                     </UsersList>
                   )
                   :
@@ -337,14 +382,30 @@ const CreateRoomModal = observer((
                     },
                   }
                 }
-                onClick={() => {
-                  setIsOpen(false);
-                }
-                }
+                onClick={onSubmit}
               >
                 Create
               </Button>
             </Box>
+            <Typography sx={
+              {
+                display: error ? "flex" : "none",
+                width: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                fontFamily: "Roboto",
+                fontSize: {
+                  mobile: 8,
+                  tablet: 12,
+                  laptop: 14,
+                  desktop: 16,
+                },
+                color: "red",
+              }
+            }
+            >
+              {error}
+            </Typography>
           </Box>
         </Box>
       </Modal>

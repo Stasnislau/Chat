@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import ApiError from "src/exceptions/api-error";
 import { roomDTO } from "./dto";
+import cloudinary from "../cloudinary";
 
 @Injectable()
 export class RoomService {
@@ -33,7 +34,24 @@ export class RoomService {
     } else if (data.userIds.length !== 2) {
       if (!data.avatar || data.avatar === "" || data.name === "" || !data.name)
         throw ApiError.badRequest("Avatar and name are required");
-      endAvatar = [data.avatar];
+      const promise = async (image) => {
+        const res = await cloudinary.uploader.upload(
+          data.avatar,
+          {
+            folder: "products",
+            resource_type: "image",
+          },
+          (error, result) => {
+            if (error) {
+              return ApiError.badGateway("Unable to upload images");
+            }
+          }
+        );
+        return res.secure_url;
+      };
+      const avatar = await promise(data.avatar);
+
+      endAvatar = [avatar];
       endName = data.name;
     } else {
       data.userIds.forEach(async (id) => {

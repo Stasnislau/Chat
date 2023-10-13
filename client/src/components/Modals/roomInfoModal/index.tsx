@@ -68,7 +68,7 @@ const UserInfoModal = observer(
         if (data.userIds && data.userIds.length < 3) {
           getUser(
             data.userIds.find((id: string) => id !== store.state.userId) ||
-              store.state.userId
+            store.state.userId
           );
         }
         if (data.userIds && data.userIds.length >= 3) {
@@ -132,6 +132,8 @@ const UserInfoModal = observer(
           },
           body: JSON.stringify({
             userIds: [additionalId, store.state.userId],
+            name: name,
+            avatar: avatar,
           }),
         });
         const data = await response.json();
@@ -139,7 +141,6 @@ const UserInfoModal = observer(
         if (response.status < 200 || response.status >= 300) {
           throw new Error(data.message);
         }
-        store.stopSearching();
         store.setCurrentRoomId(data.id);
         setIsModalOpen(false);
       } catch (error: any) {
