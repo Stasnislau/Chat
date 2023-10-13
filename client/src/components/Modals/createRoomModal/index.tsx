@@ -186,10 +186,10 @@ const CreateRoomModal = observer((
                   (
                     <UsersList isFull={selectedUserIds && selectedUserIds.length < 3}
                     >
-                      <UserSkeleton />
-                      <UserSkeleton />
-                      <UserSkeleton />
-                      <UserSkeleton />
+                      <UserSkeleton key="skeleton-1" />
+                      <UserSkeleton key="skeleton-2"/>
+                      <UserSkeleton key="skeleton-3"/>
+                      <UserSkeleton key="skeleton-4"/>
                     </UsersList>
                   )
                   :

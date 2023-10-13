@@ -12,20 +12,18 @@ const AddedImage = ({ source, onDelete, height }: ComponentProps) => {
     <Box
       sx={{
         width: 1,
-        height: "100%",
         position: "relative",
-        // backgroundImage: `url(${source})`,
-        // backgroundPosition: "center",
-        // backgroundRepeat: "no-repeat",
-        // backgroundSize: "cover",
-        // objectFit: "cover",
+        display: "flex",
+        justifyContent: "center",
+        p: 1,
+        boxSizing: "border-box",
       }}
     >
       <Avatar
         src={source}
         sx={{
           height: `${height}px`,
-          objectFit: "cover",
+          width: `${height}px`,
         }}
       />
       <IconButton

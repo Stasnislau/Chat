@@ -54,8 +54,8 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
       console.log(box.clientHeight, 'box')
       setHeight(box.clientHeight);
     }
-  }, [boxRef])
-  
+  }, [boxRef, file])
+
   const onDelete = () => {
     setFile(null);
   };
@@ -92,7 +92,7 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
           <Typography
 
             sx={{
-              fontFamily: "Arial, sans-serif",
+              fontFamily: "Roboto",
               fontSize: {
                 mobile: "0.8rem",
                 tablet: "1rem",
