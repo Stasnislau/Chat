@@ -7,7 +7,6 @@ import UserBoxBadged from "../../userBoxBadged";
 import { API_URL } from "../../../constants";
 import useDebounce from "../../../hooks/useDebounce";
 import UploadZone from "../../dropZone/uploadZone";
-import React from "react";
 import UsersList from "./UsersList";
 
 interface createRoomModalProps {
@@ -28,8 +27,6 @@ const CreateRoomModal = (
     const [isLoading, setIsLoading] = useState(false);
     const [chatName, setChatName] = useState("");
     const [chatPicture, setChatPicture] = useState<string>();
-
-
 
     const fetchChosenUsers = async () => {
       try {
@@ -163,6 +160,7 @@ const CreateRoomModal = (
                 width: "100%",
                 flexDirection: "column",
                 fontFamily: "Roboto",
+                flexGrow: selectedUserIds && selectedUserIds.length < 3 ? 1 : 0,
               }
             }>
               <Box sx={
@@ -203,16 +201,29 @@ const CreateRoomModal = (
                       <Typography sx={
                         {
                           fontSize: 20,
-                          textAlign: "center",
+                          textAlign: "left",
+                          fontWeight: "bold",
+                          paddingLeft: 1,
                         }
-                      } fontWeight="bold" textAlign="left" paddingBottom="1rem">
+                      }>
+                        <Skeleton variant="text" />
+                        <Skeleton variant="text" />
+                      </Typography>
+                      <Typography sx={
+                        {
+                          fontSize: 20,
+                          textAlign: "left",
+                          fontWeight: "bold",
+                          paddingLeft: 1,
+                        }
+                      }>
                         <Skeleton variant="text" />
                         <Skeleton variant="text" />
                       </Typography>
                     </Box>
                   )
                   :
-                  (<UsersList>
+                  (<UsersList isFull={selectedUserIds && selectedUserIds.length < 3}>
                     {searchResults && searchResults.length > 0 && searchResults.map((user) => {
                       return (
                         <Box sx={
@@ -231,7 +242,7 @@ const CreateRoomModal = (
                             isChosen={selectedUserIds.includes(user.id)}
                             handleUserClick={(id: string) => {
                               if (selectedUserIds.includes(user.id)) {
-                                if (selectedUserIds.length === 1) {
+                                if (selectedUserIds.length === 1 || user.id === store.state.userId) {
                                   return;
                                 }
                                 setSelectedUserIds(selectedUserIds.filter((userId) => userId !== user.id));
@@ -262,7 +273,7 @@ const CreateRoomModal = (
                               isChosen={selectedUserIds.includes(user.id)}
                               handleUserClick={(id: string) => {
                                 if (selectedUserIds.includes(user.id)) {
-                                  if (selectedUserIds.length === 1) {
+                                  if (selectedUserIds.length === 1 || user.id === store.state.userId) {
                                     return;
                                   }
                                   setSelectedUserIds(selectedUserIds.filter((userId) => userId !== user.id));
@@ -348,7 +359,6 @@ const CreateRoomModal = (
                     alignItems: "center",
                     justifyContent: "center",
                     fontFamily: "Roboto",
-                    color: "black",
                     variant: "contained",
                     backgroundColor: "secondary.main",
                     boxShadow: 4,

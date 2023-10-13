@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { Box, Typography, Avatar } from "@mui/material";
 import { Context } from "../../App";
 import { observer } from "mobx-react-lite";
-import { API_URL } from "../../constants";
 const UserBoxBadged = observer(
     ({
         userId,
