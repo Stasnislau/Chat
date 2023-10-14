@@ -11,6 +11,7 @@ import {
 import { Send, Mic } from "@mui/icons-material";
 import { Context } from "../../../App";
 import moment from "moment";
+import { observer } from "mobx-react-lite";
 import useMicFrequency from "../../../hooks/useMicFrequency";
 import fixWebmDuration from "fix-webm-duration";
 interface ChatTextFieldProps {
@@ -18,7 +19,7 @@ interface ChatTextFieldProps {
   onRecord: (recording: Blob, text: string) => void;
 }
 
-const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
+const ChatTextField = observer(({ onSend, onRecord }: ChatTextFieldProps) => {
   const [isRecording, setIsRecording] = useState<boolean | null>(null);
   const [message, setMessage] = useState("");
   const store = useContext(Context);
@@ -133,8 +134,17 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
       }
     };
     func();
-  }
-    , [isRecording]);
+  }, [isRecording]);
+
+  useEffect(() => {
+    if (store.state.currentRoomId !== "") {
+      const textField = document.getElementById("chat-text-field");
+      if (textField) {
+        textField.focus();
+      }
+    }
+  }, [store.state.currentRoomId]);
+
 
   useEffect(() => {
     if (audioBlob) {
@@ -153,8 +163,7 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
 
   useEffect(() => {
     navigator.mediaDevices.getUserMedia({ audio: true });
-  }
-    , []);
+  }, []);
   return (
     <Box
       sx={{
@@ -262,6 +271,8 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
               maxRows={4}
               multiline
               value={message}
+              placeholder="Type a message"
+              id="chat-text-field"
               sx={{
                 "& .MuiInputBase-root": {
                   backgroundColor: "primary.main",
@@ -295,6 +306,6 @@ const ChatTextField = ({ onSend, onRecord }: ChatTextFieldProps) => {
       }
     </Box >
   );
-};
+});
 
 export default ChatTextField;
