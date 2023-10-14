@@ -38,11 +38,16 @@ const EditingModal = ({
       <Box
         sx={{
           backgroundColor: "#FFFFFF",
-          width: "30%",
+          width: {
+            mobile: "70%",
+            tablet: "50%",
+            laptop: "30%",
+            desktop: "30%",
+          },
           height: "30%",
           borderRadius: "1rem",
           boxShadow: 24,
-          padding: "1%",
+          padding: 1,
           display: "flex",
           flexDirection: "column",
           borderBox: "box-sizing",
@@ -60,7 +65,16 @@ const EditingModal = ({
         </Box>
         {chosenField === "name" && (
           <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            <Typography fontSize={18}>
+            <Typography sx={
+              {
+                fontSize: {
+                  mobile: 12,
+                  tablet: 14,
+                  laptop: 16,
+                  desktop: 18,
+                }
+              }
+            }>
               Enter the new value of the field
             </Typography>
             <TextField
@@ -122,7 +136,7 @@ const EditingModal = ({
               Enter the new value of the field
             </Typography>
             <Box sx={{ height: "50%" }}>
-              <UploadZone onChange={setFieldValue} height="100%" width="100%" />
+              <UploadZone onChange={setFieldValue}/>
             </Box>
             <Button
               onClick={onsubmit}

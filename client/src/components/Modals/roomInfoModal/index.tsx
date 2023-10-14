@@ -23,8 +23,6 @@ import {
 } from "@mui/icons-material";
 import EditingModal from "../editingModal/index.tsx";
 import UsersListModal from "../usersListModal/index.tsx";
-import { create } from "domain";
-import { set } from "mobx";
 
 interface UserInfoModalProps {
   isModalOpen: boolean;
@@ -454,6 +452,7 @@ const UserInfoModal = observer(
               handleClick={createRoom}
             />
           )}
+          
         </Box>
       </Modal>
     );
