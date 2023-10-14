@@ -1,8 +1,8 @@
-import { Box, Button, Divider, FormControl, IconButton, InputLabel, Modal, Skeleton, TextField, Typography } from "@mui/material";
+import { Box, Button, FormControl, Modal, TextField, Typography } from "@mui/material";
 import { useEffect, useState, useContext } from "react";
 import { Context } from "../../../App";
-import LocalSearchField from "../localSearchField";
-import { user } from "../../../types";
+import LocalSearchField from "../../localSearchField";
+import { room, user } from "../../../types";
 import UserBoxBadged from "../../userBoxBadged";
 import { API_URL } from "../../../constants";
 import useDebounce from "../../../hooks/useDebounce";
@@ -111,6 +111,7 @@ const CreateRoomModal = observer((
         setIsLoading(false);
       }
     };
+
     const callFetching = useDebounce(async () => {
       if (selectedUserIds.length > 0) {
         await fetchChosenUsers();

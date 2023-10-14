@@ -51,7 +51,6 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
   useEffect(() => {
     const box = boxRef.current;
     if (box && !file) {
-      console.log(box.clientHeight, 'box')
       setHeight(box.clientHeight);
     }
   }, [boxRef, file])

@@ -7,8 +7,6 @@ import {
   Avatar,
   Divider,
   Skeleton,
-  TextField,
-  IconButton,
   AvatarGroup,
 } from "@mui/material";
 import { API_URL } from "../../../constants/index.ts";
@@ -21,8 +19,8 @@ import {
   People,
   PersonAdd,
 } from "@mui/icons-material";
-import EditingModal from "../editingModal/index.tsx";
 import UsersListModal from "../usersListModal/index.tsx";
+import AddUsersModal from "../addUsersModal/index.tsx";
 
 interface UserInfoModalProps {
   isModalOpen: boolean;
@@ -36,7 +34,6 @@ const UserInfoModal = observer(
     const [name, setName] = useState("");
     const [avatar, setAvatar] = useState("");
     const [nickname, setNickname] = useState("");
-    const [shouldUpdate, setShouldUpdate] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [usersInRoom, setUsersInRoom] = useState<
       {
@@ -44,6 +41,7 @@ const UserInfoModal = observer(
         avatar: string;
       }[]
     >([]);
+    const [isAddUsersModalOpen, setIsAddUsersModalOpen] = useState(false);
 
     const getRoomInfo = async () => {
       try {
@@ -150,7 +148,7 @@ const UserInfoModal = observer(
     useEffect(() => {
       getRoomInfo();
     }, [roomId]);
-    const [openModal, setOpenModal] = useState(false);
+    const [isUsersListModalOpen, setIsUsersListModalOpen] = useState(false);
     return (
       <Modal
         open={isModalOpen}
@@ -300,7 +298,7 @@ const UserInfoModal = observer(
                 }}
                 onClick={() => {
                   if (usersInRoom && usersInRoom.length > 0) {
-                    setOpenModal(true);
+                    setIsUsersListModalOpen(true);
                   }
                 }}
               >
@@ -395,7 +393,7 @@ const UserInfoModal = observer(
                     },
                   }}
                   onClick={() => {
-                    alert("Add users functionality here");
+                    setIsAddUsersModalOpen(true);
                   }}
                 >
                   <Box
@@ -444,15 +442,21 @@ const UserInfoModal = observer(
               Write message
             </Button>
           </Box>
-          {openModal && (
+          {isUsersListModalOpen && (
             <UsersListModal
               usersList={usersInRoom}
-              open={openModal}
-              setOpen={setOpenModal}
+              open={isUsersListModalOpen}
+              setOpen={setIsUsersListModalOpen}
               handleClick={createRoom}
             />
           )}
-          
+          {isAddUsersModalOpen && (
+            <AddUsersModal
+              isOpen={isAddUsersModalOpen}
+              setIsOpen={setIsAddUsersModalOpen}
+            />
+          )
+          }
         </Box>
       </Modal>
     );
