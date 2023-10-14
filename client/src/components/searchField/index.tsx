@@ -34,7 +34,7 @@ const SearchField = observer(() => {
   const store = useContext(Context);
 
   useEffect(() => {
-      store.setSearchingText(searchText);
+    store.setSearchingText(searchText);
   }, [isSearchOn, searchText]);
 
   return (
@@ -52,7 +52,11 @@ const SearchField = observer(() => {
         <StyledTextField
           type="text"
           placeholder="Search.."
-          sx={{ width: "100%", height: "50%", boxSizing: "border-box" }}
+          color="secondary"
+          sx={{
+            width: "100%", height: "50%", boxSizing: "border-box",
+            border: "1px solid #e9e9e9",
+          }}
           value={searchText}
           onChange={(event) => {
             setSearchText(event.target.value);
@@ -77,7 +81,7 @@ const SearchField = observer(() => {
             width: "100%",
             height: "50%",
             boxSizing: "border-box",
-            backgroundColor: isSearchOn ? "secondary.main" : "#FFFFFF",
+            backgroundColor: "#FFFFFF",
             borderRadius: "4px",
             border: "1px solid #e9e9e9",
             "&:hover": {
@@ -85,7 +89,6 @@ const SearchField = observer(() => {
             },
           }}
           onClick={() => {
-            // setIsSearchOn(!isSearchOn);
             setIsModalOpen(true);
           }}
         >
