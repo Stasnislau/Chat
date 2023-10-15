@@ -14,11 +14,13 @@ import { observer } from "mobx-react-lite";
 interface createRoomModalProps {
   isOpen: boolean,
   setIsOpen: (isOpen: boolean) => void,
+  onSuccess: () => void,
 }
 const AddUsersModal = observer((
   {
     isOpen,
     setIsOpen,
+    onSuccess,
   }: createRoomModalProps) => {
   {
     const store = useContext(Context);
@@ -87,11 +89,11 @@ const AddUsersModal = observer((
         setIsLoading(false);
       }
     }
-    const updateRoom = async () => { // TODO: change into update room 
+    const updateRoom = async () => { 
       try {
         store.setIsBeingSubmitted(true);
-        const response = await fetch(`${API_URL}/room/create`, {
-          method: "POST",
+        const response = await fetch(`${API_URL}/room/update/${store.state.currentRoomId}`, {
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
@@ -106,8 +108,8 @@ const AddUsersModal = observer((
         if (response.status < 200 || response.status >= 300) {
           throw new Error(data.message);
         }
-        store.setCurrentRoomId(data.id);
         setIsOpen(false);
+        onSuccess();
       } catch (error: any) {
         store.displayError(error.message);
       } finally {
@@ -165,7 +167,7 @@ const AddUsersModal = observer((
     }, [searchText]);
     const onSubmit = async () => {
       if (selectedUserIds.length < 3) {
-        // await updateRoom();
+        await updateRoom();
       }
       else {
         if (!chatName) {
@@ -176,7 +178,7 @@ const AddUsersModal = observer((
           setError("Chat picture is required");
           return;
         }
-        // await updateRoom();
+        await updateRoom();
       }
     }
 
@@ -381,6 +383,8 @@ const AddUsersModal = observer((
                   id="chatName"
                   aria-describedby="chatName"
                   color="secondary"
+                  value={chatName}
+                  label="Chat name"
                   onChange={(e) => {
                     setChatName(e.target.value);
                   }}
@@ -427,7 +431,7 @@ const AddUsersModal = observer((
                 }
                 onClick={onSubmit}
               >
-                Create
+                Update
               </Button>
             </Box>
             <Typography sx={

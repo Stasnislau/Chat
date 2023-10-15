@@ -10,13 +10,11 @@ import { observer } from "mobx-react-lite";
 const MessagingZone = observer(
   ({
     avatars,
-    setShouldUpdateRoom,
   }: {
     avatars: {
       id: string;
       avatar: string;
     }[];
-    setShouldUpdateRoom: (value: boolean) => void;
   }) => {
     const store = useContext(Context);
     const [rooms, setRooms] = useState<extendedRoom[]>([]);
@@ -189,7 +187,7 @@ const MessagingZone = observer(
     useEffect(() => {
       socket?.on("changed-online-status", (roomId: string) => {
         if (roomId === store.state.currentRoomId) {
-          setShouldUpdateRoom(true);
+          store.setShouldUpdateCurrentRoom(true);
         }
       });
     }, [socket, store.state.currentRoomId]);

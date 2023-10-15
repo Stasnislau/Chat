@@ -11,6 +11,7 @@ export interface storeInterface {
   alerts: alertInterface[];
   shouldUpdateRooms: boolean;
   searchText: string;
+  shouldUpdateCurrentRoom: boolean;
 }
 export default class Store {
   state: storeInterface;
@@ -25,6 +26,7 @@ export default class Store {
       addedAlert: false,
       searchText: "",
       shouldUpdateRooms: false,
+      shouldUpdateCurrentRoom: false,
     };
     makeAutoObservable(this);
   }
@@ -78,4 +80,7 @@ export default class Store {
   setSearchingText = (searchingText: string) => {
     this.state.searchText = searchingText;
   }
+  setShouldUpdateCurrentRoom = (shouldUpdateCurrentRoom: boolean) => {
+    this.state.shouldUpdateCurrentRoom = shouldUpdateCurrentRoom;
+  };
 }

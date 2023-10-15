@@ -89,6 +89,7 @@ export class RoomService {
   }
 
   async getRoomById(id: string, callingId: string) {
+    if (!id || id === "") return ApiError.badRequest("Room id is required");
     const room = await this.prisma.room.findUnique({
       where: {
         id,
@@ -97,7 +98,11 @@ export class RoomService {
     if (!room) {
       return ApiError.badRequest("Room not found");
     }
-    if (!room.isDeletable || room.userIds.length !== 2) return room;
+    if (!room.isDeletable || room.userIds.length !== 2)
+      return {
+        ...room,
+        avatar: room.avatar[0],
+      };
     const users = await this.prisma.user.findMany({
       where: {
         id: {
@@ -122,7 +127,8 @@ export class RoomService {
   }
 
   async getRoomByName(name: string) {
-    // is not used yet
+    if (!name || name === "")
+      return ApiError.badRequest("Room name is required");
     const room = await this.prisma.room.findMany({
       where: {
         name,
@@ -158,6 +164,7 @@ export class RoomService {
   }
 
   async deleteRoom(id: string) {
+    if (!id || id === "") return ApiError.badRequest("Room id is required");
     const room = await this.prisma.room.findUnique({
       where: {
         id,
@@ -182,6 +189,7 @@ export class RoomService {
   }
 
   async updateRoom(id: string, data: roomDTO) {
+    if (!id || id === "") return ApiError.badRequest("Room id is required");
     const oldRoom = await this.prisma.room.findUnique({
       where: {
         id,
@@ -198,16 +206,42 @@ export class RoomService {
         return ApiError.badRequest("You should provide name and avatar");
       }
     }
+    oldRoom.userIds.forEach((id) => {
+      if (!data.userIds.includes(id)) {
+        return ApiError.badRequest("You cannot remove users from this room");
+      }
+    });
+    let avatar = oldRoom.avatar;
+    if (data.avatar !== oldRoom.avatar[0]) {
+      const promise = async (image) => {
+        const res = await cloudinary.uploader.upload(
+          data.avatar,
+          {
+            folder: "avatars",
+            resource_type: "image",
+          },
+          (error, result) => {
+            if (error) {
+              return ApiError.badGateway("Unable to upload images");
+            }
+          }
+        );
+        return [res.secure_url];
+      };
+      avatar = await promise(data.avatar);
+    }
+    const name = data.name === oldRoom.name ? oldRoom.name : data.name;
+
     const room = await this.prisma.room.update({
       where: {
         id,
       },
       data: {
-        name: data.name,
+        name: name,
         users: {
           connect: data.userIds.map((id) => ({ id })),
         },
-        avatar: [data.avatar],
+        avatar: avatar,
       },
     });
     if (!room) {

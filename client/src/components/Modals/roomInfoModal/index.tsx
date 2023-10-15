@@ -454,6 +454,12 @@ const UserInfoModal = observer(
             <AddUsersModal
               isOpen={isAddUsersModalOpen}
               setIsOpen={setIsAddUsersModalOpen}
+              onSuccess={() => {
+                store.setShouldUpdateRooms(true);
+                setIsModalOpen(false);
+                store.setShouldUpdateCurrentRoom(true);
+              }
+              }
             />
           )
           }

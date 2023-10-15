@@ -6,6 +6,7 @@ import { observer } from "mobx-react-lite";
 import RoomInfoModal from "../../Modals/roomInfoModal";
 
 const InfoComponent = observer(({ room }: { room: room | undefined }) => {
+  
   const [isLoading, setIsLoading] = useState<boolean>(room === undefined);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   useEffect(() => {
