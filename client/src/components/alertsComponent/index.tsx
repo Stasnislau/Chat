@@ -21,13 +21,16 @@ const MessageComponent = observer(() => {
 
   useEffect(() => {
     if (
-      store.state.addedAlert &&
       store.state.alerts.length > 0 &&
       currentAlerts.length < 3
     ) {
+      let numberOfAlerts = currentAlerts.length;
       store.state.alerts.forEach((item) => {
+        if (numberOfAlerts >= 3)
+          return;
         if (!currentAlerts.find((alert) => alert.id === item.id)) {
           setCurrentAlerts((prevAlerts) => [...prevAlerts, item]);
+          numberOfAlerts++;
         }
       });
     }
@@ -42,61 +45,68 @@ const MessageComponent = observer(() => {
       }
     });
   }, [store.state.alerts.length, currentAlerts.length]);
-  useEffect(() => {
-    if (currentAlerts.length > 3) {
-      setCurrentAlerts((prevAlerts) => prevAlerts.slice(1));
-    }
-  }, [currentAlerts.length]);
   return (
     <Box>
-      {currentAlerts.map((item, index) => (
-        <Snackbar
-          key={item.id}
-          open={true}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-          sx={{
-            marginBottom: `${index * 70}px`,
-          }}
-        >
-          <Alert
+      {currentAlerts.map((item, index) => {
+        setTimeout(() => {
+          store.removeAlert(item.id);
+          setCurrentAlerts((prevAlerts) =>
+            prevAlerts.filter((alert) => alert.id !== item.id)
+          );
+        }, 5000);
+        return (
+
+          <Snackbar
+            key={item.id}
+            open={true}
+            anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             sx={{
-              width: "100%",
-              margin: "auto",
-              overflowWrap: "break-word",
-              borderRadius: "1rem",
-              boxShadow: "1px rgba(0,0,0,0.4)",
+              marginBottom: `${index * 70}px`,
             }}
-            severity={item.type}
-            onClose={() => {
-              store.removeAlert(item.id);
-            }}
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  store.removeAlert(item.id);
+
+          >
+            <Alert
+              sx={{
+                margin: "auto",
+                overflowWrap: "break-word",
+                borderRadius: "1rem",
+                boxShadow: "1px rgba(0,0,0,0.4)",
+              }}
+              severity={item.type}
+              onClose={() => {
+                store.removeAlert(item.id);
+                setCurrentAlerts((prevAlerts) =>
+                  prevAlerts.filter((alert) => alert.id !== item.id)
+                );
+              }}
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    store.removeAlert(item.id);
+                  }}
+                >
+                  <Close fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              <Typography
+                sx={{
+                  display: "inline",
+                  marginRight: "auto",
+                  width: "80%",
+                  fontFamily: "Roboto",
+                  fontWeight: "400",
                 }}
               >
-                <Close fontSize="inherit" />
-              </IconButton>
-            }
-          >
-            <Typography
-              sx={{
-                display: "inline",
-                marginRight: "auto",
-                width: "80%",
-                fontFamily: "Roboto",
-                fontWeight: "400",
-              }}
-            >
-              {item.text}
-            </Typography>
-          </Alert>
-        </Snackbar>
-      ))}
+                {item.text}
+              </Typography>
+            </Alert>
+          </Snackbar>
+        )
+      })}
     </Box>
   );
 });
