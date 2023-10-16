@@ -4,8 +4,6 @@ import { Context } from "../../App";
 import { useContext } from "react";
 import {
   Snackbar,
-  Slide,
-  SlideProps,
   Box,
   Alert,
   IconButton,
@@ -16,7 +14,6 @@ import { Close } from "@mui/icons-material";
 
 const MessageComponent = observer(() => {
   const store = useContext(Context);
-
   const [currentAlerts, setCurrentAlerts] = useState<alertInterface[]>([]);
 
   useEffect(() => {
@@ -62,6 +59,7 @@ const MessageComponent = observer(() => {
             anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             sx={{
               marginBottom: `${index * 70}px`,
+              animation: "slideIn 0.5s ease-in-out",
             }}
 
           >

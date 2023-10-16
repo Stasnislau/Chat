@@ -6,83 +6,6 @@ import { useContext } from "react";
 import { Context } from "../../../App.tsx";
 import { StyledTextField } from "../../Styled/index.tsx";
 import UploadZone from "../../dropZone/uploadZone/index.tsx";
-import styled from "styled-components";
-
-const StyledModal = styled(Modal)`
-  height: 100%;
-  width: 100%;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-`;
-
-const StyledBox = styled(Box)`
-  height: 80%;
-  width: 40%;
-  outline: none;
-  display: flex;
-  flex-direction: column;
-  background-color: #ffff;
-  box-shadow: 1rm rgba(0, 0, 0, 0.75);
-  border-radius: 1rem;
-  padding: 2rem;
-  position: relative;
-
-  @media (max-width: 768px) {
-    width: 90%;
-  }
-`;
-
-const StyledTypography = styled(Typography)`
-  font-size: 2rem;
-  font-weight: 700;
-  font-family: Roboto;
-`;
-
-const StyledTextFieldWrapper = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  padding: 0 1rem;
-  margin-top: 1%;
-  @media (max-width: 768px) {
-    margin-top: 0.5%;
-  }
-`;
-
-const StyledUploadZoneWrapper = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-  padding: 0 1rem;
-  margin-top: 2.5%;
-  @media (max-width: 768px) {
-    margin-top: 1%;
-  }
-`;
-
-const StyledButton = styled(Button)`
-  color: white;
-  border-radius: 1rem;
-  width: fit-content;
-  align-self: center;
-  align-items: flex-end;
-  padding: 1rem;
-  margin-top: 1%;
-
-  @media (max-width: 768px) {
-    margin-top: 0.5%;
-  }
-`;
-
-const StyledErrorTypography = styled(Typography)`
-  font-size: 1rem;
-  font-weight: 400;
-  color: red;
-
-  @media (max-width: 768px) {
-    font-size: 0.8rem;
-  }
-`;
 
 interface RegistrationModalProps {
   isModalOpen: boolean;
@@ -158,24 +81,47 @@ const RegistrationModal = observer(
     };
 
     return (
-      <StyledModal
+      <Modal
         open={isModalOpen}
         onClose={() => {
           store.displayError("You need to register to proceed to the chat");
         }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
       >
-        <StyledBox>
+        <Box sx={{
+          width: {
+            mobile: "90%",
+            tablet: "70%",
+            laptop: "50%",
+            desktop: "45%",
+          },
+          height: {
+            mobile: "80%",
+            tablet: "80%",
+            laptop: "75%",
+            desktop: "75%",
+          },
+          borderRadius: "1rem",
+          backgroundColor: "primary.main",
+          display: "flex",
+          flexDirection: "column",
+          boxShadow: "0px 2px 15px rgba(0, 0, 0, 0.5)",
+          p: 4,
+        }}>
           <Box
             sx={{
               display: "flex",
-              width: "100%",
+              width: 1,
               flexDirection: "column",
               position: "relative",
               height: "fit-content",
               fontFamily: "Roboto",
-              color: "#8446b7",
             }}
           >
             <Box
@@ -183,20 +129,37 @@ const RegistrationModal = observer(
                 position: "relative",
                 flexDirection: "column",
                 alignItems: "center",
+                display: "flex",
               }}
             >
-              <StyledTypography>Registration</StyledTypography>
+              <Typography sx={
+                {
+                  fontSize: {
+                    mobile: "1.2rem",
+                    tablet: "1.5rem",
+                    laptop: "2rem",
+                    desktop: "2.2rem",
+                  },
+                  fontWeight: "600",
+                }
+              }
+              >Registration</Typography>
             </Box>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
+                fontFamily: "Roboto",
               }}
             >
               <Typography
                 sx={{
-                  fontSize: "1.2rem",
-                  fontWeight: "400",
+                  fontSize: {
+                    mobile: "0.9rem",
+                    tablet: "1.0rem",
+                    laptop: "1.2rem",
+                    desktop: "1.5rem",
+                  }
                 }}
               >
                 To proceed to the chat please create your name and nickname
@@ -208,49 +171,63 @@ const RegistrationModal = observer(
               display: "flex",
               flexDirection: "column",
               width: "100%",
-              backgroundColor: "secondary.main",
-              flex: 1,
+              flexGrow: 1,
               borderRadius: "1rem",
               fontFamily: "Roboto",
-              marginTop: "1%",
-              color: "#FFFF",
             }}
           >
-            <StyledTextFieldWrapper>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: "1.2rem",
-                    fontWeight: "400",
-                    marginLeft: "0.5rem",
-                  }}
-                >
-                  It will be displayed in the chat
-                </Typography>
-                <StyledTextField
-                  placeholder="Name"
-                  value={name}
-                  onChange={(e) => {
-                    setFieldErrors({
-                      ...fieldErrors,
-                      name: "",
-                    });
-                    setName(e.target.value);
-                  }}
-                />
-              </Box>
-            </StyledTextFieldWrapper>
-            <StyledTextFieldWrapper>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                fontFamily: "Roboto",
+                width: 1,
+                marginTop: 2,
+              }}
+            >
               <Typography
                 sx={{
-                  fontSize: "1.2rem",
-                  fontWeight: "400",
-                  marginLeft: "0.5rem",
+                  fontSize: {
+                    mobile: "0.8rem",
+                    tablet: "1rem",
+                    laptop: "1.1rem",
+                    desktop: "1.2rem",
+                  },
+                  fontFamily: "Roboto",
+                }}
+              >
+                Name will be displayed in the chat
+              </Typography>
+              <StyledTextField
+                placeholder="Name"
+                value={name}
+                onChange={(e) => {
+                  setFieldErrors({
+                    ...fieldErrors,
+                    name: "",
+                  });
+                  setName(e.target.value);
+                }}
+              />
+            </Box>
+            <Box sx={{
+              display: "flex",
+              flexDirection: "column",
+              fontFamily: "Roboto",
+              width: 1,
+              marginTop: 2,
+
+            }}>
+
+              <Typography
+                sx={{
+                  fontSize: {
+                    mobile: "0.8rem",
+                    tablet: "1rem",
+                    laptop: "1.1rem",
+                    desktop: "1.2rem",
+                  },
+                  fontFamily: "Roboto",
                 }}
               >
                 Unique nickname for finding you in the chat
@@ -266,8 +243,16 @@ const RegistrationModal = observer(
                   setNickname(e.target.value);
                 }}
               />
-            </StyledTextFieldWrapper>
-            <StyledUploadZoneWrapper>
+            </Box>
+            <Box sx={{
+              display: "flex",
+              flexDirection: "column",
+              fontFamily: "Roboto",
+              width: 1,
+              marginTop: 2,
+              flexGrow: 1,
+            }}>
+
               <UploadZone
                 onChange={(file) => {
                   setFieldErrors({
@@ -277,35 +262,39 @@ const RegistrationModal = observer(
                   setAvatar(file);
                 }}
               />
-            </StyledUploadZoneWrapper>
+            </Box>
             <Box sx={
               {
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "flex-end",
-                flex: 1,
+                alignItems: "center",
+                width: 1,
               }
             }>
-              <StyledButton onClick={onSubmit}>Create</StyledButton>
+              <Button sx={
+                {
+                  width: "fit-content",
+                }
+              } color="secondary" onClick={onSubmit}>Create</Button>
             </Box>
           </Box>
           <Box
             sx={{
-              display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              marginTop: "2%",
               transform: "transition all 0.5s ease-in-out",
+              display: fieldErrors.name || fieldErrors.nickname || fieldErrors.avatar ? "flex" : "none",
+              color: "error.main",
             }}
           >
             {fieldErrors.name || fieldErrors.nickname || fieldErrors.avatar ? (
-              <StyledErrorTypography>
+              <Typography>
                 {fieldErrors.name || fieldErrors.nickname || fieldErrors.avatar}
-              </StyledErrorTypography>
+              </Typography>
             ) : null}
           </Box>
-        </StyledBox>
-      </StyledModal>
+        </Box>
+      </Modal >
     );
   }
 );

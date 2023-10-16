@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@emotion/styled": "^11.11.0",
+    "@formkit/auto-animate": "^0.8.0",
     "@mui/icons-material": "^5.14.8",
     "@mui/material": "^5.14.8",
     "@mui/styled-engine": "^5.14.8",
@@ -27,6 +28,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
+    "react-transition-group": "^4.4.5",
     "recorder-js": "^1.0.7",
     "socket.io-client": "^4.7.2",
     "styled-components": "^6.0.7"
