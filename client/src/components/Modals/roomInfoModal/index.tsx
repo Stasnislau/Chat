@@ -165,7 +165,12 @@ const UserInfoModal = observer(
         <Box
           sx={{
             backgroundColor: "#FFFFFF",
-            width: "25%",
+            width: {
+              mobile: "70%",
+              tablet: "50%",
+              laptop: "30%",
+              desktop: "30%",
+            },
             height: "60%",
             borderRadius: "1rem",
             boxShadow: 24,

@@ -14,9 +14,9 @@ import { extendedRoom, user } from "../types";
 import { API_URL } from "../constants";
 import SearchField from "../components/searchField";
 import { observer } from "mobx-react-lite";
-import UserBox from "../components/usersBox";
 import ChatArea from "../components/chatMessagingZone/chatArea";
 import UserInfoModal from "../components/Modals/userInfoModal";
+import { useTheme } from "@mui/material";
 
 const HomePage = observer(() => {
   const store = useContext(Context);
@@ -76,31 +76,6 @@ const HomePage = observer(() => {
       fetchUser();
     }
   }, [store.state.userId]);
-  const [searchResults, setSearchResults] = useState<user[]>([]);
-  const fetchUsers = async () => {
-    try {
-      store.setIsLoading(true);
-      const response = await fetch(
-        `${API_URL}/user/searchByNickname/${store.state.searchText}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const data = await response.json();
-      if (response.status < 200 || response.status >= 300) {
-        throw new Error(data.message);
-      }
-      setSearchResults(data);
-    } catch (error: any) {
-      store.displayError(error.message);
-    } finally {
-      store.setIsLoading(false);
-    }
-  };
 
   useEffect(() => {
     if (store.state.userId !== "") {
@@ -118,6 +93,16 @@ const HomePage = observer(() => {
       store.setShouldUpdateRooms(false);
     }
   }, [store.state.shouldUpdateRooms]);
+  const theme = useTheme();
+  useEffect(() => {
+    if (store.state.currentRoomId !== "") { 
+      if (theme.breakpoints.values.mobile > window.innerWidth || theme.breakpoints.values.tablet > window.innerWidth) {
+        setIsRoomsPanelOpen(false);
+      }
+    }
+  },
+    [store.state.currentRoomId, theme.breakpoints]);
+
   return (
     <Box
       sx={{
@@ -193,7 +178,7 @@ const HomePage = observer(() => {
             flexDirection: "column",
             width: isRoomsPanelOpen ? {
               mobile: "100%",
-              tablet: "100%",
+              tablet: "32%",
               laptop: "32%",
               desktop: "32%",
             } : "0%",
@@ -284,7 +269,7 @@ const HomePage = observer(() => {
           sx={{
             display: isRoomsPanelOpen ? {
               mobile: "none",
-              tablet: "none",
+              tablet: "flex",
               laptop: "flex",
               desktop: "flex",
             } : "flex",

@@ -47,7 +47,7 @@ const EditingModal = ({
           height: "30%",
           borderRadius: "1rem",
           boxShadow: 24,
-          padding: 1,
+          p: 2,
           display: "flex",
           flexDirection: "column",
           borderBox: "box-sizing",
@@ -135,7 +135,14 @@ const EditingModal = ({
             <Typography fontSize={18}>
               Enter the new value of the field
             </Typography>
-            <Box sx={{ height: "50%" }}>
+            <Box sx={{ 
+              display: "flex", 
+              flexDirection: "column", 
+              gap: "1rem",
+              flexGrow: "1",
+              justifyContent: "center",
+              alignItems: "center"
+            }}>
               <UploadZone onChange={setFieldValue}/>
             </Box>
             <Button

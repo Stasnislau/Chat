@@ -67,6 +67,7 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
           flexDirection: "column",
           flexGrow: 1,
           width: 1,
+          fontFamily: "Roboto",
         }
       }
     >
@@ -90,7 +91,6 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
           <AddedImage source={file.preview} onDelete={onDelete} size={size} />
         ) : (
           <Typography
-
             sx={{
               fontFamily: "Roboto",
               fontSize: {
