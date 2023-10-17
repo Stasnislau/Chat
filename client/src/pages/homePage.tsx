@@ -191,7 +191,12 @@ const HomePage = observer(() => {
         <Box
           sx={{
             flexDirection: "column",
-            width: "32%",
+            width: isRoomsPanelOpen ? {
+              mobile: "100%",
+              tablet: "100%",
+              laptop: "32%",
+              desktop: "32%",
+            } : "0%",
             height: "100%",
             backgroundColor: "#FFFFFF",
             borderRight: "1px solid grey",
@@ -277,9 +282,14 @@ const HomePage = observer(() => {
         </Box>
         <Box
           sx={{
-            display: "flex",
+            display: isRoomsPanelOpen ? {
+              mobile: "none",
+              tablet: "none",
+              laptop: "flex",
+              desktop: "flex",
+            } : "flex",
             flexDirection: "column",
-            width: isRoomsPanelOpen ? "68%" : "100%",
+            width: "68%",
             flexGrow: 1,
             boxSizing: "border-box",
           }}
