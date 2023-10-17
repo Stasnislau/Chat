@@ -12,7 +12,7 @@ interface UploadZoneProps {
 
 const UploadZone = ({ onChange }: UploadZoneProps) => {
   const store = useContext(Context);
-  const [height, setHeight] = useState<number>(0);
+  const [size, setSize] = useState<number>(0);
   const boxRef = useRef<HTMLDivElement>(null);
   const [file, setFile] = useState<fileObject | null>(null);
 
@@ -51,7 +51,7 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
   useEffect(() => {
     const box = boxRef.current;
     if (box && !file) {
-      setHeight(box.clientHeight);
+      setSize(Math.min(box.getBoundingClientRect().height, box.getBoundingClientRect().width));
     }
   }, [boxRef, file])
 
@@ -73,7 +73,7 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
       <Box
         {...getRootProps()}
         sx={{
-          width: file && file == null ? 0.7 : 1,
+          width: 1,
           backgroundColor: "#f5f5f5",
           display: "flex",
           justifyContent: "center",
@@ -83,10 +83,11 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
           border: "2px dashed #ccc",
           borderRadius: "8px",
           cursor: "pointer",
+          boxSizing: "border-box",
         }}
       >
         {file ? (
-          <AddedImage source={file.preview} onDelete={onDelete} height={height} />
+          <AddedImage source={file.preview} onDelete={onDelete} size={size} />
         ) : (
           <Typography
 

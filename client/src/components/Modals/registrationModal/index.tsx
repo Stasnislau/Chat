@@ -269,6 +269,7 @@ const RegistrationModal = observer(
                 flexDirection: "column",
                 alignItems: "center",
                 width: 1,
+                marginTop: 2,
               }
             }>
               <Button sx={

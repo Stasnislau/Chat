@@ -4,10 +4,10 @@ import { Cancel } from "@mui/icons-material";
 interface ComponentProps {
   source: string;
   onDelete: (source: string) => void;
-  height: number;
+  size: number;
 }
 
-const AddedImage = ({ source, onDelete, height }: ComponentProps) => {
+const AddedImage = ({ source, onDelete, size }: ComponentProps) => {
   return (
     <Box
       sx={{
@@ -15,15 +15,15 @@ const AddedImage = ({ source, onDelete, height }: ComponentProps) => {
         position: "relative",
         display: "flex",
         justifyContent: "center",
-        p: 1,
         boxSizing: "border-box",
+        height: `${size}px`,
       }}
     >
       <Avatar
         src={source}
         sx={{
-          height: `${height}px`,
-          width: `${height}px`,
+          height: `${size}px`,
+          width: `${size}px`,
         }}
       />
       <IconButton
