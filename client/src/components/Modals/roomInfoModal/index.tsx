@@ -35,6 +35,7 @@ const UserInfoModal = observer(
     const [avatar, setAvatar] = useState("");
     const [nickname, setNickname] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const containerRef = React.useRef<HTMLDivElement>(null);
     const [usersInRoom, setUsersInRoom] = useState<
       {
         id: string;
@@ -42,6 +43,12 @@ const UserInfoModal = observer(
       }[]
     >([]);
     const [isAddUsersModalOpen, setIsAddUsersModalOpen] = useState(false);
+    const [size, setSize] = useState(128);
+    useEffect(() => {
+      if (containerRef.current) {
+        setSize(Math.min(containerRef.current.offsetWidth, containerRef.current.offsetHeight));
+      }
+    }, [containerRef.current]);
 
     const getRoomInfo = async () => {
       try {
@@ -161,6 +168,7 @@ const UserInfoModal = observer(
           justifyContent: "center",
           fontFamily: "Roboto",
         }}
+        disableAutoFocus
       >
         <Box
           sx={{
@@ -174,11 +182,11 @@ const UserInfoModal = observer(
             height: "60%",
             borderRadius: "1rem",
             boxShadow: 24,
-            padding: "1%",
             display: "flex",
             flexDirection: "column",
             borderBox: "box-sizing",
             border: "none",
+            p: 2,
           }}
         >
           <Box
@@ -186,14 +194,14 @@ const UserInfoModal = observer(
               display: "flex",
               flexDirection: "row",
               justifyContent: "center",
-              height: "10%",
             }}
           >
             <Typography fontSize={24}>Info</Typography>
           </Box>
           <Box
-            height="50%"
+
             sx={{
+              flexGrow: 1,
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
@@ -201,19 +209,30 @@ const UserInfoModal = observer(
             }}
           >
             <Box
+              ref={containerRef}
               sx={{
                 width: "100%",
-                height: "100%",
+                flexGrow: 1,
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
+                padding: 1,
+                boxSizing: "border-box",
               }}
             >
               {isLoading ? (
-                <Skeleton variant="circular" width="8rem" height="8rem" />
+                <Skeleton variant="circular" sx={
+                  {
+                    width: size - 1,
+                    height: size - 1,
+                  }
+                } />
               ) : (
-                <Avatar src={avatar} sx={{ height: "8rem", width: "8rem" }} />
+                <Avatar src={avatar} sx={{
+                  width: size,
+                  height: size,
+                }} />
               )}
             </Box>
             <Divider

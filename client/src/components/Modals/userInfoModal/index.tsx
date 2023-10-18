@@ -110,6 +110,7 @@ const UserInfoModal = observer(
           justifyContent: "center",
           fontFamily: "Roboto",
         }}
+        disableAutoFocus
       >
         <Box
           sx={{
