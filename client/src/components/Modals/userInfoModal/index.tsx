@@ -15,7 +15,6 @@ import { observer } from "mobx-react-lite";
 import { useContext } from "react";
 import { Context } from "../../../App.tsx";
 import { AccountBox, AlternateEmail } from "@mui/icons-material";
-import { styled } from "@mui/material/styles";
 import EditingModal from "../editingModal/index.tsx";
 
 interface UserInfoModalProps {
@@ -35,6 +34,8 @@ const UserInfoModal = observer(
     const [newName, setNewName] = useState("");
     const [newAvatar, setNewAvatar] = useState("");
     const [shouldUpdate, setShouldUpdate] = useState(false);
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const [size, setSize] = React.useState(0);
 
     const getUserInfo = async () => {
       try {
@@ -97,7 +98,11 @@ const UserInfoModal = observer(
     useEffect(() => {
       if (store.state.userId !== "") getUserInfo();
     }, [store.state.userId, shouldUpdate]);
-
+    useEffect(() => {
+      if (containerRef.current) {
+        setSize(Math.min(containerRef.current.offsetWidth, containerRef.current.offsetHeight));
+      }
+    }, [containerRef, containerRef.current, window.innerHeight, window.innerWidth]);
     return (
       <Modal
         open={isModalOpen}
@@ -115,202 +120,234 @@ const UserInfoModal = observer(
         <Box
           sx={{
             backgroundColor: "#FFFFFF",
-            width: "25%",
-            height: "55%",
+            width: {
+              mobile: 0.7,
+              tablet: 0.5,
+              laptop: 0.3,
+              desktop: 0.3,
+            },
+            height: {
+              mobile: "55%",
+              tablet: "45%",
+              laptop: "40%",
+              desktop: "40%",
+            },
             borderRadius: "1rem",
             boxShadow: 24,
-            padding: "1%",
             display: "flex",
             flexDirection: "column",
-            borderBox: "box-sizing",
             border: "none",
+            p: 2,
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-              height: "10%",
-            }}
-          >
-            <Typography fontSize={24}>Info</Typography>
-          </Box>
-          <Box
-            height="50%"
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
+          <Box sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            flexGrow: 1,
+            minHeight: 0,
+          }}>
             <Box
               sx={{
-                width: "100%",
-                height: "100%",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
+              <Typography fontSize={24}>Info</Typography>
+            </Box>
+            <Box
+              ref={containerRef}
+              sx={{
+                width: 1,
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                boxSizing: "border-box",
+              }}
+            >
+              <Box
+                sx={{
+                  width: 1,
+                  flexGrow: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {isLoading ? (
+                  <Skeleton variant="circular" sx={
+                    {
+                      width: size - 1,
+                      height: size - 1,
+                    }
+                  } />
+                ) : (
+                  <IconButton
+                    onClick={() => {
+                      setIsEditingEnabled(true);
+                      setChosenField("avatar");
+                    }}
+                  >
+                    <Avatar src={avatar} sx={{
+                      width: size - 1,
+                      height: size - 1,
+                    }} />
+                  </IconButton>
+                )}
+              </Box>
+              <Divider
+                sx={{
+                  width: 1,
+                  height: "1px",
+                }}
+              />
+            </Box>
+            <Box
+              sx={{
+                width: 1,
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
-              }}
-            >
-              {isLoading ? (
-                <Skeleton variant="circular" width="8rem" height="8rem" />
-              ) : (
-                <IconButton
-                  onClick={() => {
-                    setIsEditingEnabled(true);
-                    setChosenField("avatar");
-                  }}
-                >
-                  <Avatar src={avatar} sx={{ height: "8rem", width: "8rem" }} />
-                </IconButton>
-              )}
-            </Box>
-            <Divider
-              sx={{
-                width: "100%",
-                height: "1px",
-              }}
-            />
-          </Box>
-          <Box
-            sx={{
-              height: "30%",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                justifyContent: "space-between",
-                flexDirection: "column",
+                height: {
+                  mobile: "25%",
+                  tablet: "25%",
+                  laptop: "35%",
+                  desktop: "35%",
+                }
               }}
             >
               <Box
                 sx={{
-                  width: "100%",
-                  height: "50%",
-                  flexDirection: "column",
+                  width: 1,
+                  display: "flex",
                   justifyContent: "space-between",
-                  cursor: "pointer",
-                  "&:hover": {
-                    backgroundColor: "#e9e9e9",
-                  },
-                }}
-                onClick={() => {
-                  setIsEditingEnabled(true);
-                  setChosenField("name");
+                  flexDirection: "column",
                 }}
               >
                 <Box
                   sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
+                    width: 1,
+                    flexGrow: 0.5,
+                    flexDirection: "column",
                     justifyContent: "space-between",
-                    padding: "0 0.5rem 0 0.5rem",
+                    cursor: "pointer",
+                    "&:hover": {
+                      backgroundColor: "#e9e9e9",
+                    },
+                  }}
+                  onClick={() => {
+                    setIsEditingEnabled(true);
+                    setChosenField("name");
                   }}
                 >
-                  <Typography
+                  <Box
                     sx={{
-                      height: "100%",
+                      width: 1,
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
-                      gap: "10px",
+                      justifyContent: "space-between",
+                      fontFamily: "Roboto",
+                      flexGrow: 1,
                     }}
                   >
-                    <AccountBox />
-                    Name:
-                  </Typography>
-                  {isLoading ? (
-                    <Skeleton variant="text" />
-                  ) : (
                     <Typography
                       sx={{
-                        height: "100%",
                         display: "flex",
                         flexDirection: "row",
                         alignItems: "center",
+                        lineHeight: 3,
+                        gap: 1,
                       }}
                     >
-                      {name}
+                      <AccountBox />
+                      Name:
                     </Typography>
-                  )}
+                    {isLoading ? (
+                      <Skeleton variant="text" />
+                    ) : (
+                      <Typography
+                        sx={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        {name}
+                      </Typography>
+                    )}
+                  </Box>
                 </Box>
-              </Box>
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "50%",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  cursor: "pointer",
-                  "&:hover": {
-                    backgroundColor: "#e9e9e9",
-                  },
-                }}
-                onClick={() => {
-                  setIsEditingEnabled(true);
-                  setChosenField("nickname");
-                }}
-              >
                 <Box
                   sx={{
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
+                    width: 1,
+                    flexGrow: 0.5,
+                    flexDirection: "column",
                     justifyContent: "space-between",
-                    padding: "0 0.5rem 0 0.5rem",
+                    cursor: "pointer",
+                    "&:hover": {
+                      backgroundColor: "#e9e9e9",
+                    },
+                  }}
+                  onClick={() => {
+                    setIsEditingEnabled(true);
+                    setChosenField("nickname");
                   }}
                 >
-                  <Typography
+                  <Box
                     sx={{
-                      height: "100%",
                       display: "flex",
                       flexDirection: "row",
                       alignItems: "center",
-                      gap: "10px",
+                      justifyContent: "space-between",
+                      fontFamily: "Roboto",
+                      flexGrow: 1,
                     }}
                   >
-                    <AlternateEmail /> Nickname:
-                  </Typography>
-                  {isLoading ? (
-                    <Skeleton variant="text" />
-                  ) : (
-                    <Typography>{nickname}</Typography>
-                  )}
+                    <Typography
+                      sx={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        lineHeight: 3,
+                        gap: 1,
+                      }}
+                    >
+                      <AlternateEmail /> Nickname:
+                    </Typography>
+                    {isLoading ? (
+                      <Skeleton variant="text" />
+                    ) : (
+                      <Typography>{nickname}</Typography>
+                    )}
+                  </Box>
                 </Box>
               </Box>
             </Box>
+            {isEditingEnabled && (
+              <EditingModal
+                open={isEditingEnabled}
+                onClose={() => {
+                  setIsEditingEnabled(false);
+                  setChosenField("");
+                }}
+                chosenField={chosenField}
+                onChange={(value: string) => {
+                  {
+                    chosenField === "name"
+                      ? setNewName(value)
+                      : setNewAvatar(value);
+                  }
+                  setIsEditingEnabled(false);
+                }}
+              />
+            )}
           </Box>
-          {isEditingEnabled && (
-            <EditingModal
-              open={isEditingEnabled}
-              onClose={() => {
-                setIsEditingEnabled(false);
-                setChosenField("");
-              }}
-              chosenField={chosenField}
-              onChange={(value: string) => {
-                {
-                  chosenField === "name"
-                    ? setNewName(value)
-                    : setNewAvatar(value);
-                }
-                setIsEditingEnabled(false);
-              }}
-            />
-          )}
         </Box>
       </Modal>
     );
