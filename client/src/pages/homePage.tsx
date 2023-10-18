@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import {
   Avatar,
   Box,
@@ -17,6 +17,7 @@ import { observer } from "mobx-react-lite";
 import ChatArea from "../components/chatMessagingZone/chatArea";
 import UserInfoModal from "../components/Modals/userInfoModal";
 import { useTheme } from "@mui/material";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 const HomePage = observer(() => {
   const store = useContext(Context);
@@ -25,6 +26,7 @@ const HomePage = observer(() => {
     useState<boolean>(false);
   const [rooms, setRooms] = useState<extendedRoom[]>([]);
   const [user, setUser] = useState<user>();
+  const [containerRef] = useAutoAnimate<HTMLDivElement>();
   const fetchUser = async () => {
     try {
       store.setIsLoading(true);
@@ -48,6 +50,7 @@ const HomePage = observer(() => {
       store.setIsLoading(false);
     }
   };
+
   const fetchRooms = async () => {
     try {
       store.setIsLoading(true);
@@ -95,13 +98,14 @@ const HomePage = observer(() => {
   }, [store.state.shouldUpdateRooms]);
   const theme = useTheme();
   useEffect(() => {
-    if (store.state.currentRoomId !== "") { 
+    if (store.state.currentRoomId !== "") {
       if (theme.breakpoints.values.mobile > window.innerWidth || theme.breakpoints.values.tablet > window.innerWidth) {
         setIsRoomsPanelOpen(false);
       }
     }
   },
     [store.state.currentRoomId, theme.breakpoints]);
+
 
   return (
     <Box
@@ -212,6 +216,7 @@ const HomePage = observer(() => {
               boxSizing: "border-box",
               position: "relative",
             }}
+            ref={containerRef}
           >
             {rooms &&
               rooms.length > 0 &&
