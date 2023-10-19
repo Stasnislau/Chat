@@ -129,7 +129,6 @@ const ChatArea = observer(() => {
               display: "flex",
               flexDirection: "column",
               width: "100%",
-              height: "10.5%",
               backgroundColor: "#FFFFFF",
               borderBottom: "1px solid grey",
               boxSizing: "border-box",

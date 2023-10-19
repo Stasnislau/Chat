@@ -7,7 +7,6 @@ import { extendedRoom, message } from "../../../types";
 import ChatTextField from "../chatTextField";
 import MessageBubble from "../messageBubble";
 import { observer } from "mobx-react-lite";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 const MessagingZone = observer(
   ({
     avatars,
@@ -137,8 +136,7 @@ const MessagingZone = observer(
       if (record) {
         handleSendVoiceMessage(record);
       }
-    }
-      , [record]);
+    }, [record]);
     useEffect(() => {
       const socket = io("http://localhost:8001");
       setSocket(socket);
@@ -198,7 +196,6 @@ const MessagingZone = observer(
     useEffect(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
     }, [messageHistory.length]);
-    const [messagesContainerRef] = useAutoAnimate<HTMLDivElement>();
     return (
       <Box
         sx={{
@@ -224,7 +221,6 @@ const MessagingZone = observer(
           }}
           component="div"
           className="message-history-container"
-          ref={messagesContainerRef}
           onScroll={() => {
             const visibleMessages = getVisibleMessages()?.filter(
               (message) =>

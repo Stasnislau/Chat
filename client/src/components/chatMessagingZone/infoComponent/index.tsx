@@ -1,12 +1,12 @@
-import { Box, Avatar, IconButton, Typography, Skeleton } from "@mui/material";
-import { useState, useEffect } from "react";
+import { Box, Avatar, Typography, Skeleton } from "@mui/material";
+import { useState, useEffect, useRef } from "react";
 import { room } from "../../../types";
-import { Call, VideoCall } from "@mui/icons-material";
 import { observer } from "mobx-react-lite";
 import RoomInfoModal from "../../Modals/roomInfoModal";
 
 const InfoComponent = observer(({ room }: { room: room | undefined }) => {
-  
+  const [height, setHeight] = useState<number>(0);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState<boolean>(room === undefined);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   useEffect(() => {
@@ -27,16 +27,25 @@ const InfoComponent = observer(({ room }: { room: room | undefined }) => {
       }
     }
   }, [room]);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      setHeight(containerRef.current.offsetHeight);
+    }
+  }, [containerRef.current, window.innerHeight, window.innerWidth]);
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "row",
         width: "100%",
+        flexGrow: 1,
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "0 10px",
+        p: 0.75,
+        borderBox: "box-sizing",
       }}
+      ref={containerRef}
     >
       <Box
         sx={{
@@ -44,16 +53,22 @@ const InfoComponent = observer(({ room }: { room: room | undefined }) => {
           flexDirection: "row",
           alignItems: "center",
           cursor: "pointer",
+          flexGrow: 1,
         }}
         onClick={() => setIsModalOpen(true)}
       >
         {isLoading ? (
-          <Skeleton variant="circular" width={50} height={50} />
+          <Skeleton variant="circular" sx={
+            {
+              width: height - 2,
+              height: height - 2
+            }
+          } />
         ) : (
           <Avatar
             sx={{
-              width: "50px",
-              height: "50px",
+              width: height - 2,
+              height: height - 2,
             }}
             src={room?.avatar}
           />
@@ -91,41 +106,6 @@ const InfoComponent = observer(({ room }: { room: room | undefined }) => {
             </Typography>
           )}
         </Box>
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <IconButton
-          sx={{
-            width: "40px",
-            height: "40px",
-            marginRight: "10px",
-          }}
-        >
-          <Call
-            sx={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        </IconButton>
-        <IconButton
-          sx={{
-            width: "40px",
-            height: "40px",
-          }}
-        >
-          <VideoCall
-            sx={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        </IconButton>
       </Box>
       {isModalOpen && (
         <RoomInfoModal
