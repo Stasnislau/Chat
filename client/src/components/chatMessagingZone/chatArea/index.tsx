@@ -10,7 +10,7 @@ import { room } from "../../../types";
 const ChatArea = observer(() => {
   const store = useContext(Context);
   const [room, setRoom] = useState<room>();
-  
+
   const fetchRoom = async () => {
     try {
       store.setIsLoading(true);

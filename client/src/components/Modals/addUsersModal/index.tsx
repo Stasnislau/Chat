@@ -10,6 +10,7 @@ import UploadZone from "../../dropZone/uploadZone";
 import UsersList from "../createRoomModal/UsersList";
 import UserSkeleton from "../createRoomModal/userSkeleton";
 import { observer } from "mobx-react-lite";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 interface createRoomModalProps {
   isOpen: boolean,
@@ -33,7 +34,6 @@ const AddUsersModal = observer((
     const [chatName, setChatName] = useState("");
     const [chatPicture, setChatPicture] = useState<string>("");
     const [error, setError] = useState<string>("");
-
 
     const fetchRoom = async () => {
       try {
@@ -89,7 +89,7 @@ const AddUsersModal = observer((
         setIsLoading(false);
       }
     }
-    const updateRoom = async () => { 
+    const updateRoom = async () => {
       try {
         store.setIsBeingSubmitted(true);
         const response = await fetch(`${API_URL}/room/update/${store.state.currentRoomId}`, {

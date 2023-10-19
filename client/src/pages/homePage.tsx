@@ -105,7 +105,7 @@ const HomePage = observer(() => {
     }
   },
     [store.state.currentRoomId, theme.breakpoints]);
-
+  const [chatRef] = useAutoAnimate<HTMLDivElement>();
 
   return (
     <Box
@@ -216,7 +216,6 @@ const HomePage = observer(() => {
               boxSizing: "border-box",
               position: "relative",
             }}
-            ref={containerRef}
           >
             {rooms &&
               rooms.length > 0 &&
