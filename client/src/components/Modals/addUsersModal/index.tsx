@@ -10,7 +10,6 @@ import UploadZone from "../../dropZone/uploadZone";
 import UsersList from "../createRoomModal/UsersList";
 import UserSkeleton from "../createRoomModal/userSkeleton";
 import { observer } from "mobx-react-lite";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 interface createRoomModalProps {
   isOpen: boolean,
@@ -294,7 +293,8 @@ const AddUsersModal = observer((
                             fontFamily: "Roboto",
                             flexWrap: "wrap",
                           }
-                        }>
+                        }
+                          key={user.id}>
                           <UserBoxBadged
                             userId={user.id}
                             name={user.name}
@@ -455,7 +455,7 @@ const AddUsersModal = observer((
             </Typography>
           </Box>
         </Box>
-      </Modal>
+      </Modal >
     )
   }
 });

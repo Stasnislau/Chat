@@ -142,6 +142,7 @@ const ChatArea = observer(() => {
                 justifyContent: "center",
                 alignItems: "center",
                 boxSizing: "border-box",
+                minHeight: "60px",
               }}
             >
               <InfoComponent room={room} />

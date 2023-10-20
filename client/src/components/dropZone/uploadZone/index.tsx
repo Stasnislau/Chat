@@ -46,15 +46,14 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
       }
     };
     func();
-  }, [file]);
+  }, [file, onChange]);
 
   useEffect(() => {
     const box = boxRef.current;
-    if (box && !file) {
+    if (box && box !== null && !file) {
       setSize(Math.min(box.getBoundingClientRect().height, box.getBoundingClientRect().width));
     }
-  }, [boxRef, file])
-
+  }, [boxRef, file, size])
   const onDelete = () => {
     setFile(null);
   };
@@ -68,6 +67,7 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
           flexGrow: 1,
           width: 1,
           fontFamily: "Roboto",
+          minHeight: 0,
         }
       }
     >

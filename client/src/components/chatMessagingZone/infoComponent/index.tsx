@@ -42,7 +42,7 @@ const InfoComponent = observer(({ room }: { room: room | undefined }) => {
         flexGrow: 1,
         justifyContent: "space-between",
         alignItems: "center",
-        p: 0.75,
+        p: 0.5,
         borderBox: "box-sizing",
       }}
       ref={containerRef}
