@@ -193,8 +193,8 @@ const UserInfoModal = observer(
                     }}
                   >
                     <Avatar src={avatar} sx={{
-                      width: size - 1,
-                      height: size - 1,
+                      width: size - 1.5,
+                      height: size - 1.5,
                     }} />
                   </IconButton>
                 )}
