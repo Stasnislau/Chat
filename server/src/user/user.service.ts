@@ -135,6 +135,26 @@ export class UserService {
           avatar: avatar,
         },
       });
+      const savedMessagesRoom = await this.prisma.room.findFirst({
+        where: {
+          userIds: {
+            equals: [id],
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+      if (savedMessagesRoom && savedMessagesRoom.id) {
+        await this.prisma.room.update({
+          where: {
+            id: savedMessagesRoom.id,
+          },
+          data: {
+            avatar: [avatar],
+          },
+        });
+      }
       if (!user) {
         return ApiError.badRequest("User not found");
       }
