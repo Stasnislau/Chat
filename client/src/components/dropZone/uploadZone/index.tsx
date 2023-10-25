@@ -50,7 +50,7 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
 
   useEffect(() => {
     const box = boxRef.current;
-    if (box && box !== null && !file) {
+    if (box && box !== null && file) {
       setSize(Math.min(box.getBoundingClientRect().height, box.getBoundingClientRect().width));
     }
   }, [boxRef, file, size])
