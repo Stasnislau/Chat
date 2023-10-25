@@ -67,7 +67,7 @@ const UploadZone = ({ onChange }: UploadZoneProps) => {
           flexGrow: 1,
           width: 1,
           fontFamily: "Roboto",
-          minHeight: 0,
+          height: 0,
         }
       }
     >

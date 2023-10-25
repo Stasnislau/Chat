@@ -145,7 +145,7 @@ const UserInfoModal = observer(
             flexDirection: "column",
             alignItems: "center",
             flexGrow: 1,
-            minHeight: 0,
+            height: 0,
           }}>
             <Box
               sx={{
