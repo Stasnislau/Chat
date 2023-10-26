@@ -8,7 +8,6 @@ interface ComponentProps {
 }
 
 const AddedImage = ({ source, onDelete, size }: ComponentProps) => {
-  console.log(size, source)
   return (
     <Box
       sx={{
