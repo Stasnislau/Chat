@@ -1,6 +1,4 @@
-import React, { useContext } from "react";
 import { Box, Typography, Avatar } from "@mui/material";
-import { Context } from "../../App";
 import { observer } from "mobx-react-lite";
 const UserBoxBadged = observer(
     ({
@@ -15,9 +13,8 @@ const UserBoxBadged = observer(
         name: string;
         avatar: string;
         isChosen: boolean;
-        handleUserClick: (id: string) => void;
+        handleUserClick: () => void;
     }) => {
-        const store = useContext(Context);
         return (
             <Box
                 sx={{
