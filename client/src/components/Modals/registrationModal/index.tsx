@@ -93,6 +93,7 @@ const RegistrationModal = observer(
           alignItems: "center",
           justifyContent: "center",
         }}
+        disableAutoFocus
       >
         <Box sx={{
           width: {
