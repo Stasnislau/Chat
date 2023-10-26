@@ -13,7 +13,7 @@ import ApiError from "src/exceptions/api-error";
 import { Readable } from "stream";
 import { streamToBuffer } from "@jorgeferrero/stream-to-buffer";
 @WebSocketGateway(8001, {
-  cors: "*",
+  cors: process.env.CLIENT_URL || "http://localhost",
 })
 export class ChatGateway {
   constructor(private prisma: PrismaService) {}
