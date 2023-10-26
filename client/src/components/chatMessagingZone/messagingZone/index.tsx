@@ -138,7 +138,7 @@ const MessagingZone = observer(
       }
     }, [record]);
     useEffect(() => {
-      const socket = io("http://localhost:8001");
+      const socket = io(API_URL + ":8001");
       setSocket(socket);
     }, [setSocket]);
     useEffect(() => {
