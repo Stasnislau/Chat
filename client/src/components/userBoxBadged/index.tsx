@@ -2,14 +2,12 @@ import { Box, Typography, Avatar } from "@mui/material";
 import { observer } from "mobx-react-lite";
 const UserBoxBadged = observer(
     ({
-        userId,
         name,
         avatar,
         isChosen,
         handleUserClick,
 
     }: {
-        userId: string;
         name: string;
         avatar: string;
         isChosen: boolean;

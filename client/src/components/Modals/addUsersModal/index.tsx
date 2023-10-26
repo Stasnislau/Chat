@@ -296,7 +296,6 @@ const AddUsersModal = observer((
                         }
                           key={user.id}>
                           <UserBoxBadged
-                            userId={user.id}
                             name={user.name}
                             avatar={user.avatar}
                             isChosen={selectedUserIds.includes(user.id)}
@@ -327,7 +326,6 @@ const AddUsersModal = observer((
                             }
                           }>
                             <UserBoxBadged
-                              userId={user.id}
                               name={user.name}
                               avatar={user.avatar}
                               isChosen={selectedUserIds.includes(user.id)}

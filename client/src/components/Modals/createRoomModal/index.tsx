@@ -252,7 +252,6 @@ const CreateRoomModal = observer((
                           }
                         }>
                           <UserBoxBadged
-                            userId={user.id}
                             name={user.name}
                             avatar={user.avatar}
                             isChosen={selectedUserIds.includes(user.id)}
@@ -283,7 +282,6 @@ const CreateRoomModal = observer((
                             }
                           }>
                             <UserBoxBadged
-                              userId={user.id}
                               name={user.name}
                               avatar={user.avatar}
                               isChosen={selectedUserIds.includes(user.id)}
