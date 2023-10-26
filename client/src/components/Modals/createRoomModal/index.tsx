@@ -256,7 +256,7 @@ const CreateRoomModal = observer((
                             name={user.name}
                             avatar={user.avatar}
                             isChosen={selectedUserIds.includes(user.id)}
-                            handleUserClick={(id: string) => {
+                            handleUserClick={() => {
                               if (selectedUserIds.includes(user.id)) {
                                 if (selectedUserIds.length === 1 || user.id === store.state.userId) {
                                   return;
@@ -287,7 +287,7 @@ const CreateRoomModal = observer((
                               name={user.name}
                               avatar={user.avatar}
                               isChosen={selectedUserIds.includes(user.id)}
-                              handleUserClick={(id: string) => {
+                              handleUserClick={() => {
                                 if (selectedUserIds.includes(user.id)) {
                                   if (selectedUserIds.length === 1 || user.id === store.state.userId) {
                                     return;
