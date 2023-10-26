@@ -31,7 +31,6 @@ const UserBox = observer(
         if (response.status < 200 || response.status >= 300) {
           throw new Error(data.message);
         }
-        store.stopSearching();
         store.setCurrentRoomId(data.id);
       } catch (error: any) {
         store.displayError(error.message);
