@@ -68,7 +68,7 @@ const AudioPlayer = ({
   }, [isPlaying]);
 
 
-  const handleSliderChange = (event: any, newValue: number | number[]) => {
+  const handleSliderChange = (_event: any, newValue: number | number[]) => {
     if (audioPlayer.current) {
       audioPlayer.current.currentTime = newValue as number;
       setCurrentTime(newValue as number);

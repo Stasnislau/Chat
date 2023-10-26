@@ -30,7 +30,7 @@ const UserBoxBadged = observer(
                         backgroundColor: "#f5f5f5",
                     },
                 }}
-                onClick={() => handleUserClick(userId)}
+                onClick={() => handleUserClick()}
             >
                 <Avatar src={avatar} sx={{
                     height: "3rem", width: "3rem",
