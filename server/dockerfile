@@ -1,0 +1,25 @@
+# Use an official Node.js runtime as a parent image
+FROM node:18.3.0
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json to the container
+COPY package*.json ./
+
+# Install Nest.js project dependencies
+RUN npm install 
+
+# Copy the rest of your application code to the container
+COPY . .
+
+RUN npx prisma generate
+
+# Build your Nest.js application
+RUN npm run build
+
+# Expose the port your Nest.js app runs on
+EXPOSE 3001 8001
+
+# Define the command to run your Nest.js app
+CMD ["npm", "run", "start:prod"]
