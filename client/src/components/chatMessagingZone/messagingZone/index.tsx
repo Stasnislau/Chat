@@ -138,7 +138,7 @@ const MessagingZone = observer(
       }
     }, [record]);
     useEffect(() => {
-      const socket = io(import.meta.env.VITE_API_URL + ":8001" || "http://localhost:3001");
+      const socket = io(import.meta.env.VITE_SOCKET_URL);
       setSocket(socket);
     }, [setSocket]);
     useEffect(() => {
